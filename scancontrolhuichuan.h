@@ -5,17 +5,21 @@
 #include <QProgressDialog>
 #include <QDebug>
 
-class ScanControlHuiChuan : public ScanControlAbstract
+
+class ScanControlHuiChuan : public ScanControlAbstract  // 修改继承关系
 {
     Q_OBJECT
 
+
+
 public:
     explicit ScanControlHuiChuan(QObject *parent = nullptr);
+
     ~ScanControlHuiChuan();
 
-    void setModbusTcpIP(QString ip) { PlcIP = ip;
-                               }   //设置IP
+    void setModbusTcpIP(QString ip) { PlcIP = ip;}   //设置IP
     void setModbusPort(int port) { PlcPort = port;}   //设置端口
+    void disConncet();
 
     QPointF virtualOrigin() const { return zeroPoint; }     //虚拟0点
     QPointF limitRegion() const { return limitPoint; }      //极限区域
@@ -36,7 +40,7 @@ public:
     bool isJogCrossed(int &address, float &data);
 
     ScanModel currentScanModel() const{ return scanModel;}      //当前扫查模式
-    QSettings* scanControlSetting() const{ return settings;}    //配置表句柄
+    QSettings* scanControlSetting() const{ return Rsettings;}    //配置表句柄
 
     bool haveMachine() const { return isHaveMachine;}   //是否有设置机械原点
     bool haveLimit() const {return isHaveLimit;}        //是否有设置机械极限位
@@ -44,8 +48,13 @@ public:
     void setManualModel(bool states);
     bool nextScan();
 
-    void writeRoutePos(int address, quint16 size, QList<float> dataList_x0,QList<float> dataList_y0, QList<float> dataList_r0,QList<float> dataList_x1, QList<float> dataList_y1,QList<float> dataList_r1,QList<QString> nameList);
-    void writeRoutPosName(int address,QList<QString> nameList);
+
+    void writeRegisterGroup( int startAddress,
+                            const QVector<modelDate> &modelDates, int serverAddress);
+    bool isRunTarget = false;   //执行目标点
+    void ZdetectHight(float hight);
+
+
 
 public slots:
     void init();
@@ -57,7 +66,7 @@ public slots:
     void on_stopScanBtn_clicked();      //暂停扫查
     void on_endScanBtn_clicked();       //结束扫描
 
-    void on_setOriginBtn_clicked();     //设置起点
+    void on_setOriginBtn_clicked(float x,float y,bool isCurrPosi);     //设置零点
 
     void setXLenght(float lenght) { xScanLenght = lenght;}  //设置扫查X轴
     void setYLenght(float lenght) { yScanLenght = lenght;}  //设置扫查Y轴
@@ -151,8 +160,7 @@ private:
 
     void perfromJogTasks();         //点动
 
-    void writeNameRegisterGroup(QModbusClient *modbusDevice, int serverAddress,QList<QString> nameList);
-    void writeRegisterGroup(QModbusClient *modbusDevice, int startAddress, int remainingRegisters, QVector<uint16_t> data, int serverAddress);
+
 
 
 
@@ -161,7 +169,7 @@ private:
     QModbusTcpClient *modbusClient = nullptr;
     QString PlcIP;
     int PlcPort = 502;
-    QSettings *settings = nullptr;
+    QSettings *Rsettings = nullptr;
     QTimer *timer = nullptr;
 
     float xScanLenght = 0;
@@ -183,7 +191,7 @@ private:
     bool isEndScan = false;     //结束扫查标志位
     bool isJogDone = false;     //点动完成标志位
 
-    bool isRunTarget = false;   //执行目标点
+
 
     bool isHaveMachine = true;  //判断是否有机械原点
     bool isHaveLimit = true;    //判断是否有机械极限
@@ -204,3 +212,9 @@ private:
 };
 
 #endif // ScanControlHuiChuan_H
+
+//    void writeNameRegisterGroup(QModbusClient *modbusDevice, int serverAddress,QList<QString> nameList);
+//    void writeRegisterGroup(QModbusClient *modbusDevice, int startAddress, int remainingRegisters, QVector<uint16_t> data, int serverAddress);
+
+//    void writeRoutePos(int address, quint16 size, QList<float> dataList_x0,QList<float> dataList_y0, QList<float> dataList_r0,QList<float> dataList_x1, QList<float> dataList_y1,QList<float> dataList_r1,QList<QString> nameList);
+//    void writeRoutPosName(int address,QList<QString> nameList);

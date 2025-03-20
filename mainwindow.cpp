@@ -33,7 +33,7 @@
 #include <QProcess>
 #include <QDir>
 #include <QProcessEnvironment>
-
+#include <QWaitCondition>
 
 
 void MainWindow::initDb()
@@ -60,32 +60,32 @@ void MainWindow::initDb()
         createnewdb(targetPath);
         opendb(targetDb);
     }
-    QSettings settings(appDataPath+"/settings.ini", QSettings::IniFormat);
-    //QSettings settings(appDataPath+"/settings.ini", "set");  // settings 名称需统一
-    settings.setValue("targetDb", targetDb);
-    settings.setValue("targetPath", targetPath);
+    settings=new QSettings(appDataPath+"/settings.ini", QSettings::IniFormat);
+
+    settings->setValue("targetDb", targetDb);
+    settings->setValue("targetPath", targetPath);
 
 
     // 创建一个表名为 "2d" 的表，包含主键 id，其他字段可以根据需要添加
     QSqlQuery query(db);
     QString createTableSQL =  QString::fromLocal8Bit(R"(
-                             CREATE TABLE IF NOT EXISTS table2d (
-                             id INTEGER PRIMARY KEY AUTOINCREMENT,
-                             类型 TEXT,
-                             起点x TEXT,
-                             起点y TEXT,
-                             起点z TEXT,
-                             起点r TEXT,
-                             过渡点x TEXT,
-                             过渡点y TEXT,
-                             过渡点z TEXT,
-                             过渡点r TEXT,
-                             终点x TEXT,
-                             终点y TEXT,
-                             终点z TEXT,
-                             终点r TEXT
-                             )
-                             )");
+                                                     CREATE TABLE IF NOT EXISTS table2d (
+                                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                                     类型 TEXT,
+                                                     起点x TEXT,
+                                                     起点y TEXT,
+                                                     起点z TEXT,
+                                                     起点r TEXT,
+                                                     过渡点x TEXT,
+                                                     过渡点y TEXT,
+                                                     过渡点z TEXT,
+                                                     过渡点r TEXT,
+                                                     终点x TEXT,
+                                                     终点y TEXT,
+                                                     终点z TEXT,
+                                                     终点r TEXT
+                                                     )
+                                                     )");
     if (!query.exec(createTableSQL)) {
         qDebug() << "创建表失败:" << query.lastError().text();
     } else {
@@ -116,6 +116,13 @@ void MainWindow::initDb()
 
     config.loadConfig(appDataPath+"/settings.ini");
 
+    QVariant axleV = settings->value("AxleV");
+    QVariant ip = settings->value("ip");
+    QVariant port = settings->value("port");
+
+    ui->AxleVelocity_lin->setText(axleV.toString());
+    ui->ip_lin->setText(ip.toString());
+    ui->port_lin->setText(port.toString());
 
 }
 
@@ -131,60 +138,62 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     scanCtrlHunChuan = new ScanControlHuiChuan();
-    scanCtrl = scanCtrlHunChuan;
+    scanCtrlHunChuan->Rsettings=settings;
+    scanCtrlHunChuan->isUseScanDetect=ui->isUseScanDetect->checkState();
 
-    scanCtrl->setModbusTcpIP(ui->ipLineEdit->text());
-    scanCtrl->setModbusPort(ui->portLineEdit->text().toInt());
 
-    connect(ui->connectButton, &QPushButton::clicked, scanCtrl, &ScanControlAbstract::on_connectBtn_clicked);
-    connect(scanCtrl, &ScanControlAbstract::modbusStateChange,this, &MainWindow::modbusStateChange);
-    connect(ui->xAddBtn_2, &QPushButton::pressed, scanCtrl, &ScanControlAbstract::on_xAddBtn_pressed);
-    connect(ui->xAddBtn_2, &QPushButton::released, scanCtrl, &ScanControlAbstract::on_xAddBtn_released);
-    connect(ui->xSubBtn_2, &QPushButton::pressed, scanCtrl, &ScanControlAbstract::on_xSubBtn_pressed);
-    connect(ui->xSubBtn_2, &QPushButton::released, scanCtrl, &ScanControlAbstract::on_xSubBtn_released);
-    connect(ui->yAddBtn_2, &QPushButton::pressed, scanCtrl, &ScanControlAbstract::on_yAddBtn_pressed);
-    connect(ui->yAddBtn_2, &QPushButton::released, scanCtrl, &ScanControlAbstract::on_yAddBtn_released);
-    connect(ui->ySubBtn_2, &QPushButton::pressed, scanCtrl, &ScanControlAbstract::on_ySubBtn_pressed);
-    connect(ui->ySubBtn_2, &QPushButton::released, scanCtrl, &ScanControlAbstract::on_ySubBtn_released);
-    connect(ui->zAddBtn_2, &QPushButton::pressed, scanCtrl, &ScanControlAbstract::on_zAddBtn_pressed);
-    connect(ui->zAddBtn_2, &QPushButton::released, scanCtrl, &ScanControlAbstract::on_zAddBtn_released);
-    connect(ui->zSubBtn_2, &QPushButton::pressed, scanCtrl, &ScanControlAbstract::on_zSubBtn_pressed);
-    connect(ui->zSubBtn_2, &QPushButton::released, scanCtrl, &ScanControlAbstract::on_zSubBtn_released);
-    connect(ui->rAddBtn_2, &QPushButton::pressed, scanCtrl, &ScanControlAbstract::on_rAddBtn_pressed);
-    connect(ui->rAddBtn_2, &QPushButton::released, scanCtrl, &ScanControlAbstract::on_rAddBtn_released);
-    connect(ui->rSubBtn_2, &QPushButton::pressed, scanCtrl, &ScanControlAbstract::on_rSubBtn_pressed);
-    connect(ui->rSubBtn_2, &QPushButton::released, scanCtrl, &ScanControlAbstract::on_rSubBtn_released);
+    connect(scanCtrlHunChuan, &ScanControlAbstract::modbusStateChange,this, &MainWindow::modbusStateChange);
+    connect(ui->xAdd_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_xAddBtn_pressed);
+    connect(ui->xAdd_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_xAddBtn_released);
+    connect(ui->xSub_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_xSubBtn_pressed);
+    connect(ui->xSub_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_xSubBtn_released);
+    connect(ui->yAdd_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_yAddBtn_pressed);
+    connect(ui->yAdd_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_yAddBtn_released);
+    connect(ui->ySub_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_ySubBtn_pressed);
+    connect(ui->ySub_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_ySubBtn_released);
+    connect(ui->zAdd_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_zAddBtn_pressed);
+    connect(ui->zAdd_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_zAddBtn_released);
+    connect(ui->zSub_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_zSubBtn_pressed);
+    connect(ui->zSub_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_zSubBtn_released);
+    connect(ui->rAdd_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_rAddBtn_pressed);
+    connect(ui->rAdd_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_rAddBtn_released);
+    connect(ui->rSub_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_rSubBtn_pressed);
+    connect(ui->rSub_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_rSubBtn_released);
 
-    connect(scanCtrl, &ScanControlAbstract::positionChange, this, &MainWindow::updatePosition);
-    connect(ui->alarmResetBtn, &QPushButton::clicked, scanCtrl, &ScanControlAbstract::on_alarmResetBtn_clicked);
-    connect(ui->startScanBtn, &QPushButton::clicked, scanCtrl, &ScanControlAbstract::on_startScanBtn_clicked);
-    connect(ui->stopScanBtn, &QPushButton::clicked, scanCtrl, &ScanControlAbstract::on_stopScanBtn_clicked);
-    connect(ui->endScanBtn, &QPushButton::clicked, scanCtrl, &ScanControlAbstract::on_endScanBtn_clicked);
+    connect(ui->writeInPLC_but, &QPushButton::clicked, this, &MainWindow::pbWriteInPLC);
+    connect(scanCtrlHunChuan, &ScanControlAbstract::positionChange, this, &MainWindow::updatePosition);
+    connect(ui->alarmReset_but, &QPushButton::clicked, scanCtrlHunChuan, &ScanControlAbstract::on_alarmResetBtn_clicked);
+    connect(ui->startScan_But, &QPushButton::clicked, scanCtrlHunChuan, &ScanControlAbstract::on_startScanBtn_clicked);
+    connect(ui->stopScan_but, &QPushButton::clicked, scanCtrlHunChuan, &ScanControlAbstract::on_stopScanBtn_clicked);
+    connect(ui->endScan_but, &QPushButton::clicked, scanCtrlHunChuan, &ScanControlAbstract::on_endScanBtn_clicked);
 
+    connect(ui->AxleVelocity_lin, &QLineEdit::editingFinished, this, &MainWindow::PbAxleVelocity_lin);
+    connect(ui->setOrigin_but, &QPushButton::clicked, this, &MainWindow::PbSetOrigin);
     connect(ui->insertArcPos_but, &QPushButton::clicked, this, &MainWindow::pbAddArcPos);
     connect(ui->insertLinePos_but, &QPushButton::clicked, this, &MainWindow::pbAddLinePos);
-    connect(ui->DXF_importBut, &QPushButton::clicked, this, &MainWindow::pbDXFimportBut);
+    connect(ui->DXFimport_but, &QPushButton::clicked, this, &MainWindow::pbDXFimportBut);
     connect(ui->creatG_but, &QPushButton::clicked, this, &MainWindow::PbCreatGcode);
     connect(ui->cleanTable_but, &QPushButton::clicked, this, &MainWindow::cleanTable);
-
+    connect(ui->connect_but, &QPushButton::clicked, this, &MainWindow::PbModbusConnectBtn);
+    connect(ui->moveToPosition_but, &QPushButton::clicked, this, &MainWindow::PbMoveToPosition);
+    connect(ui->isUseScanDetect, &QCheckBox::toggled, this, &MainWindow::isUseScanDetect);
 
     addRoute = new addRoute_dialog(this);
 
-
-    connect(addRoute, &addRoute_dialog::addBut_x_pressed, scanCtrl, &ScanControlAbstract::on_xAddBtn_pressed);
-    connect(addRoute, &addRoute_dialog::addBut_x_released, scanCtrl, &ScanControlAbstract::on_xAddBtn_released);
-    connect(addRoute, &addRoute_dialog::subBut_x_pressed, scanCtrl, &ScanControlAbstract::on_xSubBtn_pressed);
-    connect(addRoute, &addRoute_dialog::subBut_x_released, scanCtrl, &ScanControlAbstract::on_xSubBtn_released);
-    connect(addRoute, &addRoute_dialog::addBut_y_pressed, scanCtrl, &ScanControlAbstract::on_yAddBtn_pressed);
-    connect(addRoute, &addRoute_dialog::addBut_y_released, scanCtrl, &ScanControlAbstract::on_yAddBtn_released);
-    connect(addRoute, &addRoute_dialog::subBut_y_pressed, scanCtrl, &ScanControlAbstract::on_ySubBtn_pressed);
-    connect(addRoute, &addRoute_dialog::subBut_y_released, scanCtrl, &ScanControlAbstract::on_ySubBtn_released);
-    connect(addRoute, &addRoute_dialog::addBut_z_pressed, scanCtrl, &ScanControlAbstract::on_zAddBtn_pressed);
-    connect(addRoute, &addRoute_dialog::subBut_z_pressed, scanCtrl, &ScanControlAbstract::on_zSubBtn_pressed);
-    connect(addRoute, &addRoute_dialog::addBut_z_released, scanCtrl, &ScanControlAbstract::on_zAddBtn_released);
-    connect(addRoute, &addRoute_dialog::subBut_z_released, scanCtrl, &ScanControlAbstract::on_zSubBtn_released);
-    connect(addRoute, &addRoute_dialog::subBut_r_pressed, scanCtrl, &ScanControlAbstract::on_rSubBtn_pressed);
-    connect(addRoute, &addRoute_dialog::subBut_r_released, scanCtrl, &ScanControlAbstract::on_rSubBtn_released);
+    connect(addRoute, &addRoute_dialog::addBut_x_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_xAddBtn_pressed);
+    connect(addRoute, &addRoute_dialog::addBut_x_released, scanCtrlHunChuan, &ScanControlAbstract::on_xAddBtn_released);
+    connect(addRoute, &addRoute_dialog::subBut_x_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_xSubBtn_pressed);
+    connect(addRoute, &addRoute_dialog::subBut_x_released, scanCtrlHunChuan, &ScanControlAbstract::on_xSubBtn_released);
+    connect(addRoute, &addRoute_dialog::addBut_y_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_yAddBtn_pressed);
+    connect(addRoute, &addRoute_dialog::addBut_y_released, scanCtrlHunChuan, &ScanControlAbstract::on_yAddBtn_released);
+    connect(addRoute, &addRoute_dialog::subBut_y_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_ySubBtn_pressed);
+    connect(addRoute, &addRoute_dialog::subBut_y_released, scanCtrlHunChuan, &ScanControlAbstract::on_ySubBtn_released);
+    connect(addRoute, &addRoute_dialog::addBut_z_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_zAddBtn_pressed);
+    connect(addRoute, &addRoute_dialog::subBut_z_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_zSubBtn_pressed);
+    connect(addRoute, &addRoute_dialog::addBut_z_released, scanCtrlHunChuan, &ScanControlAbstract::on_zAddBtn_released);
+    connect(addRoute, &addRoute_dialog::subBut_z_released, scanCtrlHunChuan, &ScanControlAbstract::on_zSubBtn_released);
+    connect(addRoute, &addRoute_dialog::subBut_r_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_rSubBtn_pressed);
+    connect(addRoute, &addRoute_dialog::subBut_r_released, scanCtrlHunChuan, &ScanControlAbstract::on_rSubBtn_released);
 
 
     zomm_gview = new Graphics_view_zoom(ui->graphicsView);
@@ -210,32 +219,37 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
 
-    scanCtrl->disconnect();
-    scanCtrlHunChuan->disconnect();
+
     delete model;
     delete addRoute;
     delete scene;
     delete zomm_gview;
-    delete scanCtrl;
     delete scanCtrlHunChuan;
+    delete settings;
     delete ui;
 
 }
 
 void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
 {
-    qDebug()<<"updatePosition";
-    ui->xCurPos->setText(QString::number(static_cast<double>(pos.x()-scanCtrl->virtualOrigin().x()), 'f', 3));
-    ui->yCurPos->setText(QString::number(static_cast<double>(pos.y()-scanCtrl->virtualOrigin().y()), 'f', 3));
-    ui->zCurPos->setText(QString::number(static_cast<double>(cur_z), 'f', 3));
-    ui->rCurPos->setText(QString::number(static_cast<double>(cur_r), 'f', 3));
+//        qDebug()<<"updatePosition"<<static_cast<double>(pos.x()-scanCtrlHunChuan->virtualOrigin().x())
+//               <<"y"<<static_cast<double>(pos.y()-scanCtrlHunChuan->virtualOrigin().y())
+//              <<"z"<<cur_z
+//             <<"r"<<cur_r;
 
-    addRoute->set_Xcurpos(QString::number(static_cast<double>(pos.x()-scanCtrl->virtualOrigin().x()), 'f', 3));
-    addRoute->set_Ycurpos(QString::number(static_cast<double>(pos.y()-scanCtrl->virtualOrigin().y()), 'f', 3));
+    ui->xCurPos_lab->setText(QString::number(static_cast<double>(pos.x()), 'f', 3));
+    ui->yCurPos_lab->setText(QString::number(static_cast<double>(pos.y()), 'f', 3));
+    ui->zCurPos_lab->setText(QString::number(static_cast<double>(cur_z), 'f', 3));
+    ui->rCurPos_lab->setText(QString::number(static_cast<double>(cur_r), 'f', 3));
+
+    addRoute->set_Xcurpos(QString::number(static_cast<double>(pos.x()), 'f', 3));
+    addRoute->set_Ycurpos(QString::number(static_cast<double>(pos.y()), 'f', 3));
     addRoute->set_Zcurpos(QString::number(static_cast<double>(cur_z), 'f', 3));
     addRoute->set_Rcurpos(QString::number(static_cast<double>(cur_r), 'f', 3));
 
+
 }
+
 
 
 void MainWindow::updateAddRoute(int arc,int edit,int curRow)
@@ -243,7 +257,7 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
     qDebug()<<"updateAddRoute";
     db.transaction();
 
-    QList<QString> curStartPos_list = {ui->xCurPos->text(),ui->yCurPos->text(),ui->zCurPos->text(),ui->rCurPos->text()};
+    QList<QString> curStartPos_list = {ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text()};
     int route_rowNum=model->rowCount();
 
     if (addRoute->exec()) {
@@ -346,6 +360,18 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
     updateSence();
 }
 
+void MainWindow::PbModbusConnectBtn(){
+
+    scanCtrlHunChuan->setModbusTcpIP(ui->ip_lin->text());
+    scanCtrlHunChuan->setModbusPort(ui->port_lin->text().toInt());
+
+    scanCtrlHunChuan->on_connectBtn_clicked();
+
+
+    settings->setValue("ip", ui->ip_lin->text());
+    settings->setValue("port", ui->port_lin->text());
+}
+
 void MainWindow::pbAddSpline()
 {   qDebug()<<"pbAddSpline";
     //addRoute->update_Ui(0,ui->xCurPos->text(),ui->yCurPos->text(),ui->rCurPos->text(),NULL,NULL,NULL);
@@ -362,22 +388,22 @@ void MainWindow::pbAddElliptical()
 
 void MainWindow::pbAddArcPos()
 {
-    if(!scanCtrl->modbusState()){
-         QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
-         return;
+    if(!scanCtrlHunChuan->modbusState()){
+        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
+        return;
     }
-    addRoute->update_Ui(1,ui->xCurPos->text(),ui->yCurPos->text(),ui->zCurPos->text(),ui->rCurPos->text(),NULL,NULL,NULL,NULL);
+    addRoute->update_Ui(1,ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text(),NULL,NULL,NULL,NULL);
     updateAddRoute(1,0,1);
 
 }
 
 void MainWindow::pbAddLinePos()
 {
-    if(!scanCtrl->modbusState()){
-         QMessageBox::warning(nullptr, "error",QString::fromLocal8Bit( " 通讯未连接   "));
-         return;
+    if(!scanCtrlHunChuan->modbusState()){
+        QMessageBox::warning(nullptr, "error",QString::fromLocal8Bit( " 通讯未连接   "));
+        return;
     }
-    addRoute->update_Ui(0,ui->xCurPos->text(),ui->yCurPos->text(),ui->zCurPos->text(),ui->rCurPos->text(),NULL,NULL,NULL,NULL);
+    addRoute->update_Ui(0,ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text(),NULL,NULL,NULL,NULL);
     updateAddRoute(0,0,1);
 }
 
@@ -461,69 +487,77 @@ void MainWindow::on_delete_but_clicked()
 void MainWindow::pbWriteInPLC()
 {
 
-    int init_value0=3000;
-    //int init_nameValue=1000;
+
+    if(!scanCtrlHunChuan->modbusState()){
+        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
+        return;}
+
+    if(!scanCtrlHunChuan->modbusState()){
+        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
+        return;}
+
+
+
     int row_count =model->rowCount();
     //int column_cout=model->columnCount();
+
     float x0,y0,r0,z0,x1,y1,r1,z1,x2,y2,z2,r2;
     QString name;
     QVector<QVector<float>> point;
-    QList<QString>list_name;
+    QVector<modelDate> modelDates;
+
     for(int i = 0; i < row_count; ++i)
     {
         name=model->data(model->index(i, 1), Qt::DisplayRole).toString();
 
         if(name=="arc"){
-        x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
-        y0=model->data(model->index(i, 3), Qt::DisplayRole).toFloat();
-        z0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
-        r0=model->data(model->index(i, 5), Qt::DisplayRole).toFloat();
+            //x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
+            //y0=model->data(model->index(i, 3), Qt::DisplayRole).toFloat();
+            //z0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
+            //r0=model->data(model->index(i, 5), Qt::DisplayRole).toFloat();
 
-        x1=model->data(model->index(i, 6), Qt::DisplayRole).toFloat();
-        y1=model->data(model->index(i, 7), Qt::DisplayRole).toFloat();
-        z1=model->data(model->index(i, 8), Qt::DisplayRole).toFloat();
-        r1=model->data(model->index(i, 9), Qt::DisplayRole).toFloat();
+            x1=model->data(model->index(i, 6), Qt::DisplayRole).toFloat();
+            y1=model->data(model->index(i, 7), Qt::DisplayRole).toFloat();
+            z1=model->data(model->index(i, 8), Qt::DisplayRole).toFloat();
+            r1=model->data(model->index(i, 9), Qt::DisplayRole).toFloat();
 
-        x2=model->data(model->index(i, 10), Qt::DisplayRole).toFloat();
-        y2=model->data(model->index(i, 11), Qt::DisplayRole).toFloat();
-        z2=model->data(model->index(i, 12), Qt::DisplayRole).toFloat();
-        r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
+            x2=model->data(model->index(i, 10), Qt::DisplayRole).toFloat();
+            y2=model->data(model->index(i, 11), Qt::DisplayRole).toFloat();
+            z2=model->data(model->index(i, 12), Qt::DisplayRole).toFloat();
+            r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
 
-        point.push_back({x0, y0, z0, r0});
-        point.push_back({x1, y1, z1, r1});
-        point.push_back({x2, y2, z2, r2});
+            modelDate segment;
+            segment.type = "arc";
+            segment.points.push_back({x2, y2, r2});
+            segment.points.push_back({x1, y1, r1});
+
+
+            modelDates.push_back(segment);
 
         }else if (name=="line") {
-          x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
-          y0=model->data(model->index(i, 3), Qt::DisplayRole).toFloat();
-          z0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
-          r0=model->data(model->index(i, 5), Qt::DisplayRole).toFloat();
+            //x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
+            //y0=model->data(model->index(i, 3), Qt::DisplayRole).toFloat();
+            //z0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
+            //r0=model->data(model->index(i, 5), Qt::DisplayRole).toFloat();
 
-          x1=model->data(model->index(i, 6), Qt::DisplayRole).toFloat();
-          y1=model->data(model->index(i, 7), Qt::DisplayRole).toFloat();
-          z1=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
-          r1=model->data(model->index(i, 8), Qt::DisplayRole).toFloat();
+            x2=model->data(model->index(i, 10), Qt::DisplayRole).toFloat();
+            y2=model->data(model->index(i, 11), Qt::DisplayRole).toFloat();
+            z2=model->data(model->index(i, 12), Qt::DisplayRole).toFloat();
+            r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
+
+            modelDate segment;
+            segment.type = "line";
+            segment.points.push_back({x2, y2, r2});
+            modelDates.push_back(segment);
         }
-        point.push_back({x0, y0, z0, r0});
-        point.push_back({x1, y1, z1, r1});
+
 
     }
-    for (const QVector<float>& pt : point) {
-        if (pt.size() < 4)
-            continue; // 不足四个数据，跳过或做错误处理
 
-        float x = pt[0];
-        float y = pt[1];
-        float z = pt[2];
-        float r = pt[3];
-        scanCtrlHunChuan->runTargetPosition(x,y,z,r);
 
-        // 使用 x, y, z, r 进行后续处理
-        qDebug() << "x:" << x << "y:" << y << "z:" << z << "r:" << r;
-    }
-    //scanCtrlHunChuan->writeRoutPosName(init_nameValue,list_name);
 
-    //qDebug()<<"row="<<row_count<<"colum="<<column_cout;
+    scanCtrlHunChuan->writeRegisterGroup(3000,modelDates,1);
+
 
 }
 
@@ -591,37 +625,37 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
 void MainWindow::tableSelectionChanged()
 {
 
-     QItemSelectionModel *select = ui->tableView->selectionModel();
-      QModelIndex index =select->currentIndex();
-       int selectedRow = index.row();
-        QString name=model->data(model->index(selectedRow, 1), Qt::DisplayRole).toString();
-         if(scene->items().count() >0)
-         {
-             foreach (QGraphicsItem *item, scene->items()) {
-                 item->setSelected(false);
-             }
-             // 获取场景中的所有项
-             foreach (QGraphicsItem *item, scene->items()) {
-                 if (line_item *item_a = dynamic_cast<line_item *>(item)) {
-                     int sortNum=item_a->_sortNum;
-                     if(sortNum==selectedRow){
-                         item->setSelected(true);
-                         //qDebug() << "*******0";
-                     }
-                     //qDebug() << "This is a line_itme"<<item_a->_sortNum<<"selectedRow="<<selectedRow;
-                 } else if (arc_item *item_b = dynamic_cast<arc_item *>(item)) {
-                     int sortNum=item_b->_sortNum;
-                     if(sortNum==selectedRow){
-                         item->setSelected(true);
-                         //qDebug() << "*******0";
-                     }
-                     //qDebug() << "This is a arc_item";
-                 }
-             }
-         }else{
-             return;
-         }
-          scene->update();
+    QItemSelectionModel *select = ui->tableView->selectionModel();
+    QModelIndex index =select->currentIndex();
+    int selectedRow = index.row();
+    QString name=model->data(model->index(selectedRow, 1), Qt::DisplayRole).toString();
+    if(scene->items().count() >0)
+    {
+        foreach (QGraphicsItem *item, scene->items()) {
+            item->setSelected(false);
+        }
+        // 获取场景中的所有项
+        foreach (QGraphicsItem *item, scene->items()) {
+            if (line_item *item_a = dynamic_cast<line_item *>(item)) {
+                int sortNum=item_a->_sortNum;
+                if(sortNum==selectedRow){
+                    item->setSelected(true);
+                    //qDebug() << "*******0";
+                }
+                //qDebug() << "This is a line_itme"<<item_a->_sortNum<<"selectedRow="<<selectedRow;
+            } else if (arc_item *item_b = dynamic_cast<arc_item *>(item)) {
+                int sortNum=item_b->_sortNum;
+                if(sortNum==selectedRow){
+                    item->setSelected(true);
+                    //qDebug() << "*******0";
+                }
+                //qDebug() << "This is a arc_item";
+            }
+        }
+    }else{
+        return;
+    }
+    scene->update();
 
 }
 
@@ -775,38 +809,36 @@ void MainWindow::on_setTrajec_start_clicked()
     bool ok;
     double _x0= ui->traject_x0->text().toDouble(&ok);
     double _y0= ui->traject_y0->text().toDouble(&ok);
-    //qDebug()<<"***traject_x0="<<traject_x0<<traject_y0;
-    int row_count =model->rowCount();
-    QString name;
-    if(row_count>0){
-        double row0_x =model->data(model->index(0, 2), Qt::DisplayRole).toFloat();
-        double row0_y =model->data(model->index(0, 3), Qt::DisplayRole).toFloat();
-        traject_x0= _x0-row0_x;
-        traject_y0= _y0-row0_y;
-        qDebug()<<"***traject_x0="<<traject_x0<<traject_y0;
-        for(int i = 0; i < row_count; ++i)
-        {
-            name=model->data(model->index(i, 1), Qt::DisplayRole).toString();
-            if(name=="line"){
-                model->setData (model->index(i,2),model->data(model->index(i, 2), Qt::DisplayRole).toFloat()+traject_x0);
-                model->setData (model->index(i,3),model->data(model->index(i, 3), Qt::DisplayRole).toFloat()+traject_y0);
+    double _z0= ui->traject_z0->text().toDouble(&ok);
+    double _r0= ui->traject_r0->text().toDouble(&ok);
 
 
-            }else{
-                model->setData (model->index(i,2),model->data(model->index(i, 2), Qt::DisplayRole).toFloat()+traject_x0);
-                model->setData (model->index(i,3),model->data(model->index(i, 3), Qt::DisplayRole).toFloat()+traject_y0);
+    double x2 =model->data(model->index(0, 10), Qt::DisplayRole).toFloat();
+    double y2 =model->data(model->index(0, 11), Qt::DisplayRole).toFloat();
+    double z2 =model->data(model->index(0, 12), Qt::DisplayRole).toFloat();
+    double r2 =model->data(model->index(0, 13), Qt::DisplayRole).toFloat();
 
-                model->setData (model->index(i,6),model->data(model->index(i, 6), Qt::DisplayRole).toFloat()+traject_x0);
-                model->setData (model->index(i,7),model->data(model->index(i, 7), Qt::DisplayRole).toFloat()+traject_y0);
-            }
-        }
-        model->submitAll();
-    }else{
-        return;
-    }
+
+    model->setData(model->index(0, 1), "line");
+    model->setData(model->index(0, 2), _x0);
+    model->setData(model->index(0, 3), _y0);
+    model->setData(model->index(0, 4), _z0);
+    model->setData(model->index(0, 5), _r0);
+
+
+    model->setData(model->index(0, 10), x2);
+    model->setData(model->index(0, 11), y2);
+    model->setData(model->index(0, 12), z2);
+    model->setData(model->index(0, 13), r2);
+
+    model->submitAll();
+
     updateSence();
 
     db.commit();
+
+    settings->setValue("startX", _x0);
+    settings->setValue("startY", _y0);
 }
 
 
@@ -951,6 +983,23 @@ void MainWindow::cleanTable(){
 
 }
 
+void MainWindow::PbAxleVelocity_lin(){
+
+    if(!scanCtrlHunChuan->modbusState()){
+        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
+        return;
+    }
+
+    qDebug()<<"AxleV"<<ui->AxleVelocity_lin->text().toFloat();
+    scanCtrlHunChuan->on_x_velocity_editingFinished(ui->AxleVelocity_lin->text().toFloat());
+    scanCtrlHunChuan->on_y_velocity_editingFinished(ui->AxleVelocity_lin->text().toFloat());
+    settings->setValue("AxleV", ui->AxleVelocity_lin->text());
+    //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 速度已设置   "));
+    ui->messText_lin->setText(QString::fromLocal8Bit(" 速度已设置   "));
+
+
+}
+
 
 void MainWindow::PbImageProcess()
 {
@@ -989,26 +1038,26 @@ void MainWindow::PbImageProcess()
     }*/
 
 
-    QString programPath = "C:/Program Files/Cognex/VisionPro/bin/Cognex.VisionPro.QuickBuild.exe";
-    QString workingDir = "C:/Program Files/Cognex/VisionPro/bin";
+    //    QString programPath = "C:/Program Files/Cognex/VisionPro/bin/Cognex.VisionPro.QuickBuild.exe";
+    //    QString workingDir = "C:/Program Files/Cognex/VisionPro/bin";
 
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("PATH", env.value("PATH") + ";C:/Program Files/Cognex/VisionPro/bin");
+    //    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    //    env.insert("PATH", env.value("PATH") + ";C:/Program Files/Cognex/VisionPro/bin");
 
-    QProcess process;
-    process.setProcessEnvironment(env);
-    process.setWorkingDirectory(workingDir);
+    //    QProcess process;
+    //    process.setProcessEnvironment(env);
+    //    process.setWorkingDirectory(workingDir);
 
 
-    // 检查文件是否存在
-    if (QFile::exists(programPath)) {
-        // 启动 QuickBuild
-        if (!QProcess::startDetached(programPath)) {
-            QMessageBox::warning(nullptr, "Error", "Failed to start VisionPro QuickBuild.");
-        }
-    } else {
-        QMessageBox::critical(nullptr, "Error", "QuickBuild executable not found. Check the path.");
-    }
+    //    // 检查文件是否存在
+    //    if (QFile::exists(programPath)) {
+    //        // 启动 QuickBuild
+    //        if (!QProcess::startDetached(programPath)) {
+    //            QMessageBox::warning(nullptr, "Error", "Failed to start VisionPro QuickBuild.");
+    //        }
+    //    } else {
+    //        QMessageBox::critical(nullptr, "Error", "QuickBuild executable not found. Check the path.");
+    //    }
 
 }
 
@@ -1022,22 +1071,148 @@ void MainWindow::pbAscan()
 void MainWindow::modbusStateChange(QModbusDevice::State state){
 
 
-     if (state == QModbusDevice::ConnectedState||state == QModbusDevice::ConnectingState){
-        ui->connectButton->setText(QString::fromLocal8Bit("已连接"));
-     }
-     else {
-         ui->connectButton->setText(QString::fromLocal8Bit("未连接"));
-     }
+    if (state==QModbusDevice::ConnectedState){
+        ui->connect_but->setText(QString::fromLocal8Bit("已连接"));
+    }
+    else {
+        ui->connect_but->setText(QString::fromLocal8Bit("未连接"));
+    }
+
+}
+
+void MainWindow::PbMoveToPosition(){
+
+    double x = ui->traject_x0->text().toDouble();
+    double y = ui->traject_y0->text().toDouble();
+    double z = ui->zCurPos_lab->text().toDouble();
+    double r = ui->rCurPos_lab->text().toDouble();
+
+    qDebug()<<"x"<<x<<"y"<<y;
+    // 调用运动控制，设置目标位置
+    scanCtrlHunChuan->runTargetPosition(x, y, z, r);
+
+}
+void MainWindow::PbSetOrigin(){
+
+
+    scanCtrlHunChuan->on_setOriginBtn_clicked(0,0,true);
+
+
+
+}
+
+
+
+void MainWindow::isUseScanDetect(bool isUseScanMove){
+
+
+    scanCtrlHunChuan->isUseScanDetect=scanCtrlHunChuan;
+
 
 }
 
 
 
 
+//void MainWindow::pbWriteInPLC()
+//{
 
 
+//    if(!scanCtrlHunChuan->modbusState()){
+//        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
+//        return;}
+
+//    // 初始化进度条
+//    progressDialog= new QProgressDialog;
+//    progressDialog->setLabelText(tr("Writing registers..."));
+//    progressDialog->setCancelButton(nullptr);  // 禁用取消按钮
+//    //progressDialog->setWindowModality(Qt::WindowModal);  // 设置为模态
+//    progressDialog->setRange(0, model->rowCount()); // size 是数据块的数量
+//    progressDialog->show();
 
 
+//    int row_count =model->rowCount();
+//    //int column_cout=model->columnCount();
+//    float x0,y0,r0,z0,x1,y1,r1,z1,x2,y2,z2,r2;
+//    QString name;
+//    QVector<QVector<float>> point;
+//    QList<QString>list_name;
+
+
+//    for(int i = 0; i < row_count; ++i)
+//    {
+//        name=model->data(model->index(i, 1), Qt::DisplayRole).toString();
+
+//        if(name=="arc"){
+//            x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
+//            y0=model->data(model->index(i, 3), Qt::DisplayRole).toFloat();
+//            z0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
+//            r0=model->data(model->index(i, 5), Qt::DisplayRole).toFloat();
+
+//            x1=model->data(model->index(i, 6), Qt::DisplayRole).toFloat();
+//            y1=model->data(model->index(i, 7), Qt::DisplayRole).toFloat();
+//            z1=model->data(model->index(i, 8), Qt::DisplayRole).toFloat();
+//            r1=model->data(model->index(i, 9), Qt::DisplayRole).toFloat();
+
+//            x2=model->data(model->index(i, 10), Qt::DisplayRole).toFloat();
+//            y2=model->data(model->index(i, 11), Qt::DisplayRole).toFloat();
+//            z2=model->data(model->index(i, 12), Qt::DisplayRole).toFloat();
+//            r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
+
+//            point.push_back({x0, y0, z0, r0});
+//            point.push_back({x1, y1, z1, r1});
+//            point.push_back({x2, y2, z2, r2});
+
+//        }else if (name=="line") {
+//            x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
+//            y0=model->data(model->index(i, 3), Qt::DisplayRole).toFloat();
+//            z0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
+//            r0=model->data(model->index(i, 5), Qt::DisplayRole).toFloat();
+
+//            x1=model->data(model->index(i, 6), Qt::DisplayRole).toFloat();
+//            y1=model->data(model->index(i, 7), Qt::DisplayRole).toFloat();
+//            z1=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
+//            r1=model->data(model->index(i, 8), Qt::DisplayRole).toFloat();
+//        }
+//        point.push_back({x0, y0, z0, r0});
+//        point.push_back({x1, y1, z1, r1});
+
+//    }
+
+//    int i = 0;
+//    QEventLoop loop;
+//    connect(this, &MainWindow::targetReached, &loop, &QEventLoop::quit);
+
+//    for (const QVector<float>& pt : point) {
+
+
+//        float x = pt[0];
+//        float y = pt[1];
+//        float z = pt[2];
+//        float r = pt[3];
+//        scanCtrlHunChuan->runTargetPosition(x,y,z,r);
+//        currentTargetPos.x=x;
+//        currentTargetPos.y=y;
+//        currentTargetPos.z=z;
+//        currentTargetPos.r=r;
+
+//        progressDialog->setLabelText(tr("Writing registers... (%1/%2)").arg(i + 1).arg(point.count()));
+//        progressDialog->setValue(i + 1);
+
+//        qApp->processEvents();
+//        {
+//        loop.exec();
+//        }
+
+//        ++i;
+
+//        qDebug()<<"write in plc" << "x:" << x << "y:" << y << "z:" << z << "r:" << r;
+//    }
+
+//    progressDialog->close();
+
+
+//}
 
 //        //添加轨迹原点-设定坐标原点为轨迹原点
 //        model->insertRow(model->rowCount()); //添加一行
@@ -1092,7 +1267,7 @@ void MainWindow::modbusStateChange(QModbusDevice::State state){
 //void MainWindow::pbIpLineEdit(const QString &arg1)
 //{
 //    qDebug()<<"on_ipLineEdit_textChanged";
-//    scanCtrl->setModbusTcpIP(arg1);
+//    scanCtrlHunChuan->setModbusTcpIP(arg1);
 //}
 //void MainWindow::readPendingDatagrams()
 //{

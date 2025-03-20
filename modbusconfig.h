@@ -77,4 +77,31 @@
 #define X_IOSTATE quint16(0x6000)
 #define Y_IOSTATE quint16(0xa000)
 
+
+
+
+//摩擦焊定义
+
+//D区
+#define frictionWeldingMovePointDate   3000
+#define frictionWeldingStart           4216
+#define frictionWeldingStop            4220
+#define frictionWeldingEnd             4222
+#define frictionWeldingAlarmReset      4218
+#define frictionWeldinSetOrigin        4224
+
+#define frictionWeldinZdetctHight       4208
+#define frictionWeldinLineV             4210
+#define frictionWeldinArcV              4212
+#define frictionWeldinEndNumber         4214
+#define frictionWeldinXOrigin           4200
+#define frictionWeldinYOrigin           4202
+#define frictionWeldinZOrigin           4204
+#define frictionWeldinROrigin           4206
+//M区
+#define frictionWeldinMoveType         1000
+
+
+
+
 #endif // MODBUSCONFIG_H

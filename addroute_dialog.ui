@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Create Route</string>
   </property>
-  <widget class="QLabel" name="yCurPos">
+  <widget class="QLabel" name="yCurPos_lab">
    <property name="geometry">
     <rect>
      <x>610</x>
@@ -32,7 +32,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="xSubBtn_2">
+  <widget class="QPushButton" name="RxSub_btn">
    <property name="geometry">
     <rect>
      <x>700</x>
@@ -120,7 +120,7 @@
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="yAddBtn_2">
+  <widget class="QPushButton" name="RyAdd_btn">
    <property name="geometry">
     <rect>
      <x>560</x>
@@ -164,7 +164,7 @@
     <string>mm</string>
    </property>
   </widget>
-  <widget class="QLabel" name="xCurPos">
+  <widget class="QLabel" name="xCurPos_lab">
    <property name="geometry">
     <rect>
      <x>610</x>
@@ -183,7 +183,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="xAddBtn_2">
+  <widget class="QPushButton" name="RxAdd_btn">
    <property name="geometry">
     <rect>
      <x>560</x>
@@ -208,7 +208,7 @@
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="ySubBtn_2">
+  <widget class="QPushButton" name="RySub_btn">
    <property name="geometry">
     <rect>
      <x>700</x>
@@ -233,7 +233,7 @@
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="rAddBtn_2">
+  <widget class="QPushButton" name="RrAdd_btn">
    <property name="geometry">
     <rect>
      <x>700</x>
@@ -258,7 +258,7 @@
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="rSubBtn_2">
+  <widget class="QPushButton" name="RrSub_btn">
    <property name="geometry">
     <rect>
      <x>560</x>
@@ -283,7 +283,7 @@
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QLabel" name="rCurPos">
+  <widget class="QLabel" name="rCurPos_lab">
    <property name="geometry">
     <rect>
      <x>610</x>
@@ -378,7 +378,7 @@
      <string>过渡点：</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="yTrans">
+   <widget class="QLineEdit" name="yTrans_lin">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -391,7 +391,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLineEdit" name="xTrans">
+   <widget class="QLineEdit" name="xTrans_lin">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -404,7 +404,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLineEdit" name="rTrans">
+   <widget class="QLineEdit" name="rTrans_lin">
     <property name="geometry">
      <rect>
       <x>370</x>
@@ -417,7 +417,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLineEdit" name="zTrans">
+   <widget class="QLineEdit" name="zTrans_lin">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -488,7 +488,7 @@
      <string>终点：</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="rEnd">
+   <widget class="QLineEdit" name="rEnd_lin">
     <property name="geometry">
      <rect>
       <x>370</x>
@@ -501,7 +501,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLineEdit" name="xEnd">
+   <widget class="QLineEdit" name="xEnd_lin">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -536,7 +536,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="yEnd">
+   <widget class="QLineEdit" name="yEnd_lin">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -571,7 +571,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="zEnd">
+   <widget class="QLineEdit" name="zEnd_lin">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -724,7 +724,7 @@
     <string>mm</string>
    </property>
   </widget>
-  <widget class="QLabel" name="zCurPos">
+  <widget class="QLabel" name="zCurPos_lab">
    <property name="geometry">
     <rect>
      <x>610</x>
@@ -743,7 +743,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="zSubBtn_2">
+  <widget class="QPushButton" name="RzSub_Btn">
    <property name="geometry">
     <rect>
      <x>560</x>
@@ -768,7 +768,7 @@
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="zAddBtn_2">
+  <widget class="QPushButton" name="RzAdd_btn">
    <property name="geometry">
     <rect>
      <x>700</x>

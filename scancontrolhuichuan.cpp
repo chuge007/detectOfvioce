@@ -1,23 +1,26 @@
 ﻿#include "ScanControlHuiChuan.h"
-#include "mainwindow.h"
-
+#include "scancontrolabstract.h"
 #include <QDebug>
 #include <qwidget.h>
 #include <QMessageBox>
 #include <QTimer>
 #include <QProgressDialog>
+#include <QCoreApplication>
+struct modelDate {
+    QString type;                        // 保存 "arc" 或 "line" 字符串
+    QVector<QVector<float>> points;        // 保存相关点，每个点包含 4 个 float
+};
 
-ScanControlHuiChuan::ScanControlHuiChuan(QObject *parent) :
-    ScanControlAbstract(parent)
+ScanControlHuiChuan::ScanControlHuiChuan(QObject *parent):
+    ScanControlAbstract(parent)  // 调用基类构造函数
 {
     qRegisterMetaType<QModbusDevice::State>("QModbusDevice::State");
     QMetaObject::invokeMethod(this, "init", Qt::QueuedConnection);
-
-
 }
 
 ScanControlHuiChuan::~ScanControlHuiChuan()
 {
+    disConncet();
     QMetaObject::invokeMethod(this, "destroy", Qt::QueuedConnection);
 }
 
@@ -50,27 +53,27 @@ bool ScanControlHuiChuan::isJogCrossed(int &address, float &data)
     bool state = true;
 
     switch (axisInch) {
-        case AxisJog::NotAxisJog: state = false; break;
-        case AxisJog::XJogAdd: {
-            address = R_REGISTER_BASE+X_TARTPOS;
-            data = static_cast<float>(currentPos.x()) + jopStep;
-            if(static_cast<qreal>(data) >= limitPoint.x()) state = false;
-        }break;
-        case AxisJog::XJogSub: {
-            address = R_REGISTER_BASE+X_TARTPOS;
-            data = static_cast<float>(currentPos.x()) - jopStep;
-            if(static_cast<qreal>(data) < 0) state = false;
-        }break;
-        case AxisJog::YJogAdd: {
-            address = R_REGISTER_BASE+Y_TARTPOS;
-            data = static_cast<float>(currentPos.y()) + jopStep;
-            if(static_cast<qreal>(data) >= limitPoint.y()) state = false;
-        }break;
-        case AxisJog::YJogSub: {
-            address = R_REGISTER_BASE+Y_TARTPOS;
-            data = static_cast<float>(currentPos.y()) - jopStep;
-            if(static_cast<qreal>(data) < 0) state = false;
-        }break;
+    case AxisJog::NotAxisJog: state = false; break;
+    case AxisJog::XJogAdd: {
+        address = R_REGISTER_BASE+X_TARTPOS;
+        data = static_cast<float>(currentPos.x()) + jopStep;
+        if(static_cast<qreal>(data) >= limitPoint.x()) state = false;
+    }break;
+    case AxisJog::XJogSub: {
+        address = R_REGISTER_BASE+X_TARTPOS;
+        data = static_cast<float>(currentPos.x()) - jopStep;
+        if(static_cast<qreal>(data) < 0) state = false;
+    }break;
+    case AxisJog::YJogAdd: {
+        address = R_REGISTER_BASE+Y_TARTPOS;
+        data = static_cast<float>(currentPos.y()) + jopStep;
+        if(static_cast<qreal>(data) >= limitPoint.y()) state = false;
+    }break;
+    case AxisJog::YJogSub: {
+        address = R_REGISTER_BASE+Y_TARTPOS;
+        data = static_cast<float>(currentPos.y()) - jopStep;
+        if(static_cast<qreal>(data) < 0) state = false;
+    }break;
     }
 
     //没有极限点不做先为限位
@@ -96,13 +99,8 @@ bool ScanControlHuiChuan::nextScan()
 
 void ScanControlHuiChuan::initWidget()
 {
-//    QDoubleValidator *doubleValidator = new QDoubleValidator(this);
-//    doubleValidator->setRange(0.0, 500.000);
-//    doubleValidator->setDecimals(3);
 
     modbusClient = new QModbusTcpClient(this);
-
-    settings = new QSettings("./scan_setting.ini", QSettings::IniFormat);
 
     timer = new QTimer(this);
     timer->setInterval(50);
@@ -114,24 +112,24 @@ void ScanControlHuiChuan::connectFun()
     connect(modbusClient, &QModbusClient::stateChanged, this, &ScanControlHuiChuan::modbusState);
     connect(timer, &QTimer::timeout, this, &ScanControlHuiChuan::performTasks);
 
-//    connect(this, &ScanControlHuiChuan::machineStart, this, &ScanControlHuiChuan::on_startScanBtn_clicked);
-//    connect(this, &ScanControlHuiChuan::machineStop, this, &ScanControlHuiChuan::on_stopScanBtn_clicked);
+    //    connect(this, &ScanControlHuiChuan::machineStart, this, &ScanControlHuiChuan::on_startScanBtn_clicked);
+    //    connect(this, &ScanControlHuiChuan::machineStop, this, &ScanControlHuiChuan::on_stopScanBtn_clicked);
 }
 
 void ScanControlHuiChuan::readSetting()
 {
-    if(settings == nullptr) return;
+    if(Rsettings == nullptr) return;
 
-    float xPos   = settings->value("Virtual_origin_X", 0).toFloat();
-    float yPos   = settings->value("Virtual_origin_Y", 0).toFloat();
-    float xLimit = settings->value("Limit_position_X", 0).toFloat();
-    float yLimit = settings->value("Limit_position_Y", 0).toFloat();
-    xScanLenght = settings->value("X_Lenght", 0).toFloat();
-    yScanLenght = settings->value("Y_Lenght", 0).toFloat();
-    yScanStep = settings->value  ("Y_Step", 0).toFloat();
-    isHaveMachine = settings->value("Have_Machine_origin", false).toBool();
-    isHaveLimit = settings->value("Have_Limit_origin", false).toBool();
-    bool temp = settings->value("Single_Scan", false).toBool();
+    float xPos   = Rsettings->value("Virtual_origin_X", 0).toFloat();
+    float yPos   = Rsettings->value("Virtual_origin_Y", 0).toFloat();
+    float xLimit = Rsettings->value("Limit_position_X", 0).toFloat();
+    float yLimit = Rsettings->value("Limit_position_Y", 0).toFloat();
+    xScanLenght = Rsettings->value("X_Lenght", 0).toFloat();
+    yScanLenght = Rsettings->value("Y_Lenght", 0).toFloat();
+    yScanStep = Rsettings->value  ("Y_Step", 0).toFloat();
+    isHaveMachine = Rsettings->value("Have_Machine_origin", false).toBool();
+    isHaveLimit = Rsettings->value("Have_Limit_origin", false).toBool();
+    bool temp = Rsettings->value("Single_Scan", false).toBool();
     if(xPos < 0 || xPos > xLimit) xPos = 0;
     if(yPos < 0 || yPos > yLimit) yPos = 0;
 
@@ -154,19 +152,19 @@ void ScanControlHuiChuan::readSetting()
 
 void ScanControlHuiChuan::writeSetting()
 {
-    if(settings == nullptr) return;
+    if(Rsettings == nullptr) return;
 
-    settings->setValue("Virtual_origin_X", zeroPoint.x());
-    settings->setValue("Virtual_origin_Y", zeroPoint.y());
-    settings->setValue("Limit_position_X", limitPoint.x());
-    settings->setValue("Limit_position_Y", limitPoint.y());
+    Rsettings->setValue("Virtual_origin_X", zeroPoint.x());
+    Rsettings->setValue("Virtual_origin_Y", zeroPoint.y());
+    Rsettings->setValue("Limit_position_X", limitPoint.x());
+    Rsettings->setValue("Limit_position_Y", limitPoint.y());
 
-    settings->setValue("X_Lenght", static_cast<qreal>(xScanLenght));
-    settings->setValue("Y_Lenght", static_cast<qreal>(yScanLenght));
-    settings->setValue("Y_Step", static_cast<qreal>(yScanStep));
-    settings->setValue("Single_Scan", scanModel == ScanModel::NormalScan ? false : true);
+    Rsettings->setValue("X_Lenght", static_cast<qreal>(xScanLenght));
+    Rsettings->setValue("Y_Lenght", static_cast<qreal>(yScanLenght));
+    Rsettings->setValue("Y_Step", static_cast<qreal>(yScanStep));
+    Rsettings->setValue("Single_Scan", scanModel == ScanModel::NormalScan ? false : true);
 
-    settings->sync();
+    Rsettings->sync();
 
 }
 
@@ -224,13 +222,13 @@ void ScanControlHuiChuan::writeHoldingRegistersData(int address, quint16 size, f
                         isJogDone = true;
                     }
                 }else{
-//                    isPerform = false;
-//                    if(!isEndScan)  //如果是结束扫查，写失败就不处理
-//                    writeHoldingRegistersData(address, size, data);
+                    //                    isPerform = false;
+                    //                    if(!isEndScan)  //如果是结束扫查，写失败就不处理
+                    //                    writeHoldingRegistersData(address, size, data);
 
                 }
                 reply->deleteLater();
-          });
+            });
         }else {
             reply->deleteLater();
         }
@@ -280,8 +278,8 @@ void ScanControlHuiChuan::readAxisRunStatus(int address, quint16 size)
                         }
                     }
                 }else {
-//                    if(!isEndScan)  //如果是结束扫查，写失败就不处理
-//                    readAxisRunStatus(address, size);
+                    //                    if(!isEndScan)  //如果是结束扫查，写失败就不处理
+                    //                    readAxisRunStatus(address, size);
                 }
                 reply->deleteLater();
             });
@@ -382,7 +380,7 @@ void ScanControlHuiChuan::writeBackZero()
         {
             connect(reply, &QModbusReply::finished, [=](){
                 if(reply->error() == QModbusDevice::NoError){
-        //            writeAxisStopStatus(X_START);
+                    //            writeAxisStopStatus(X_START);
                     writeEndScanStatus();
 
                 }else {
@@ -413,7 +411,7 @@ void ScanControlHuiChuan::readAxisEndState()
                     if(isEndScan){
 
                         if(reply->result().value(0) == 1 &&
-                           reply->result().value(1) == 1){
+                                reply->result().value(1) == 1){
                             isEndScan = false;
                         }
                     }
@@ -480,8 +478,8 @@ void ScanControlHuiChuan::readAxisVelocity(int address, quint16 size)
                     float xVel = readModbusFloatData(reply->result().value(1), reply->result().value(0));
                     float yVel = readModbusFloatData(reply->result().value(3), reply->result().value(2));
                     float jogVel = readModbusFloatData(reply->result().value(9), reply->result().value(8));
-
                     emit velocityChange(xVel, yVel, jogVel);
+
                     isInit = false;
                     updateCurPos = true;
                 }else {
@@ -516,7 +514,7 @@ void ScanControlHuiChuan::readAxisJogStatus(int address)
                     }
                     updataCurrentPos();
                 }else {
-            //            readAxisVelocity(address, size);
+                    //            readAxisVelocity(address, size);
                 }
                 reply->deleteLater();
             });
@@ -546,7 +544,7 @@ void ScanControlHuiChuan::readAxisErrorID()
                     int m_stop = reply->result().value(3);
 
                     if(xErrorId || yErrorId)
-                    emit axisError(xErrorId, yErrorId);
+                        emit axisError(xErrorId, yErrorId);
 
                     if(m_start == 1 && m_stop == 0 ){
                         emit machineStart();
@@ -601,9 +599,9 @@ void ScanControlHuiChuan::writeAxisLimitPosition()
                     limitPoint.setX(currentPos.x());
                     limitPoint.setY(currentPos.y());
 
-                    settings->setValue("Limit_position_X", limitPoint.x());
-                    settings->setValue("Limit_position_Y", limitPoint.y());
-                    settings->setValue("Have_Limit_origin", true);
+                    Rsettings->setValue("Limit_position_X", limitPoint.x());
+                    Rsettings->setValue("Limit_position_Y", limitPoint.y());
+                    Rsettings->setValue("Have_Limit_origin", true);
                     isHaveLimit = true;
                 }else {
                     writeAxisLimitPosition();
@@ -632,9 +630,9 @@ void ScanControlHuiChuan::writeAxisMachineOrigin()
                     zeroPoint.setX(0);
                     zeroPoint.setY(0);
 
-                    settings->setValue("Virtual_origin_X", limitPoint.x());
-                    settings->setValue("Virtual_origin_Y", limitPoint.y());
-                    settings->setValue("Have_Machine_origin", true);
+                    Rsettings->setValue("Virtual_origin_X", limitPoint.x());
+                    Rsettings->setValue("Virtual_origin_Y", limitPoint.y());
+                    Rsettings->setValue("Have_Machine_origin", true);
                     isHaveMachine = true;
                 }else {
                     writeAxisLimitPosition();
@@ -665,11 +663,11 @@ void ScanControlHuiChuan::writeAxisJog(int address, bool data)
                     axisJog =  AxisJog::NotAxisJog;
                     updateCurPos = true;
                 }else {
-//                  qDebug() << __FUNCTION__ << "SHI BAI";
+                    //                  qDebug() << __FUNCTION__ << "SHI BAI";
                     if(!data){
-//                  如果写OFF, 必然要写成功
-//                  qDebug() << __FUNCTION__ << data;
-                    writeAxisJog(address, data);
+                        //                  如果写OFF, 必然要写成功
+                        //                  qDebug() << __FUNCTION__ << data;
+                        writeAxisJog(address, data);
                     }else {
                         updateCurPos = true;
                     }
@@ -688,22 +686,28 @@ void ScanControlHuiChuan::initTasks()
     if(isInit){
         readAxisVelocity(R_REGISTER_BASE+X_VELOCITY, 10);
     }
+
+
 }
 
 void ScanControlHuiChuan::on_connectBtn_clicked()
 {
+
+
     if(modbusClient->state() != QModbusDevice::ConnectedState ){
         modbusClient->setConnectionParameter(QModbusDevice::NetworkAddressParameter, PlcIP);
         modbusClient->setConnectionParameter(QModbusDevice::NetworkPortParameter, PlcPort);
         modbusClient->setNumberOfRetries(3);
-        modbusClient->setTimeout(1000);
-        qDebug()<<"PlcIP="<<PlcIP<<"PlcPort="<<PlcPort;
+        modbusClient->setTimeout(3000);
+
         if(modbusClient->connectDevice()){
         }else {
         }
     }else {
         modbusClient->disconnectDevice();
     }
+
+
 }
 
 void ScanControlHuiChuan::on_startScanBtn_clicked()
@@ -711,8 +715,25 @@ void ScanControlHuiChuan::on_startScanBtn_clicked()
     if(modbusClient->state() != QModbusDevice::ConnectedState)
         return;
 
-//    qDebug() << zeroPoint << currentPos;
-//    if() return;
+    if(!isUseScanDetect){
+
+        QModbusDataUnit command(QModbusDataUnit::HoldingRegisters, frictionWeldingStart, 1);
+        command.setValue(0,1);
+        auto *reply = modbusClient->sendWriteRequest(command, 1);
+
+        QEventLoop loop;
+        QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();  // 等待 finished 信号
+
+        command.setValue(0,0);
+        auto*reply1 = modbusClient->sendWriteRequest(command, 1);
+
+        QObject::connect(reply1, &QModbusReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();  // 等待 finished 信号
+
+        return;
+    }
+
     if(isEndScan || isRunTarget) return;
 
     if(isXCrossed() || isYCrossed()) return;
@@ -726,8 +747,12 @@ void ScanControlHuiChuan::on_startScanBtn_clicked()
             isKeepScan = true;
         }
     }
+
+
+
     isAxisStop = false;
     isRunTarget = false;
+
 }
 
 void ScanControlHuiChuan::on_stopScanBtn_clicked()
@@ -735,12 +760,27 @@ void ScanControlHuiChuan::on_stopScanBtn_clicked()
     if(modbusClient->state() != QModbusDevice::ConnectedState)
         return;
 
+
+    QModbusDataUnit command(QModbusDataUnit::HoldingRegisters, frictionWeldingStop, 1);
+    command.setValue(0,1);
+    auto *reply = modbusClient->sendWriteRequest(command, 1);
+
+    QEventLoop loop;
+    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();  // 等待 finished 信号
+
+    command.setValue(0,0);
+    auto*reply1 = modbusClient->sendWriteRequest(command, 1);
+
+    QObject::connect(reply1, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();  // 等待 finished 信号
+
     if(isEndScan) return;
 
     if(tasks.count() == 0) {
         if(!isRunTarget){
-//            updateCurPos = true;
-//            isStopScan = false;
+            //            updateCurPos = true;
+            //            isStopScan = false;
             return;
         }
     }
@@ -759,6 +799,20 @@ void ScanControlHuiChuan::on_endScanBtn_clicked()
 
     if(isEndScan) return;
 
+    QModbusDataUnit command(QModbusDataUnit::HoldingRegisters, frictionWeldingEnd, 1);
+    command.setValue(0,1);
+    auto *reply = modbusClient->sendWriteRequest(command, 1);
+
+    QEventLoop loop;
+    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();  // 等待 finished 信号
+
+    command.setValue(0,0);
+    auto*reply1 = modbusClient->sendWriteRequest(command, 1);
+
+    QObject::connect(reply1, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();  // 等待 finished 信号
+
     isStopScan = false;
     isPerform = false;
     isStartScan = false;
@@ -773,29 +827,76 @@ void ScanControlHuiChuan::on_endScanBtn_clicked()
     perfromEndScanTasks();
 }
 
-void ScanControlHuiChuan::on_setOriginBtn_clicked()
+void ScanControlHuiChuan::on_setOriginBtn_clicked(float x,float y,bool isCurrPosi)
 {
+
     if(modbusClient->state() != QModbusDevice::ConnectedState)
         return;
 
-    if(isEndScan || isAxisStop) return;
+    if(isEndScan || isAxisStop)
+        return;
 
-    if(!isPerform){
+    if(!isUseScanDetect){
+
+        QModbusDataUnit command(QModbusDataUnit::HoldingRegisters, frictionWeldinSetOrigin, 1);
+        command.setValue(0,1);
+        auto *reply = modbusClient->sendWriteRequest(command, 1);
+
+        QEventLoop loop;
+        QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();  // 等待 finished 信号
+
+        command.setValue(0,0);
+        auto*reply1 = modbusClient->sendWriteRequest(command, 1);
+
+        QObject::connect(reply1, &QModbusReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();  // 等待 finished 信号
+
+        return;
+    }
+
+    if(!isPerform) {
         zeroPoint.setX(currentPos.x());
         zeroPoint.setY(currentPos.y());
-        settings->setValue("Virtual_origin_X", zeroPoint.x());
-        settings->setValue("Virtual_origin_Y", zeroPoint.y());
+        Rsettings->setValue("Virtual_origin_X", zeroPoint.x());
+        Rsettings->setValue("Virtual_origin_Y", zeroPoint.y());
+
+        // 同时写入 X 和 Y 虚拟零点，共 2 个寄存器
+        QModbusDataUnit modbusData(QModbusDataUnit::HoldingRegisters, X_VIRTUAL_ORIGIN, 2);
+        modbusData.setValue(0, static_cast<quint16>(zeroPoint.x()));
+        modbusData.setValue(1, static_cast<quint16>(zeroPoint.y()));
+        auto reply = modbusClient->sendWriteRequest(modbusData, 1);
     }
+
+
+
 }
 
 void ScanControlHuiChuan::on_x_velocity_editingFinished(float val)
 {
     setXAxisVelocity(val);
+
+    QModbusDataUnit command(QModbusDataUnit::HoldingRegisters, frictionWeldinLineV, 1);
+    command.setValue(0,val);
+    auto *reply = modbusClient->sendWriteRequest(command, 1);
+
+    QEventLoop loop;
+    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();  // 等待 finished 信号
+
 }
 
 void ScanControlHuiChuan::on_y_velocity_editingFinished(float val)
 {
     setYAxisVelocity(val);
+
+    QModbusDataUnit command(QModbusDataUnit::HoldingRegisters, frictionWeldinArcV, 1);
+    command.setValue(0,val);
+    auto *reply = modbusClient->sendWriteRequest(command, 1);
+
+    QEventLoop loop;
+    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();  // 等待 finished 信号
 }
 
 void ScanControlHuiChuan::on_jog_velocity_editingFinished(float val)
@@ -1011,7 +1112,32 @@ void ScanControlHuiChuan::on_rSubBtn_released()
 
 void ScanControlHuiChuan::on_alarmResetBtn_clicked()
 {
+    if(!isUseScanDetect){
+
+        QModbusDataUnit command(QModbusDataUnit::HoldingRegisters, frictionWeldingAlarmReset, 1);
+        command.setValue(0,1);
+        auto *reply = modbusClient->sendWriteRequest(command, 1);
+
+        QEventLoop loop;
+        QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();  // 等待 finished 信号
+
+        return;
+    }
+
     writeAxisReset();
+}
+
+void ScanControlHuiChuan::ZdetectHight(float hight){
+
+    QModbusDataUnit command(QModbusDataUnit::HoldingRegisters, frictionWeldinZdetctHight, 1);
+    command.setValue(0,hight);
+    auto *reply = modbusClient->sendWriteRequest(command, 1);
+
+    QEventLoop loop;
+    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();  // 等待 finished 信号
+
 }
 
 void ScanControlHuiChuan::on_setLimitBtn_clicked()
@@ -1033,11 +1159,21 @@ void ScanControlHuiChuan::on_singleScan_toggled(bool checked)
     }
 }
 
+void ScanControlHuiChuan::disConncet(){
+
+    if(modbusClient->state() == QModbusDevice::ConnectedState ){
+        modbusClient->disconnectDevice();
+    }
+
+}
 void ScanControlHuiChuan::runTargetPosition(double x, double y ,double z, double r)
 {
-    if(modbusClient->state() != QModbusDevice::ConnectedState)
-        return;
 
+
+    if(modbusClient->state() != QModbusDevice::ConnectedState){
+        QMessageBox::information(nullptr," warning ",QString::fromLocal8Bit(" 通讯未连接 "));
+        return;
+    }
     if((tasks.count() != 0)  || isEndScan || isAxisStop || isJogDone) return;
 
     if(!isRunTarget){
@@ -1045,21 +1181,27 @@ void ScanControlHuiChuan::runTargetPosition(double x, double y ,double z, double
 
     }
 
-    QModbusDataUnit modbusData(QModbusDataUnit::HoldingRegisters, R_REGISTER_BASE + X_TARTPOS, 8);
+    ZdetectHight(z);
+
+
+    QModbusDataUnit modbusData(QModbusDataUnit::HoldingRegisters, R_REGISTER_BASE+X_TARTPOS, 4);
 
     auto xpos = writeModbusFloatData(x);
     auto ypos = writeModbusFloatData(y);
-    auto zpos = writeModbusFloatData(z);
-    auto rpos = writeModbusFloatData(r);
+    //auto zpos = writeModbusFloatData(z);
+    // auto rpos = writeModbusFloatData(r);
     modbusData.setValue(0, xpos.first);
     modbusData.setValue(1, xpos.second);
     modbusData.setValue(2, ypos.first);
     modbusData.setValue(3, ypos.second);
-    modbusData.setValue(4, zpos.first);
-    modbusData.setValue(5, zpos.second);
-    modbusData.setValue(6, rpos.first);
-    modbusData.setValue(7, rpos.second);
+
+    //    modbusData.setValue(4, zpos.first);
+    //    modbusData.setValue(5, zpos.second);
+    //    modbusData.setValue(6, rpos.first);
+    //    modbusData.setValue(7, rpos.second);
+
     auto reply = modbusClient->sendWriteRequest(modbusData, 1);
+
     if(reply){
         if (!reply->isFinished())
         {
@@ -1067,13 +1209,19 @@ void ScanControlHuiChuan::runTargetPosition(double x, double y ,double z, double
                 if(reply->error() == QModbusDevice::NoError){
                     updateCurPos = true;
                     isRunTarget = true;
+
                 }else{
+
+
                     runTargetPosition(x, y,z,r);
+
                 }
                 reply->deleteLater();
             });
         }else {
             reply->deleteLater();
+
+            qDebug() << "发送请求失败:" << modbusClient->errorString();
         }
     }
 }
@@ -1087,15 +1235,15 @@ void ScanControlHuiChuan::init()
 
 void ScanControlHuiChuan::destroy()
 {
-    if (settings) {
+    if (Rsettings) {
         writeSetting();
-        delete settings;
-        settings = nullptr;
+        delete Rsettings;
+        Rsettings = nullptr;
     }
     if (modbusClient) {
-         modbusClient->disconnectDevice();
-         delete modbusClient;
-         modbusClient= nullptr;
+        modbusClient->disconnectDevice();
+        delete modbusClient;
+        modbusClient= nullptr;
     }
     if (timer) {
         timer->stop();
@@ -1108,6 +1256,8 @@ void ScanControlHuiChuan::setXAxisVelocity(float vel)
 {
     xVelocity = vel;
     writeAxisVelocity(R_REGISTER_BASE+X_VELOCITY, 2, xVelocity);
+
+
 }
 
 void ScanControlHuiChuan::setYAxisVelocity(float vel)
@@ -1133,14 +1283,19 @@ bool ScanControlHuiChuan::modbusState()
     if(modbusClient->state() == QModbusDevice::ConnectedState){
         timer->start();
         qDebug() << "PLC Connection Successful!";
+
+        emit modbusStateChange(modbusClient->state());
         return true;
     }else if (modbusClient->state() == QModbusDevice::UnconnectedState) {
         timer->stop();
         initStates();
         qDebug() << "PLC Connection Failure!";
+
+
+        emit modbusStateChange(modbusClient->state());
         return false;
     }
-    emit modbusStateChange(modbusClient->state());
+    qDebug()<<modbusClient->errorString();
     //    emit scanRackTcpStateChangedSignal(modbusClient->state());
 }
 
@@ -1149,17 +1304,20 @@ bool ScanControlHuiChuan::modbusState()
 void ScanControlHuiChuan::performTasks()
 {
     //qDebug()<<"****performTasks*****";
-//    perfromEndScanTasks();
+    //    perfromEndScanTasks();
     initTasks();
     perfromJogTasks();
     perfromStopScanTasks();
     perfromStartScanTasks();
+
+    //updataCurrentPos();
+
     if(updateCurPos/*tasks.count() == 0 || isAxisStop (!isStartScan && !isPerform)*/){
         updataCurrentPos();
     }
-//    if(isRunTarget){
-//        readAxisRunStatus(X_AXIS_DONE, 2);
-//    }
+    //    if(isRunTarget){
+    //        readAxisRunStatus(X_AXIS_DONE, 2);
+    //    }
 }
 
 void ScanControlHuiChuan::creataTasksTable()
@@ -1183,9 +1341,9 @@ void ScanControlHuiChuan::creataTasksTable()
     float xTemp = xPos + xScanLenght;
     tasks.clear();
     if(scanModel == ScanModel::NormalScan){
-         emit scanRowNumChange(stepNum);
-//        tasks.push_back(QPair<QString, float>("x", static_cast<float>(zeroPoint.x())));
-//        tasks.push_back(QPair<QString, float>("y", static_cast<float>(zeroPoint.y())));
+        emit scanRowNumChange(stepNum);
+        //        tasks.push_back(QPair<QString, float>("x", static_cast<float>(zeroPoint.x())));
+        //        tasks.push_back(QPair<QString, float>("y", static_cast<float>(zeroPoint.y())));
         if(stepNum > 1){
             bool b = true;
             for (int i=0; i<=stepNum-1; i++) {
@@ -1200,8 +1358,8 @@ void ScanControlHuiChuan::creataTasksTable()
         }
     }else if (scanModel == ScanModel::SingleScan) {
         emit scanRowNumChange(stepNum*2);
-//        tasks.push_back(QPair<QString, float>("x", static_cast<float>(zeroPoint.x())));
-//        tasks.push_back(QPair<QString, float>("y", static_cast<float>(zeroPoint.y())));
+        //        tasks.push_back(QPair<QString, float>("x", static_cast<float>(zeroPoint.x())));
+        //        tasks.push_back(QPair<QString, float>("y", static_cast<float>(zeroPoint.y())));
 
         if(stepNum > 1){
             for (int i=0; i<=stepNum-1; i++) {
@@ -1227,17 +1385,17 @@ void ScanControlHuiChuan::creataTasksTable()
         }
         keepTime *= 1000;
     }
-//    qDebug() << "tasks count" << tasks.count();
-//    for (int i=0; i< tasks.count(); i++) {
-//        qDebug() << tasks[i];
-//    }
+    //    qDebug() << "tasks count" << tasks.count();
+    //    for (int i=0; i< tasks.count(); i++) {
+    //        qDebug() << tasks[i];
+    //    }
     isStartScan = true;
 }
 
 void ScanControlHuiChuan::perfromStartScanTasks()
 {
     if(tasks.count() == 0) {
-//        if(!isInit || (axisInch != AxisJog::NotAxisJog)) updateCurPos = true;
+        //        if(!isInit || (axisInch != AxisJog::NotAxisJog)) updateCurPos = true;
         isStartScan = false;
         return;
     }
@@ -1291,7 +1449,7 @@ void ScanControlHuiChuan::updataCurrentPos()
                     curZ=readModbusFloatData(reply->result().value(3), reply->result().value(2));
                     float xPos = readModbusFloatData(reply->result().value(5), reply->result().value(4));
                     float yPos = readModbusFloatData(reply->result().value(7), reply->result().value(6));
-
+                    //qDebug()<<"updataCurrentPos "<<xPos<<"   "<<yPos;
                     currentPos.setX(static_cast<qreal>(xPos));
                     currentPos.setY(static_cast<qreal>(yPos));
 
@@ -1306,7 +1464,7 @@ void ScanControlHuiChuan::updataCurrentPos()
                 reply->deleteLater();
             });
         }else {
-                reply->deleteLater();
+            reply->deleteLater();
         }
     }
 }
@@ -1350,472 +1508,741 @@ void ScanControlHuiChuan::perfromJogTasks()
 
     if(axisJog != AxisJog::NotAxisJog && axisInch == AxisJog::NotAxisJog){
         switch (axisJog) {
-            case XJogAddPressed:{
-                writeAxisJog(X_ADD, true);
-                        //qDebug()<<"XJogAddPressed******";
-            }break;
-            case XJogAddReleased:{
-                writeAxisJog(X_ADD, false);
-            }break;
-            case XJogSubPressed:{
-                writeAxisJog(X_SUB, true);
-            }break;
-            case XJogSubReleased:{
-                writeAxisJog(X_SUB, false);
-            }break;
-            case YJogAddPressed:{
-                writeAxisJog(Y_ADD, true);
-            }break;
-            case YJogAddReleased:{
-                writeAxisJog(Y_ADD, false);
-            }break;
-            case YJogSubPressed:{
-                writeAxisJog(Y_SUB, true);
-            }break;
-            case YJogSubReleased:{
-                writeAxisJog(Y_SUB, false);
-            }break;
-            case ZJogAddPressed:{
-                writeAxisJog(Z_ADD, true);
-            }break;
-            case ZJogAddReleased:{
-                writeAxisJog(Z_ADD, false);
-            }break;
-            case ZJogSubPressed:{
-                writeAxisJog(Z_SUB, true);
-            }break;
-            case ZJogSubReleased:{
-                writeAxisJog(Z_SUB, false);
-            }break;
-            case RJogAddPressed:{
+        case XJogAddPressed:{
+            writeAxisJog(X_ADD, true);
+            //qDebug()<<"XJogAddPressed******";
+        }break;
+        case XJogAddReleased:{
+            writeAxisJog(X_ADD, false);
+        }break;
+        case XJogSubPressed:{
+            writeAxisJog(X_SUB, true);
+        }break;
+        case XJogSubReleased:{
+            writeAxisJog(X_SUB, false);
+        }break;
+        case YJogAddPressed:{
+            writeAxisJog(Y_ADD, true);
+        }break;
+        case YJogAddReleased:{
+            writeAxisJog(Y_ADD, false);
+        }break;
+        case YJogSubPressed:{
+            writeAxisJog(Y_SUB, true);
+        }break;
+        case YJogSubReleased:{
+            writeAxisJog(Y_SUB, false);
+        }break;
+        case ZJogAddPressed:{
+            writeAxisJog(Z_ADD, true);
+        }break;
+        case ZJogAddReleased:{
+            writeAxisJog(Z_ADD, false);
+        }break;
+        case ZJogSubPressed:{
+            writeAxisJog(Z_SUB, true);
+        }break;
+        case ZJogSubReleased:{
+            writeAxisJog(Z_SUB, false);
+        }break;
+        case RJogAddPressed:{
             writeAxisJog(R_ADD, true);
-            }break;
-            case RJogAddReleased:{
-                writeAxisJog(R_ADD, false);
-            }break;
-            case RJogSubPressed:{
-                writeAxisJog(R_SUB, true);
-            }break;
-            case RJogSubReleased:{
-                writeAxisJog(R_SUB, false);
-            }break;
+        }break;
+        case RJogAddReleased:{
+            writeAxisJog(R_ADD, false);
+        }break;
+        case RJogSubPressed:{
+            writeAxisJog(R_SUB, true);
+        }break;
+        case RJogSubReleased:{
+            writeAxisJog(R_SUB, false);
+        }break;
         }
     }
 }
 
-void ScanControlHuiChuan::writeRoutePos(int startAddress, quint16 size, QList<float> dataList_x0,QList<float> dataList_y0, QList<float> dataList_r0,QList<float> dataList_x1, QList<float> dataList_y1,QList<float> dataList_r1,QList<QString> nameList)
+
+void ScanControlHuiChuan::writeRegisterGroup(int startAddress, const QVector<modelDate> &modelDates, int serverAddress)
 {
-    //qDebug()<<"=dataList_x0="<<dataList_x0<<dataList_y0<<dataList_r0<<"dataList_x1="<<dataList_x1<<dataList_y1<<dataList_r1;
+    // 假设你要写入的寄存器数量和每次写入的组大小
+    int  moveDatelen=12;
+    int  MaxregistersPerGroup = 100*moveDatelen;  // 每组写入 100 个寄存器
+    int  maxSendRegisters= 120;  // 本次写入的寄存器数量
+    int  currentWriteCount = qMin(MaxregistersPerGroup, modelDates.count()*moveDatelen);  // 本次写入的寄存器数量
+    int  BatchPonits=maxSendRegisters/moveDatelen;
+    double  toltalBatch=std::ceil(static_cast<double>(currentWriteCount)/maxSendRegisters);
+    int  totalPoints=modelDates.count();
+
+    qDebug()<<"modelDates.count()"<<totalPoints;
+
+    for (int batch=0; batch<toltalBatch; batch++) {
+
+
+        totalPoints = qAbs(totalPoints - (BatchPonits*batch));
+        int PointsRemaining = (totalPoints > BatchPonits) ? BatchPonits : totalPoints;
+
+        qDebug()<<"totalPoints"<<totalPoints;
+        qDebug()<<"PointsRemaining*moveDatelen"<<PointsRemaining*moveDatelen;
+        QModbusDataUnit moveDate(QModbusDataUnit::HoldingRegisters, startAddress+(maxSendRegisters*batch), PointsRemaining*moveDatelen);
+
+        // 设置要写入的寄存器值
+        for (int i = 0; i <BatchPonits; i++) {
+
+
+            int index=i+batch*BatchPonits;
+            qDebug()<<"index"<<index;
+
+            if (modelDates.count()<(index+1)){break;}
+
+            if(modelDates[index].type=="arc"){
+                auto xpos0 = writeModbusFloatData(modelDates[index].points[0][0]);
+                auto ypos0 = writeModbusFloatData(modelDates[index].points[0][1]);
+                auto rpos0 = writeModbusFloatData(modelDates[index].points[0][2]);
+                auto xpos1 = writeModbusFloatData(modelDates[index].points[1][0]);
+                auto ypos1 = writeModbusFloatData(modelDates[index].points[1][1]);
+                auto rpos1 = writeModbusFloatData(modelDates[index].points[1][2]);
+
+                moveDate.setValue(0+(i*moveDatelen), xpos0.first);
+                moveDate.setValue(1+(i*moveDatelen), xpos0.second);
+                moveDate.setValue(2+(i*moveDatelen), ypos0.first);
+                moveDate.setValue(3+(i*moveDatelen), ypos0.second);
+                moveDate.setValue(4+(i*moveDatelen), rpos0.first);
+                moveDate.setValue(5+(i*moveDatelen), rpos0.second);
+
+                moveDate.setValue(6+(i*moveDatelen), xpos1.first);
+                moveDate.setValue(7+(i*moveDatelen), xpos1.second);
+                moveDate.setValue(8+(i*moveDatelen), ypos1.first);
+                moveDate.setValue(9+(i*moveDatelen), ypos1.second);
+                moveDate.setValue(10+(i*moveDatelen), rpos1.first);
+                moveDate.setValue(11+(i*moveDatelen), rpos1.second);
+
+
+                QModbusDataUnit moveType(QModbusDataUnit::Coils, frictionWeldinMoveType+index, 1);
+                moveType.setValue(0,false);
+                auto *reply = modbusClient->sendWriteRequest(moveType, serverAddress);
+
+                QEventLoop loop;
+                QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+                loop.exec();  // 等待 finished 信号
+
+                qDebug()<<"acr"<<index<<"  " <<index*moveDatelen<<"  "<<modelDates[index].points[0][0] <<" "<<modelDates[index].points[0][1]<<" "
+                                                                                                                                           <<modelDates[index].points[0][2]
+                        <<modelDates[index].points[1][0]<<" "<<modelDates[index].points[1][1]<<" "<<modelDates[index].points[1][2];
+
+
+            }else {
+
+                auto xpos0 = writeModbusFloatData(modelDates[index].points[0][0]);
+                auto ypos0 = writeModbusFloatData(modelDates[index].points[0][1]);
+                auto rpos0 = writeModbusFloatData(modelDates[index].points[0][2]);
+
+                moveDate.setValue(0+(i*12), xpos0.first);
+                moveDate.setValue(1+(i*12), xpos0.second);
+                moveDate.setValue(2+(i*12), ypos0.first);
+                moveDate.setValue(3+(i*12), ypos0.second);
+                moveDate.setValue(4+(i*12), rpos0.first);
+                moveDate.setValue(5+(i*12), rpos0.second);
+
+                moveDate.setValue(6+(i*12), 0);
+                moveDate.setValue(7+(i*12), 0);
+                moveDate.setValue(8+(i*12), 0);
+                moveDate.setValue(9+(i*12), 0);
+                moveDate.setValue(10+(i*12), 0);
+                moveDate.setValue(11+(i*12), 0);
+
+                QModbusDataUnit moveType(QModbusDataUnit::Coils, frictionWeldinMoveType+index, 1);
+                moveType.setValue(0,true);
+                auto *reply = modbusClient->sendWriteRequest(moveType, serverAddress);
+
+                QEventLoop loop;
+                QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+                loop.exec();  // 等待 finished 信号
+
+                qDebug()<<"l"<<index<<"  "<<index*moveDatelen<<"  "<<modelDates[index].points[0][0] <<" "<<
+                                                                                                      modelDates[index].points[0][1]<<" "<<modelDates[index].points[0][2];
+
+            }
+
+
+
+        }
+
+        qDebug() << "Write group from address " << startAddress+(maxSendRegisters*batch) << " start!";
+
+
+        auto *reply = modbusClient->sendWriteRequest(moveDate, serverAddress);
+
+
+
+        QEventLoop loop;
+        QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();  // 等待 finished 信号
+
+
+
+
+        QMessageBox::information(nullptr, "Information", QString::fromLocal8Bit("点位发送完毕"));
+
+
+    }
+
+}
+
+
+
+
+
+//// 假设你要写入的寄存器数量和每次写入的组大小
+//int registersPerGroup = 100*12;  // 每组写入 100 个寄存器
+
+////int currentWriteCount = qMin(registersPerGroup, modelDates.count());  // 本次写入的寄存器数量
+//int currentWriteCount = qMin(registersPerGroup, 120);  // 本次写入的寄存器数量
+//QModbusDataUnit writeUnit(QModbusDataUnit::HoldingRegisters, startAddress, currentWriteCount);
+
+//// 设置要写入的寄存器值
+//for (int i = 0; i < modelDates.count(); i++) {
+
+//    if(modelDates[i].type=="arc"){
+//        auto xpos0 = writeModbusFloatData(modelDates[i].points[0][0]);
+//        auto ypos0 = writeModbusFloatData(modelDates[i].points[0][1]);
+//        auto rpos0 = writeModbusFloatData(modelDates[i].points[0][2]);
+//        auto xpos1 = writeModbusFloatData(modelDates[i].points[1][0]);
+//        auto ypos1 = writeModbusFloatData(modelDates[i].points[1][1]);
+//        auto rpos1 = writeModbusFloatData(modelDates[i].points[1][2]);
+
+//        writeUnit.setValue(0+(i*12), xpos0.first);
+//        writeUnit.setValue(1+(i*12), xpos0.second);
+//        writeUnit.setValue(2+(i*12), ypos0.first);
+//        writeUnit.setValue(3+(i*12), ypos0.second);
+//        writeUnit.setValue(4+(i*12), rpos0.first);
+//        writeUnit.setValue(5+(i*12), rpos0.second);
+
+//        writeUnit.setValue(6+(i*12), xpos1.first);
+//        writeUnit.setValue(7+(i*12), xpos1.second);
+//        writeUnit.setValue(8+(i*12), ypos1.first);
+//        writeUnit.setValue(9+(i*12), ypos1.second);
+//        writeUnit.setValue(10+(i*12), rpos1.first);
+//        writeUnit.setValue(11+(i*12), rpos1.second);
+
+//        qDebug()<<"acr"<<i<<"  " <<i*12<<"  "<<modelDates[i].points[0][0] <<" "<<modelDates[i].points[0][1]<<" "<<modelDates[i].points[0][2]
+//                <<modelDates[i].points[1][0]<<" "<<modelDates[i].points[1][1]<<" "<<modelDates[i].points[1][2];
+//    }else {
+
+//        auto xpos0 = writeModbusFloatData(modelDates[i].points[0][0]);
+//        auto ypos0 = writeModbusFloatData(modelDates[i].points[0][1]);
+//        auto rpos0 = writeModbusFloatData(modelDates[i].points[0][2]);
+
+//        writeUnit.setValue(0+(i*12), xpos0.first);
+//        writeUnit.setValue(1+(i*12), xpos0.second);
+//        writeUnit.setValue(2+(i*12), ypos0.first);
+//        writeUnit.setValue(3+(i*12), ypos0.second);
+//        writeUnit.setValue(4+(i*12), rpos0.first);
+//        writeUnit.setValue(5+(i*12), rpos0.second);
+
+//        writeUnit.setValue(6+(i*12), 0);
+//        writeUnit.setValue(7+(i*12), 0);
+//        writeUnit.setValue(8+(i*12), 0);
+//        writeUnit.setValue(9+(i*12), 0);
+//        writeUnit.setValue(10+(i*12), 0);
+//        writeUnit.setValue(11+(i*12), 0);
+
+//        qDebug()<<"l"<<i<<"  "<<i*12<<"  "<<modelDates[i].points[0][0] <<" "<<modelDates[i].points[0][1]<<" "<<modelDates[i].points[0][2];
+
+//    }
+
+
+
+//}
+
+//// 发送写入请求
+//if (auto *reply = modbusClient->sendWriteRequest(writeUnit, serverAddress)) {
+//    if (!reply->isFinished()) {
+//        // 连接写入完成的信号
+//        connect(reply, &QModbusReply::finished, [=]() {
+//            if (reply->error() == QModbusDevice::ProtocolError) {
+//                qWarning() << "Write error: " << reply->errorString();
+//            } else if (reply->error() == QModbusDevice::TimeoutError) {
+//                qWarning() << "Request timeout occurred. Retrying...";
+//                // 如果请求超时，进行重试
+//                if (retryCount < 3) {  // 设置重试次数为3次
+//                    progressDialog->setValue(progressDialog->value() + 20);  // 更新进度
+//                    QTimer::singleShot(500, this, [=]() {
+//                        writeRegisterGroup( startAddress,modelDates, serverAddress);  // 重试
+//                        retryCount=retryCount + 1;
+//                    });
+//                } else {
+//                    progressDialog->close();
+//                    QMessageBox::warning(nullptr,  // 父窗口，这里传递 nullptr 表示没有父窗口
+//                                         "Warning",  // 对话框的标题
+//                                         "Max retry attempts reached. "
+//                                         "Aborting write."
+//                                         "Please rewrite!",  // 显示的文本
+//                                         QMessageBox::Ok);  // 确认按钮
+//                    qWarning() << "Max retry attempts reached. Aborting write.";
+//                }
+
+//            } else if (reply->error() != QModbusDevice::NoError) {
+
+//                qWarning() << "Write finished with error: " << reply->errorString();
+
+//            } else {
+
+//                qDebug() << "Write group from address " << startAddress << " successful!";
+
+//            }
+
+//            reply->deleteLater();
+//        });
+
+//    } else {
+//        delete reply;
+//    }
+//} else {
+//    qWarning() << "Failed to send write request: " << modbusClient->errorString();
+//}
+
+
+
+
+//void ScanControlHuiChuan::writeNameRegisterGroup(QModbusClient *modbusDevice, int serverAddress,QList<QString> nameList)
+//{
+//    int address_name=1000;
+//    int size_name =nameList.count();
+//    qDebug()<<"*****size_name="<<size_name;
+//    QModbusDataUnit modbusData(QModbusDataUnit::Coils,  address_name, size_name);
+//    for (int i = 0; i < size_name; ++i) {
+//        if(nameList.at(i)=="arc"){
+//            modbusData.setValue(i, true);
+//            qDebug()<<QString::fromLocal8Bit("arc")<<"true";
+//        }else{
+//            modbusData.setValue(i, false);
+//            qDebug()<<QString::fromUtf8("line")<<"false";
+//        }
+//    }
+//    qDebug()<<"modbusData"<<modbusData.values();
+//    auto reply_coils = modbusDevice->sendWriteRequest(modbusData, serverAddress);
+//    if(reply_coils){
+//        if (!reply_coils->isFinished())
+//        {
+//            connect(reply_coils, &QModbusReply::finished, [=](){
+//                if(reply_coils->error() == QModbusDevice::NoError){qDebug()<<"****write oK****";
+//                }else {
+//                    QMessageBox::warning(nullptr,tr("Write Failed!"),tr("error message：").arg(reply_coils->errorString()).arg(reply_coils->error(), -1, 16), 5000,QMessageBox::Yes,QMessageBox::No);
+//                }
+//                reply_coils->deleteLater();
+//            });
+//        }else {
+//            reply_coils->deleteLater();
+//        }
+//    }
+//}
+
+//void ScanControlHuiChuan::writeRegisterGroup(QModbusClient *modbusDevice, int startAddress, int remainingRegisters, QVector<uint16_t> data, int serverAddress)
+//{
+
+//    // 假设你要写入的寄存器数量和每次写入的组大小
+//    int registersPerGroup = 120;  // 每组写入 100 个寄存器
+
+//    int currentWriteCount = qMin(registersPerGroup, remainingRegisters);  // 本次写入的寄存器数量
+//    QModbusDataUnit writeUnit(QModbusDataUnit::HoldingRegisters, startAddress, currentWriteCount);
+
+//    // 设置要写入的寄存器值
+//    for (int i = 0; i < currentWriteCount; ++i) {
+//        writeUnit.setValue(i, data[startAddress + i-3000]);
+//        //qDebug()<<"data="<<data<<"count="<<startAddress + i-3000;
+//    }
+//    //qDebug()<<"writeUnit="<<writeUnit.values();
+
+//    // 发送写入请求
+//    if (auto *reply = modbusDevice->sendWriteRequest(writeUnit, serverAddress)) {
+//        if (!reply->isFinished()) {
+//            // 连接写入完成的信号
+//            connect(reply, &QModbusReply::finished, [=]() {
+//                if (reply->error() == QModbusDevice::ProtocolError) {
+//                    qWarning() << "Write error: " << reply->errorString();
+//                } else if (reply->error() == QModbusDevice::TimeoutError) {
+//                    qWarning() << "Request timeout occurred. Retrying...";
+//                    // 如果请求超时，进行重试
+//                    if (retryCount < 3) {  // 设置重试次数为3次
+//                        progressDialog->setValue(progressDialog->value() + 20);  // 更新进度
+//                        qDebug() << "Retrying write group from address " << startAddress << " retry count: " << (retryCount + 1);
+//                        QTimer::singleShot(500, this, [=]() {
+//                            writeRegisterGroup(modbusDevice, startAddress, remainingRegisters, data, serverAddress);  // 重试
+//                            retryCount=retryCount + 1;
+//                        });
+//                    } else {
+//                        progressDialog->close();
+//                        QMessageBox::warning(nullptr,  // 父窗口，这里传递 nullptr 表示没有父窗口
+//                                             "Warning",  // 对话框的标题
+//                                             "Max retry attempts reached. "
+//                                             "Aborting write."
+//                                             "Please rewrite!",  // 显示的文本
+//                                             QMessageBox::Ok);  // 确认按钮
+//                        qWarning() << "Max retry attempts reached. Aborting write.";
+//                    }
+//                } else if (reply->error() != QModbusDevice::NoError) {
+//                    qWarning() << "Write finished with error: " << reply->errorString();
+//                } else {
+//                    qDebug() << "Write group from address " << startAddress << " successful!";
+//                    // 如果还有剩余的寄存器，需要继续写入
+//                    if (remainingRegisters - currentWriteCount > 0) {
+//                        // 递归调用，写入下一组
+//                        progressDialog->setValue(progressDialog->value() + 5);  // 更新进度
+//                        writeRegisterGroup(modbusDevice, startAddress + currentWriteCount, remainingRegisters - currentWriteCount, data, serverAddress);
+//                    } else {
+//                        qDebug() << "All register groups written successfully!";
+//                        progressDialog->close();
+//                        QMessageBox::information(nullptr,  // 父窗口，这里传递 nullptr 表示没有父窗口
+//                                                 "Information",  // 对话框的标题
+//                                                 "All register groups written successfully!",  // 显示的文本
+//                                                 QMessageBox::Ok);  // 确认按钮
+//                    }
+//                }
+//                reply->deleteLater();
+//            });
+//        } else {
+//            delete reply;
+//        }
+//    } else {
+//        qWarning() << "Failed to send write request: " << modbusDevice->errorString();
+//    }
+
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//void ScanControlHuiChuan::writeRoutePos(int startAddress, quint16 size, QList<float> dataList_x0,QList<float> dataList_y0, QList<float> dataList_r0,QList<float> dataList_x1, QList<float> dataList_y1,QList<float> dataList_r1,QList<QString> nameList)
+//{
+
+//    if (modbusClient->state() != QModbusDevice::ConnectedState)
+//        return;
+
+//    int totalRegisters = 6 * size * 2;
+//    int serverAddress = 1;
+
+//    // 准备要写入的数据
+//    QVector<uint16_t> data(totalRegisters, 0);  // 假设这里初始化了总共1000个寄存器数据
+
+//    // 初始化进度条
+//    progressDialog= new QProgressDialog;
+//    progressDialog->setLabelText(tr("Writing registers..."));
+//    progressDialog->setCancelButton(nullptr);  // 禁用取消按钮
+//    progressDialog->setWindowModality(Qt::WindowModal);  // 设置为模态
+//    progressDialog->setRange(0, 100); // size 是数据块的数量
+//    progressDialog->setValue(10);
+//    progressDialog->show();
+
+//    int retryCount = 0;
+
+//    // 填充数据
+//    for (int i = 0; i < size * 2 * 6; i += 2 * 6) {
+//        // 数据处理逻辑与之前相同
+//        float data_x0 = dataList_x0.at(i / (2 * 6));
+//        quint32 intValue_x0 = *reinterpret_cast<uint32_t*>(&data_x0);
+//        data[i] = intValue_x0 & 0xFFFF;           // 低16位
+//        data[i + 1] = (intValue_x0 >> 16) & 0xFFFF; // 高16位
+
+//        float data_y0 = dataList_y0.at(i / (2 * 6));
+//        quint32 intValue_y0 = *reinterpret_cast<uint32_t*>(&data_y0);
+//        data[i + 2] = intValue_y0 & 0xFFFF;           // 低16位
+//        data[i + 3] = (intValue_y0 >> 16) & 0xFFFF; // 高16位
+
+//        float data_r0 = dataList_r0.at(i / (2 * 6));
+//        quint32 intValue_r0 = *reinterpret_cast<uint32_t*>(&data_r0);
+//        data[i + 4] = intValue_r0 & 0xFFFF;           // 低16位
+//        data[i + 5] = (intValue_r0 >> 16) & 0xFFFF; // 高16位
+
+//        float data_x1 = dataList_x1.at(i / (2 * 6));
+//        quint32 intValue_x1 = *reinterpret_cast<uint32_t*>(&data_x1);
+//        data[i + 6] = intValue_x1 & 0xFFFF;           // 低16位
+//        data[i + 7] = (intValue_x1 >> 16) & 0xFFFF; // 高16位
+
+//        float data_y1 = dataList_y1.at(i / (2 * 6));
+//        quint32 intValue_y1 = *reinterpret_cast<uint32_t*>(&data_y1);
+//        data[i + 8] = intValue_y1 & 0xFFFF;           // 低16位
+//        data[i + 9] = (intValue_y1 >> 16) & 0xFFFF; // 高16位
+
+//        float data_r1 = dataList_r1.at(i / (2 * 6));
+//        quint32 intValue_r1 = *reinterpret_cast<uint32_t*>(&data_r1);
+//        data[i + 10] = intValue_r1 & 0xFFFF;           // 低16位
+//        data[i + 11] = (intValue_r1 >> 16) & 0xFFFF; // 高16位
+//    }
+
+//    if (size < 120) {
+//        int address_name = 1000;
+//        int size_name = nameList.count();
+//        QModbusDataUnit modbusData(QModbusDataUnit::Coils, address_name, size_name);
+
+//        for (int i = 0; i < size_name; ++i) {
+//            modbusData.setValue(i, nameList.at(i) == "arc");
+//        }
+
+//        int maxRetryCount = 3;
+//        // 递归函数用于重试逻辑
+//        std::function<void(int)> sendWriteRequestWithRetry = [=, &sendWriteRequestWithRetry](int currentRetryCount) mutable {
+//            auto reply_coils = modbusClient->sendWriteRequest(modbusData, serverAddress);
+//            if (reply_coils) {
+//                if (!reply_coils->isFinished()) {
+//                    connect(reply_coils, &QModbusReply::finished, [=]() mutable {
+//                        if (reply_coils->error() == QModbusDevice::NoError) {
+//                            qDebug() << "****Write OK****";
+//                            // 更新进度条
+//                            progressDialog->setValue(progressDialog->value() + 20);  // 更新进度
+
+//                            // 写入成功后，继续写入剩余的寄存器
+//                            writeRegisterGroup(modbusClient, startAddress, totalRegisters, data, serverAddress);
+//                        } else if (reply_coils->error() == QModbusDevice::TimeoutError && currentRetryCount < maxRetryCount) {
+//                            qWarning() << "Request timeout occurred. Retrying... (" << currentRetryCount + 1 << "/" << maxRetryCount << ")";
+//                            // 进行重试
+//                            QTimer::singleShot(500, this, [=]() mutable {
+//                                sendWriteRequestWithRetry(currentRetryCount + 1);  // 递归重试
+//                            });
+//                        } else {
+//                            QMessageBox::warning(nullptr, tr("Write Failed!"), tr("Error message: %1 (Error code: %2)")
+//                                                 .arg(reply_coils->errorString())
+//                                                 .arg(reply_coils->error(), -1, 16), QMessageBox::Yes);
+//                        }
+//                        reply_coils->deleteLater();
+//                    });
+//                } else {
+//                    reply_coils->deleteLater();
+//                }
+//            } else {
+//                qWarning() << "Failed to send write request: " << modbusClient->errorString();
+//            }
+//        };
+
+//        // 发送初次请求
+//        sendWriteRequestWithRetry(retryCount);
+//    }
+
+//    // 关闭进度条
+//    //progressDialog->close();
+//}
+
+//void ScanControlHuiChuan::writeRoutPosName(int address,QList<QString> nameList)
+//{
+//    //qDebug()<<"*****writeRoutPosName"<<address<<nameList;
+//    if(modbusClient->state() != QModbusDevice::ConnectedState)
+//        return;
+
+//    int size =nameList.count();
+//    //qDebug()<<"*****size"<<size;
+//    QModbusDataUnit modbusData(QModbusDataUnit::Coils,  address, size);
+//    for (int i = 0; i < size; ++i) {
+//        if(nameList.at(i)=="arc"){
+//            modbusData.setValue(i, true);
+//            qDebug()<<QString::fromLocal8Bit("arc")<<"true";
+//        }else{
+//            modbusData.setValue(i, false);
+//            qDebug()<<QString::fromUtf8("line")<<"false";
+//        }
+//        //qDebug()<<"modbusData"<<modbusData.values()<<"i="<<i<<"name="<<nameList.at(i);
+//    }
+//    auto reply = modbusClient->sendWriteRequest(modbusData, 1);
+//    if(reply){
+//        if (!reply->isFinished())
+//        {
+//            connect(reply, &QModbusReply::finished, [=](){
+//                if(reply->error() == QModbusDevice::NoError){qDebug()<<"****write oK****";
+//                }else {
+//                    QMessageBox::warning(nullptr,tr("Write Failed!"),tr("error message：").arg(reply->errorString()).arg(reply->error(), -1, 16), 5000,QMessageBox::Yes,QMessageBox::No);
+//                }
+//                reply->deleteLater();
+//            });
+//        }else {
+//            reply->deleteLater();
+//        }
+//    }
+//}
+
+
+
+
+
+
+
+
+
+
+
 #if 0
-    if(modbusClient->state() != QModbusDevice::ConnectedState)
-        return;
-
-    int totalRegisters=6*size*2;
-    int serverAddress=1;
-    // 准备要写入的数据
-    QVector<uint16_t> data(totalRegisters, 0);  // 假设这里初始化了总共1000个寄存器数据
-
-    // 初始化进度条
-        QProgressDialog progressDialog;
-        progressDialog.setLabelText(tr("Writing registers..."));
-        progressDialog.setRange(0, size); // size 是数据块的数量
-        progressDialog.setCancelButton(nullptr);  // 禁用取消按钮，确保写入过程不会被中断
-        progressDialog.setWindowModality(Qt::WindowModal);  // 设置为模态对话框，阻塞其他操作
-
-        // 进度条显示
-        progressDialog.show();
-
-    retryCount=0;
-    //QModbusDataUnit modbusData(QModbusDataUnit::HoldingRegisters,  address, 6*size*2);
-    for (int i = 0; i< size*2*6; i+=2*6) {
-    qDebug()<<"****i/2*6=****"<<i/(2*6)<<startAddress<<size;
-        float data_x0, data_y0, data_r0, data_x1, data_y1,data_r1;
-        data_x0 = dataList_x0.at(i/(2*6));
-        quint32 intValue_x0 = *reinterpret_cast<uint32_t*>(&data_x0);
-        quint16 v2_x0 = (intValue_x0 >> 16) & 0xFFFF;
-        quint16 v1_x0 = intValue_x0 & 0xFFFF;
-        //modbusData.setValue(i,v1_x0);
-        //modbusData.setValue(i+1,v2_x0);
-        data.replace(i,v1_x0);
-        data.replace(i+1,v2_x0);
-
-        data_y0 = dataList_y0.at(i/(2*6));
-        quint32 intValue_y0 = *reinterpret_cast<uint32_t*>(&data_y0);
-        quint16 v2_y0 = (intValue_y0 >> 16) & 0xFFFF;
-        quint16 v1_y0 = intValue_y0 & 0xFFFF;
-        //modbusData.setValue(i+2,v1_y0);
-        //modbusData.setValue(i+3,v2_y0);
-        data.replace(i+2,v1_y0);
-        data.replace(i+3,v2_y0);
-
-        data_r0 = dataList_r0.at(i/(2*6));
-        quint32 intValue_r0 = *reinterpret_cast<uint32_t*>(&data_r0);
-        quint16 v2_r0 = (intValue_r0 >> 16) & 0xFFFF;
-        quint16 v1_r0 = intValue_r0 & 0xFFFF;
-        //modbusData.setValue(i+4,v1_r0);
-        //modbusData.setValue(i+5,v2_r0);
-        data.replace(i+4,v1_r0);
-        data.replace(i+5,v2_r0);
-
-        data_x1 = dataList_x1.at(i/(2*6));
-        quint32 intValue_x1 = *reinterpret_cast<uint32_t*>(&data_x1);
-        quint16 v2_x1 = (intValue_x1 >> 16) & 0xFFFF;
-        quint16 v1_x1 = intValue_x1 & 0xFFFF;
-        //modbusData.setValue(i+6,v1_x1);
-        //modbusData.setValue(i+7,v2_x1);
-        data.replace(i+6,v1_x1);
-        data.replace(i+7,v2_x1);
-
-        data_y1 = dataList_y1.at(i/(2*6));
-        quint32 intValue_y1 = *reinterpret_cast<uint32_t*>(&data_y1);
-        quint16 v2_y1 = (intValue_y1 >> 16) & 0xFFFF;
-        quint16 v1_y1 = intValue_y1 & 0xFFFF;
-        //modbusData.setValue(i+8,v1_y1);
-        //modbusData.setValue(i+9,v2_y1);
-        data.replace(i+8,v1_y1);
-        data.replace(i+9,v2_y1);
-
-        data_r1 = dataList_r1.at(i/(2*6));
-        quint32 intValue_r1 = *reinterpret_cast<uint32_t*>(&data_r1);
-        quint16 v2_r1 = (intValue_r1 >> 16) & 0xFFFF;
-        quint16 v1_r1 = intValue_r1 & 0xFFFF;
-        //modbusData.setValue(i+10,v1_r1);
-        //modbusData.setValue(i+11,v2_r1);
-        data.replace(i+10,v1_r1);
-        data.replace(i+11,v2_r1);
-    }
-
-    if(size<120){
-        int address_name=1000;
-        int size_name =nameList.count();
-            qDebug()<<"*****size_name="<<size_name;
-        QModbusDataUnit modbusData(QModbusDataUnit::Coils,  address_name, size_name);
-        for (int i = 0; i < size_name; ++i) {
-            if(nameList.at(i)=="arc"){
-                 modbusData.setValue(i, true);
-                 qDebug()<<QString::fromLocal8Bit("arc")<<"true";
-            }else{
-                 modbusData.setValue(i, false);
-                 qDebug()<<QString::fromUtf8("line")<<"false";
-            }
-        }
-        qDebug()<<"modbusData"<<modbusData.values();
-
-        int maxRetryCount=3;
-        // 递归函数用于重试逻辑
-                std::function<void(int)> sendWriteRequestWithRetry = [=, &sendWriteRequestWithRetry](int currentRetryCount) mutable {
-                    auto reply_coils = modbusClient->sendWriteRequest(modbusData, serverAddress);
-                    if (reply_coils) {
-                        if (!reply_coils->isFinished()) {
-                            connect(reply_coils, &QModbusReply::finished, [=]() mutable {
-                                if (reply_coils->error() == QModbusDevice::NoError) {
-                                    qDebug() << "****Write OK****";
-                                    // 写入成功后，继续写入剩余的寄存器
-                                    writeRegisterGroup(modbusClient, startAddress, totalRegisters, data, serverAddress);
-                                } else if (reply_coils->error() == QModbusDevice::TimeoutError && currentRetryCount < maxRetryCount) {
-                                    qWarning() << "Request timeout occurred. Retrying... (" << currentRetryCount + 1 << "/" << maxRetryCount << ")";
-                                    // 进行重试
-                                    QTimer::singleShot(500, this, [=]() mutable {
-                                        sendWriteRequestWithRetry(currentRetryCount + 1);  // 递归重试
-                                    });
-                                } else {
-                                    QMessageBox::warning(nullptr, tr("Write Failed!"), tr("Error message: %1 (Error code: %2)")
-                                        .arg(reply_coils->errorString())
-                                        .arg(reply_coils->error(), -1, 16), QMessageBox::Yes);
-                                }
-                                reply_coils->deleteLater();
-                            });
-                        } else {
-                            reply_coils->deleteLater();
-                        }
-                    } else {
-                        qWarning() << "Failed to send write request: " << modbusClient->errorString();
-                    }
-                };
-
-                // 发送初次请求
-                sendWriteRequestWithRetry(retryCount);
-    }
-#endif
-    if (modbusClient->state() != QModbusDevice::ConnectedState)
-            return;
-
-        int totalRegisters = 6 * size * 2;
-        int serverAddress = 1;
-
-        // 准备要写入的数据
-        QVector<uint16_t> data(totalRegisters, 0);  // 假设这里初始化了总共1000个寄存器数据
-
-        // 初始化进度条
-        progressDialog= new QProgressDialog;
-        progressDialog->setLabelText(tr("Writing registers..."));
-        progressDialog->setCancelButton(nullptr);  // 禁用取消按钮
-        progressDialog->setWindowModality(Qt::WindowModal);  // 设置为模态
-        progressDialog->setRange(0, 100); // size 是数据块的数量
-        progressDialog->setValue(10);
-        progressDialog->show();
-
-        int retryCount = 0;
-
-        // 填充数据
-        for (int i = 0; i < size * 2 * 6; i += 2 * 6) {
-            // 数据处理逻辑与之前相同
-            float data_x0 = dataList_x0.at(i / (2 * 6));
-            quint32 intValue_x0 = *reinterpret_cast<uint32_t*>(&data_x0);
-            data[i] = intValue_x0 & 0xFFFF;           // 低16位
-            data[i + 1] = (intValue_x0 >> 16) & 0xFFFF; // 高16位
-
-            float data_y0 = dataList_y0.at(i / (2 * 6));
-            quint32 intValue_y0 = *reinterpret_cast<uint32_t*>(&data_y0);
-            data[i + 2] = intValue_y0 & 0xFFFF;           // 低16位
-            data[i + 3] = (intValue_y0 >> 16) & 0xFFFF; // 高16位
-
-            float data_r0 = dataList_r0.at(i / (2 * 6));
-            quint32 intValue_r0 = *reinterpret_cast<uint32_t*>(&data_r0);
-            data[i + 4] = intValue_r0 & 0xFFFF;           // 低16位
-            data[i + 5] = (intValue_r0 >> 16) & 0xFFFF; // 高16位
-
-            float data_x1 = dataList_x1.at(i / (2 * 6));
-            quint32 intValue_x1 = *reinterpret_cast<uint32_t*>(&data_x1);
-            data[i + 6] = intValue_x1 & 0xFFFF;           // 低16位
-            data[i + 7] = (intValue_x1 >> 16) & 0xFFFF; // 高16位
-
-            float data_y1 = dataList_y1.at(i / (2 * 6));
-            quint32 intValue_y1 = *reinterpret_cast<uint32_t*>(&data_y1);
-            data[i + 8] = intValue_y1 & 0xFFFF;           // 低16位
-            data[i + 9] = (intValue_y1 >> 16) & 0xFFFF; // 高16位
-
-            float data_r1 = dataList_r1.at(i / (2 * 6));
-            quint32 intValue_r1 = *reinterpret_cast<uint32_t*>(&data_r1);
-            data[i + 10] = intValue_r1 & 0xFFFF;           // 低16位
-            data[i + 11] = (intValue_r1 >> 16) & 0xFFFF; // 高16位
-        }
-
-        if (size < 120) {
-            int address_name = 1000;
-            int size_name = nameList.count();
-            QModbusDataUnit modbusData(QModbusDataUnit::Coils, address_name, size_name);
-
-            for (int i = 0; i < size_name; ++i) {
-                modbusData.setValue(i, nameList.at(i) == "arc");
-            }
-
-            int maxRetryCount = 3;
-            // 递归函数用于重试逻辑
-            std::function<void(int)> sendWriteRequestWithRetry = [=, &sendWriteRequestWithRetry](int currentRetryCount) mutable {
-                auto reply_coils = modbusClient->sendWriteRequest(modbusData, serverAddress);
-                if (reply_coils) {
-                    if (!reply_coils->isFinished()) {
-                        connect(reply_coils, &QModbusReply::finished, [=]() mutable {
-                            if (reply_coils->error() == QModbusDevice::NoError) {
-                                qDebug() << "****Write OK****";
-                                // 更新进度条
-                                progressDialog->setValue(progressDialog->value() + 20);  // 更新进度
-
-                                // 写入成功后，继续写入剩余的寄存器
-                                writeRegisterGroup(modbusClient, startAddress, totalRegisters, data, serverAddress);
-                            } else if (reply_coils->error() == QModbusDevice::TimeoutError && currentRetryCount < maxRetryCount) {
-                                qWarning() << "Request timeout occurred. Retrying... (" << currentRetryCount + 1 << "/" << maxRetryCount << ")";
-                                // 进行重试
-                                QTimer::singleShot(500, this, [=]() mutable {
-                                    sendWriteRequestWithRetry(currentRetryCount + 1);  // 递归重试
-                                });
-                            } else {
-                                QMessageBox::warning(nullptr, tr("Write Failed!"), tr("Error message: %1 (Error code: %2)")
-                                    .arg(reply_coils->errorString())
-                                    .arg(reply_coils->error(), -1, 16), QMessageBox::Yes);
-                            }
-                            reply_coils->deleteLater();
-                        });
-                    } else {
-                        reply_coils->deleteLater();
-                    }
+// 发送写入请求
+if (auto *reply = modbusDevice->sendWriteRequest(writeUnit, serverAddress)) {
+    if (!reply->isFinished()) {
+        // 连接写入完成的信号
+        connect(reply, &QModbusReply::finished, [=]() {
+            if (reply->error() == QModbusDevice::ProtocolError) {
+                qWarning() << "Write error: " << reply->errorString();
+            } else if (reply->error() != QModbusDevice::NoError) {
+                qWarning() << "Write finished with error: " << reply->errorString();
+                //connect(reply, &QModbusReply::finished, this, &ScanControlHuiChuan::handleReply);
+            } else {
+                qDebug() << "Write group from address " << startAddress << " successful!";
+                // 如果还有剩余的寄存器，需要继续写入
+                if (remainingRegisters - currentWriteCount > 0) {
+                    // 递归调用，写入下一组
+                    writeRegisterGroup(modbusDevice, startAddress + currentWriteCount, remainingRegisters - currentWriteCount, data, serverAddress);
                 } else {
-                    qWarning() << "Failed to send write request: " << modbusClient->errorString();
+                    qDebug() << "All register groups written successfully!";
+                    QMessageBox::information(nullptr, // 父窗口，这里传递 nullptr 表示没有父窗口
+                                             "Information", // 对话框的标题
+                                             "All register groups written successfully!", // 显示的文本
+                                             QMessageBox::Ok); // 确认按钮
+
                 }
-            };
-
-            // 发送初次请求
-            sendWriteRequestWithRetry(retryCount);
-        }
-
-        // 关闭进度条
-        //progressDialog->close();
-}
-
-void ScanControlHuiChuan::writeRoutPosName(int address,QList<QString> nameList)
-{
-    //qDebug()<<"*****writeRoutPosName"<<address<<nameList;
-    if(modbusClient->state() != QModbusDevice::ConnectedState)
-        return;
-
-    int size =nameList.count();
-        //qDebug()<<"*****size"<<size;
-    QModbusDataUnit modbusData(QModbusDataUnit::Coils,  address, size);
-    for (int i = 0; i < size; ++i) {
-        if(nameList.at(i)=="arc"){
-             modbusData.setValue(i, true);
-             qDebug()<<QString::fromLocal8Bit("arc")<<"true";
-        }else{
-             modbusData.setValue(i, false);
-             qDebug()<<QString::fromUtf8("line")<<"false";
-        }
-    //qDebug()<<"modbusData"<<modbusData.values()<<"i="<<i<<"name="<<nameList.at(i);
-    }
-    auto reply = modbusClient->sendWriteRequest(modbusData, 1);
-    if(reply){
-        if (!reply->isFinished())
-        {
-            connect(reply, &QModbusReply::finished, [=](){
-                if(reply->error() == QModbusDevice::NoError){qDebug()<<"****write oK****";
-                }else {
-                    QMessageBox::warning(nullptr,tr("Write Failed!"),tr("error message：").arg(reply->errorString()).arg(reply->error(), -1, 16), 5000,QMessageBox::Yes,QMessageBox::No);
-                }
-                reply->deleteLater();
-            });
-        }else {
+            }
             reply->deleteLater();
-        }
+        });
+    } else {
+        delete reply;
     }
+} else {
+qWarning() << "Failed to send write request: " << modbusDevice->errorString();
+}
+#endif
+//qDebug()<<"=dataList_x0="<<dataList_x0<<dataList_y0<<dataList_r0<<"dataList_x1="<<dataList_x1<<dataList_y1<<dataList_r1;
+#if 0
+if(modbusClient->state() != QModbusDevice::ConnectedState)
+return;
+
+int totalRegisters=6*size*2;
+int serverAddress=1;
+// 准备要写入的数据
+QVector<uint16_t> data(totalRegisters, 0);  // 假设这里初始化了总共1000个寄存器数据
+
+// 初始化进度条
+QProgressDialog progressDialog;
+progressDialog.setLabelText(tr("Writing registers..."));
+progressDialog.setRange(0, size); // size 是数据块的数量
+progressDialog.setCancelButton(nullptr);  // 禁用取消按钮，确保写入过程不会被中断
+progressDialog.setWindowModality(Qt::WindowModal);  // 设置为模态对话框，阻塞其他操作
+
+// 进度条显示
+progressDialog.show();
+
+retryCount=0;
+//QModbusDataUnit modbusData(QModbusDataUnit::HoldingRegisters,  address, 6*size*2);
+for (int i = 0; i< size*2*6; i+=2*6) {
+    qDebug()<<"****i/2*6=****"<<i/(2*6)<<startAddress<<size;
+    float data_x0, data_y0, data_r0, data_x1, data_y1,data_r1;
+    data_x0 = dataList_x0.at(i/(2*6));
+    quint32 intValue_x0 = *reinterpret_cast<uint32_t*>(&data_x0);
+    quint16 v2_x0 = (intValue_x0 >> 16) & 0xFFFF;
+    quint16 v1_x0 = intValue_x0 & 0xFFFF;
+    //modbusData.setValue(i,v1_x0);
+    //modbusData.setValue(i+1,v2_x0);
+    data.replace(i,v1_x0);
+    data.replace(i+1,v2_x0);
+
+    data_y0 = dataList_y0.at(i/(2*6));
+    quint32 intValue_y0 = *reinterpret_cast<uint32_t*>(&data_y0);
+    quint16 v2_y0 = (intValue_y0 >> 16) & 0xFFFF;
+    quint16 v1_y0 = intValue_y0 & 0xFFFF;
+    //modbusData.setValue(i+2,v1_y0);
+    //modbusData.setValue(i+3,v2_y0);
+    data.replace(i+2,v1_y0);
+    data.replace(i+3,v2_y0);
+
+    data_r0 = dataList_r0.at(i/(2*6));
+    quint32 intValue_r0 = *reinterpret_cast<uint32_t*>(&data_r0);
+    quint16 v2_r0 = (intValue_r0 >> 16) & 0xFFFF;
+    quint16 v1_r0 = intValue_r0 & 0xFFFF;
+    //modbusData.setValue(i+4,v1_r0);
+    //modbusData.setValue(i+5,v2_r0);
+    data.replace(i+4,v1_r0);
+    data.replace(i+5,v2_r0);
+
+    data_x1 = dataList_x1.at(i/(2*6));
+    quint32 intValue_x1 = *reinterpret_cast<uint32_t*>(&data_x1);
+    quint16 v2_x1 = (intValue_x1 >> 16) & 0xFFFF;
+    quint16 v1_x1 = intValue_x1 & 0xFFFF;
+    //modbusData.setValue(i+6,v1_x1);
+    //modbusData.setValue(i+7,v2_x1);
+    data.replace(i+6,v1_x1);
+    data.replace(i+7,v2_x1);
+
+    data_y1 = dataList_y1.at(i/(2*6));
+    quint32 intValue_y1 = *reinterpret_cast<uint32_t*>(&data_y1);
+    quint16 v2_y1 = (intValue_y1 >> 16) & 0xFFFF;
+    quint16 v1_y1 = intValue_y1 & 0xFFFF;
+    //modbusData.setValue(i+8,v1_y1);
+    //modbusData.setValue(i+9,v2_y1);
+    data.replace(i+8,v1_y1);
+    data.replace(i+9,v2_y1);
+
+    data_r1 = dataList_r1.at(i/(2*6));
+    quint32 intValue_r1 = *reinterpret_cast<uint32_t*>(&data_r1);
+    quint16 v2_r1 = (intValue_r1 >> 16) & 0xFFFF;
+    quint16 v1_r1 = intValue_r1 & 0xFFFF;
+    //modbusData.setValue(i+10,v1_r1);
+    //modbusData.setValue(i+11,v2_r1);
+    data.replace(i+10,v1_r1);
+    data.replace(i+11,v2_r1);
 }
 
-void ScanControlHuiChuan::writeNameRegisterGroup(QModbusClient *modbusDevice, int serverAddress,QList<QString> nameList)
-{
+if(size<120){
     int address_name=1000;
     int size_name =nameList.count();
-        qDebug()<<"*****size_name="<<size_name;
+    qDebug()<<"*****size_name="<<size_name;
     QModbusDataUnit modbusData(QModbusDataUnit::Coils,  address_name, size_name);
     for (int i = 0; i < size_name; ++i) {
         if(nameList.at(i)=="arc"){
-             modbusData.setValue(i, true);
-             qDebug()<<QString::fromLocal8Bit("arc")<<"true";
+            modbusData.setValue(i, true);
+            qDebug()<<QString::fromLocal8Bit("arc")<<"true";
         }else{
-             modbusData.setValue(i, false);
-             qDebug()<<QString::fromUtf8("line")<<"false";
+            modbusData.setValue(i, false);
+            qDebug()<<QString::fromUtf8("line")<<"false";
         }
     }
     qDebug()<<"modbusData"<<modbusData.values();
-    auto reply_coils = modbusDevice->sendWriteRequest(modbusData, serverAddress);
-    if(reply_coils){
-        if (!reply_coils->isFinished())
-        {
-            connect(reply_coils, &QModbusReply::finished, [=](){
-                if(reply_coils->error() == QModbusDevice::NoError){qDebug()<<"****write oK****";
-                }else {
-                    QMessageBox::warning(nullptr,tr("Write Failed!"),tr("error message：").arg(reply_coils->errorString()).arg(reply_coils->error(), -1, 16), 5000,QMessageBox::Yes,QMessageBox::No);
-                }
-                reply_coils->deleteLater();
-            });
-        }else {
-            reply_coils->deleteLater();
-        }
-    }
-}
 
-void ScanControlHuiChuan::writeRegisterGroup(QModbusClient *modbusDevice, int startAddress, int remainingRegisters, QVector<uint16_t> data, int serverAddress)
-{
-
-    // 假设你要写入的寄存器数量和每次写入的组大小
-    int registersPerGroup = 120;  // 每组写入 100 个寄存器
-
-    int currentWriteCount = qMin(registersPerGroup, remainingRegisters);  // 本次写入的寄存器数量
-    QModbusDataUnit writeUnit(QModbusDataUnit::HoldingRegisters, startAddress, currentWriteCount);
-
-    // 设置要写入的寄存器值
-    for (int i = 0; i < currentWriteCount; ++i) {
-        writeUnit.setValue(i, data[startAddress + i-3000]);
-        //qDebug()<<"data="<<data<<"count="<<startAddress + i-3000;
-    }
-     //qDebug()<<"writeUnit="<<writeUnit.values();
-
-     // 发送写入请求
-         if (auto *reply = modbusDevice->sendWriteRequest(writeUnit, serverAddress)) {
-             if (!reply->isFinished()) {
-                 // 连接写入完成的信号
-                 connect(reply, &QModbusReply::finished, [=]() {
-                     if (reply->error() == QModbusDevice::ProtocolError) {
-                         qWarning() << "Write error: " << reply->errorString();
-                     } else if (reply->error() == QModbusDevice::TimeoutError) {
-                         qWarning() << "Request timeout occurred. Retrying...";
-                         // 如果请求超时，进行重试
-                         if (retryCount < 3) {  // 设置重试次数为3次
-                             progressDialog->setValue(progressDialog->value() + 20);  // 更新进度
-                             qDebug() << "Retrying write group from address " << startAddress << " retry count: " << (retryCount + 1);
-                             QTimer::singleShot(500, this, [=]() {
-                                 writeRegisterGroup(modbusDevice, startAddress, remainingRegisters, data, serverAddress);  // 重试
-                                 retryCount=retryCount + 1;
-                             });
-                         } else {
-                             progressDialog->close();
-                             QMessageBox::warning(nullptr,  // 父窗口，这里传递 nullptr 表示没有父窗口
-                                                      "Warning",  // 对话框的标题
-                                                      "Max retry attempts reached. "
-                                                      "Aborting write."
-                                                      "Please rewrite!",  // 显示的文本
-                                                      QMessageBox::Ok);  // 确认按钮
-                             qWarning() << "Max retry attempts reached. Aborting write.";
-                         }
-                     } else if (reply->error() != QModbusDevice::NoError) {
-                         qWarning() << "Write finished with error: " << reply->errorString();
-                     } else {
-                         qDebug() << "Write group from address " << startAddress << " successful!";
-                         // 如果还有剩余的寄存器，需要继续写入
-                         if (remainingRegisters - currentWriteCount > 0) {
-                             // 递归调用，写入下一组
-                             progressDialog->setValue(progressDialog->value() + 5);  // 更新进度
-                             writeRegisterGroup(modbusDevice, startAddress + currentWriteCount, remainingRegisters - currentWriteCount, data, serverAddress);
-                         } else {
-                             qDebug() << "All register groups written successfully!";
-                             progressDialog->close();
-                             QMessageBox::information(nullptr,  // 父窗口，这里传递 nullptr 表示没有父窗口
-                                                      "Information",  // 对话框的标题
-                                                      "All register groups written successfully!",  // 显示的文本
-                                                      QMessageBox::Ok);  // 确认按钮
-                         }
-                     }
-                     reply->deleteLater();
-                 });
-             } else {
-                 delete reply;
-             }
-         } else {
-             qWarning() << "Failed to send write request: " << modbusDevice->errorString();
-         }
-#if 0
-    // 发送写入请求
-    if (auto *reply = modbusDevice->sendWriteRequest(writeUnit, serverAddress)) {
-        if (!reply->isFinished()) {
-            // 连接写入完成的信号
-            connect(reply, &QModbusReply::finished, [=]() {
-                if (reply->error() == QModbusDevice::ProtocolError) {
-                    qWarning() << "Write error: " << reply->errorString();
-                } else if (reply->error() != QModbusDevice::NoError) {
-                    qWarning() << "Write finished with error: " << reply->errorString();
-                    //connect(reply, &QModbusReply::finished, this, &ScanControlHuiChuan::handleReply);
-                } else {
-                    qDebug() << "Write group from address " << startAddress << " successful!";
-                    // 如果还有剩余的寄存器，需要继续写入
-                    if (remainingRegisters - currentWriteCount > 0) {
-                        // 递归调用，写入下一组
-                        writeRegisterGroup(modbusDevice, startAddress + currentWriteCount, remainingRegisters - currentWriteCount, data, serverAddress);
+    int maxRetryCount=3;
+    // 递归函数用于重试逻辑
+    std::function<void(int)> sendWriteRequestWithRetry = [=, &sendWriteRequestWithRetry](int currentRetryCount) mutable {
+        auto reply_coils = modbusClient->sendWriteRequest(modbusData, serverAddress);
+        if (reply_coils) {
+            if (!reply_coils->isFinished()) {
+                connect(reply_coils, &QModbusReply::finished, [=]() mutable {
+                    if (reply_coils->error() == QModbusDevice::NoError) {
+                        qDebug() << "****Write OK****";
+                        // 写入成功后，继续写入剩余的寄存器
+                        writeRegisterGroup(modbusClient, startAddress, totalRegisters, data, serverAddress);
+                    } else if (reply_coils->error() == QModbusDevice::TimeoutError && currentRetryCount < maxRetryCount) {
+                        qWarning() << "Request timeout occurred. Retrying... (" << currentRetryCount + 1 << "/" << maxRetryCount << ")";
+                        // 进行重试
+                        QTimer::singleShot(500, this, [=]() mutable {
+                            sendWriteRequestWithRetry(currentRetryCount + 1);  // 递归重试
+                        });
                     } else {
-                        qDebug() << "All register groups written successfully!";
-                        QMessageBox::information(nullptr, // 父窗口，这里传递 nullptr 表示没有父窗口
-                                                     "Information", // 对话框的标题
-                                                     "All register groups written successfully!", // 显示的文本
-                                                     QMessageBox::Ok); // 确认按钮
-
+                        QMessageBox::warning(nullptr, tr("Write Failed!"), tr("Error message: %1 (Error code: %2)")
+                                             .arg(reply_coils->errorString())
+                                             .arg(reply_coils->error(), -1, 16), QMessageBox::Yes);
                     }
-                }
-                reply->deleteLater();
-            });
+                    reply_coils->deleteLater();
+                });
+            } else {
+                reply_coils->deleteLater();
+            }
         } else {
-            delete reply;
+            qWarning() << "Failed to send write request: " << modbusClient->errorString();
         }
-    } else {
-        qWarning() << "Failed to send write request: " << modbusDevice->errorString();
-    }
-#endif
+    };
+
+    // 发送初次请求
+    sendWriteRequestWithRetry(retryCount);
 }
-
-
+#endif

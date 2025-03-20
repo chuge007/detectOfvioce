@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -18,9 +18,9 @@
 #include "Graphics_view_zoom.h"
 #include "route_worksence.h"
 
-//#include "dxfreader.h"
 
 
+using modelDate = ScanControlAbstract::modelDate;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -35,6 +35,15 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    QSettings *settings;
+
+
+    struct TargetPos {
+        double x;
+        double y;
+        double z;
+        double r;
+    };
 
 
 private slots:
@@ -70,23 +79,24 @@ private slots:
 
     void PbImageProcess();
 
+    void PbSetOrigin();
+
+    void PbMoveToPosition();
+
+    void PbAxleVelocity_lin();
+
     void pbAscan();
     void updateSence();
     void cleanTable();
+    void isUseScanDetect(bool isUseScanMove);
 
+    void PbModbusConnectBtn();
 private:
     Ui::MainWindow *ui;
     QModbusTcpClient *modbusDevice;
     QUdpSocket *udpSocket;
 
-
-
-
-
-
-
-    ScanControlAbstract *scanCtrl;
-    ScanControlHuiChuan *scanCtrlHunChuan;
+    ScanControlAbstract *scanCtrlHunChuan;
 
     void initDb();
     QList<QString>  startPoint;
@@ -95,6 +105,7 @@ private:
     QString current_user;
     int current_weld_row;
     int current_weld_id;
+    TargetPos currentTargetPos;  // 用于保存当前目标点
 
     SN_Dialog * getsn_dialog;
     openDefaut_tested_dialog *default_tested_dialog;
@@ -120,7 +131,7 @@ private:
 
      NdtCfgMachine &config;
 
-
+    QProgressDialog *progressDialog;
 signals:
     void x_velocity_editingFinished(float arg);
     void y_velocity_editingFinished(float arg);
@@ -134,6 +145,8 @@ signals:
     void jog_add_sub_velocity_editingFinished(float arg);
 
     void movePosition(double x, double y);
+
+    void targetReached();   // 当目标点达到后发出
 };
 #endif // MAINWINDOW_H
 

@@ -15,6 +15,8 @@
 
 #include "modbusconfig.h"
 
+class Ui_MainWindow;
+
 enum ScanModel{
     NormalScan = 0, //正常模式
     SingleScan      //单边模式
@@ -57,13 +59,19 @@ class ScanControlAbstract : public QObject
 {
     Q_OBJECT
 
+
+
 public:
-    explicit ScanControlAbstract(QObject *parent = nullptr) : QObject(parent){}
+
+
+
+    explicit ScanControlAbstract(QObject *parent = nullptr):QObject(parent){}
+
     virtual ~ScanControlAbstract() {}
 
     virtual void setModbusTcpIP(QString ip)  = 0;   //设置IP
     virtual void setModbusPort(int port)  = 0;      //设置端口
-
+    virtual void disConncet() = 0;
     virtual QPointF virtualOrigin() const  = 0;     //虚拟0点
     virtual QPointF limitRegion() const  = 0;       //极限区域
     virtual QPointF currentPosition() const  = 0;   //当前位置
@@ -84,13 +92,25 @@ public:
 
     virtual ScanModel currentScanModel() const = 0;       //当前扫查模式
     virtual QSettings* scanControlSetting() const = 0;    //配置表句柄
+    QSettings *Rsettings;
 
     virtual bool haveMachine() const = 0;           //是否有设置机械原点
     virtual bool haveLimit() const = 0;             //是否有设置机械极限位
 
     virtual void setManualModel(bool states) = 0;   //设置手动模式
     virtual bool nextScan() = 0;                    //扫查下一步
+    bool isUseScanDetect;
+    struct modelDate {
+        QString type;                        // 保存 "arc" 或 "line" 字符串
+        QVector<QVector<float>> points;        // 保存相关点，每个点包含 4 个 float
+    };
 
+
+    virtual void writeRegisterGroup( int startAddress,
+                         const   QVector<modelDate> &modelDates, int serverAddress)=0;
+
+    bool isRunTarget;
+    virtual void ZdetectHight(float hight)=0;
 public slots:
     virtual void init() = 0;   //初始化设置
     virtual void destroy() = 0;  //销毁设置
@@ -101,7 +121,7 @@ public slots:
     virtual void on_stopScanBtn_clicked() = 0;      //暂停扫查
     virtual void on_endScanBtn_clicked() = 0;       //结束扫描
 
-    virtual void on_setOriginBtn_clicked() = 0;     //设置起点
+    virtual void on_setOriginBtn_clicked(float x,float y,bool isCurrPosi) = 0;     //设置零点
 
     virtual void setXLenght(float lenght)  = 0;     //设置扫查X轴
     virtual void setYLenght(float lenght)  = 0;     //设置扫查Y轴
