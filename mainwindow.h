@@ -84,6 +84,8 @@ private slots:
     void PbMoveToPosition();
 
     void PbAxleVelocity_lin();
+    void PblinVelocity_lin();
+    void PbarcVelocity_lin();
 
     void pbAscan();
     void updateSence();
@@ -91,14 +93,17 @@ private slots:
     void isUseScanDetect(bool isUseScanMove);
 
     void PbModbusConnectBtn();
+
 private:
     Ui::MainWindow *ui;
+
     QModbusTcpClient *modbusDevice;
     QUdpSocket *udpSocket;
 
-    ScanControlAbstract *scanCtrlHunChuan;
+    ScanControlAbstract *scanDetectCtrl;
 
     void initDb();
+
     QList<QString>  startPoint;
     QString current_db_name;
     QString current_route_name;
@@ -107,12 +112,8 @@ private:
     int current_weld_id;
     TargetPos currentTargetPos;  // 用于保存当前目标点
 
-    SN_Dialog * getsn_dialog;
-    openDefaut_tested_dialog *default_tested_dialog;
+
     QSqlTableModel*  model;
-    BooleanDelegate *b_delegate;
-    IconDelegate* ico_delegate;
-    floatpointdelegate *fdelegate;
 
 
     addRoute_dialog *addRoute;
@@ -132,6 +133,8 @@ private:
      NdtCfgMachine &config;
 
     QProgressDialog *progressDialog;
+
+
 signals:
     void x_velocity_editingFinished(float arg);
     void y_velocity_editingFinished(float arg);
@@ -159,10 +162,11 @@ signals:
 
 
 
-
-
-
-
+    //IconDelegate* ico_delegate;
+//floatpointdelegate *fdelegate;
+//BooleanDelegate *b_delegate;
+//SN_Dialog * getsn_dialog;
+//openDefaut_tested_dialog *default_tested_dialog;
 //    QList<QByteArray> splitByFour(const QByteArray &data);
     //QList<int> convertToDecimal(const QByteArray &data);
 //    QList<float> convertToReal(const QByteArray &data);

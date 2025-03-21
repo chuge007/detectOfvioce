@@ -10,7 +10,6 @@
 #define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QFrame>
@@ -22,10 +21,10 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QTabWidget>
+#include <QtWidgets/QTableView>
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QWidget>
 #include <tgraphicsviewrefactor.h>
-#include "reason_tbview.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -74,6 +73,12 @@ public:
     QLabel *label_14;
     QLabel *label_17;
     QLineEdit *AxleVelocity_lin;
+    QLabel *V_label_8;
+    QLabel *label_18;
+    QLineEdit *lineVelocity_lin;
+    QLabel *label_19;
+    QLabel *V_label_11;
+    QLineEdit *arcVelocity_lin;
     QFrame *frame;
     QPushButton *imageProcess_but;
     QPushButton *startScan_But;
@@ -81,7 +86,6 @@ public:
     QPushButton *setOrigin_but;
     QPushButton *stopScan_but;
     QPushButton *endScan_but;
-    QPushButton *more_Button;
     QFrame *line_3;
     QPushButton *DXFimport_but;
     QLineEdit *traject_y0;
@@ -109,7 +113,7 @@ public:
     QPushButton *insertLinePos_but;
     QPushButton *editPos_but;
     QPushButton *creatG_but;
-    reason_tbview *tableView;
+    QTableView *tableView;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -362,6 +366,30 @@ public:
         AxleVelocity_lin = new QLineEdit(widget);
         AxleVelocity_lin->setObjectName(QString::fromUtf8("AxleVelocity_lin"));
         AxleVelocity_lin->setGeometry(QRect(400, 10, 111, 31));
+        V_label_8 = new QLabel(widget);
+        V_label_8->setObjectName(QString::fromUtf8("V_label_8"));
+        V_label_8->setGeometry(QRect(610, 10, 131, 26));
+        V_label_8->setFont(font1);
+        V_label_8->setStyleSheet(QString::fromUtf8(""));
+        label_18 = new QLabel(widget);
+        label_18->setObjectName(QString::fromUtf8("label_18"));
+        label_18->setGeometry(QRect(850, 10, 71, 31));
+        label_18->setFont(font1);
+        lineVelocity_lin = new QLineEdit(widget);
+        lineVelocity_lin->setObjectName(QString::fromUtf8("lineVelocity_lin"));
+        lineVelocity_lin->setGeometry(QRect(730, 10, 111, 31));
+        label_19 = new QLabel(widget);
+        label_19->setObjectName(QString::fromUtf8("label_19"));
+        label_19->setGeometry(QRect(1190, 10, 71, 31));
+        label_19->setFont(font1);
+        V_label_11 = new QLabel(widget);
+        V_label_11->setObjectName(QString::fromUtf8("V_label_11"));
+        V_label_11->setGeometry(QRect(950, 10, 131, 26));
+        V_label_11->setFont(font1);
+        V_label_11->setStyleSheet(QString::fromUtf8(""));
+        arcVelocity_lin = new QLineEdit(widget);
+        arcVelocity_lin->setObjectName(QString::fromUtf8("arcVelocity_lin"));
+        arcVelocity_lin->setGeometry(QRect(1070, 10, 111, 31));
         frame = new QFrame(centralwidget);
         frame->setObjectName(QString::fromUtf8("frame"));
         frame->setGeometry(QRect(10, 1120, 1911, 121));
@@ -369,7 +397,7 @@ public:
         frame->setFrameShadow(QFrame::Raised);
         imageProcess_but = new QPushButton(frame);
         imageProcess_but->setObjectName(QString::fromUtf8("imageProcess_but"));
-        imageProcess_but->setGeometry(QRect(830, 20, 121, 41));
+        imageProcess_but->setGeometry(QRect(870, 20, 121, 41));
         startScan_But = new QPushButton(frame);
         startScan_But->setObjectName(QString::fromUtf8("startScan_But"));
         startScan_But->setGeometry(QRect(1270, 20, 101, 41));
@@ -382,7 +410,7 @@ public:
         alarmReset_but->setSizePolicy(sizePolicy);
         setOrigin_but = new QPushButton(frame);
         setOrigin_but->setObjectName(QString::fromUtf8("setOrigin_but"));
-        setOrigin_but->setGeometry(QRect(500, 70, 141, 41));
+        setOrigin_but->setGeometry(QRect(520, 70, 181, 41));
         sizePolicy.setHeightForWidth(setOrigin_but->sizePolicy().hasHeightForWidth());
         setOrigin_but->setSizePolicy(sizePolicy);
         stopScan_but = new QPushButton(frame);
@@ -395,28 +423,9 @@ public:
         endScan_but->setGeometry(QRect(1610, 20, 101, 41));
         sizePolicy.setHeightForWidth(endScan_but->sizePolicy().hasHeightForWidth());
         endScan_but->setSizePolicy(sizePolicy);
-        more_Button = new QPushButton(frame);
-        more_Button->setObjectName(QString::fromUtf8("more_Button"));
-        more_Button->setGeometry(QRect(640, 30, 24, 30));
-        more_Button->setMinimumSize(QSize(0, 30));
-        more_Button->setMaximumSize(QSize(16777215, 30));
-        QFont font2;
-        font2.setFamily(QString::fromUtf8("Arial"));
-        font2.setPointSize(9);
-        font2.setBold(false);
-        font2.setItalic(false);
-        font2.setWeight(50);
-        more_Button->setFont(font2);
-        more_Button->setLayoutDirection(Qt::RightToLeft);
-        more_Button->setStyleSheet(QString::fromUtf8(""));
-        QIcon icon;
-        icon.addFile(QString::fromUtf8(":/img/unfold-01.png"), QSize(), QIcon::Normal, QIcon::Off);
-        more_Button->setIcon(icon);
-        more_Button->setIconSize(QSize(12, 12));
-        more_Button->setFlat(true);
         line_3 = new QFrame(frame);
         line_3->setObjectName(QString::fromUtf8("line_3"));
-        line_3->setGeometry(QRect(650, 20, 20, 81));
+        line_3->setGeometry(QRect(700, 20, 20, 81));
         line_3->setFrameShape(QFrame::VLine);
         line_3->setFrameShadow(QFrame::Sunken);
         DXFimport_but = new QPushButton(frame);
@@ -426,7 +435,7 @@ public:
         DXFimport_but->setSizePolicy(sizePolicy);
         traject_y0 = new QLineEdit(frame);
         traject_y0->setObjectName(QString::fromUtf8("traject_y0"));
-        traject_y0->setGeometry(QRect(320, 20, 61, 41));
+        traject_y0->setGeometry(QRect(320, 20, 71, 41));
         setTrajecStart_but = new QPushButton(frame);
         setTrajecStart_but->setObjectName(QString::fromUtf8("setTrajecStart_but"));
         setTrajecStart_but->setGeometry(QRect(300, 70, 171, 41));
@@ -434,7 +443,7 @@ public:
         setTrajecStart_but->setSizePolicy(sizePolicy);
         traject_x0 = new QLineEdit(frame);
         traject_x0->setObjectName(QString::fromUtf8("traject_x0"));
-        traject_x0->setGeometry(QRect(190, 20, 61, 41));
+        traject_x0->setGeometry(QRect(190, 20, 81, 41));
         V_label_3 = new QLabel(frame);
         V_label_3->setObjectName(QString::fromUtf8("V_label_3"));
         V_label_3->setGeometry(QRect(160, 30, 21, 26));
@@ -447,7 +456,7 @@ public:
         V_label_4->setStyleSheet(QString::fromUtf8(""));
         ascan_but = new QPushButton(frame);
         ascan_but->setObjectName(QString::fromUtf8("ascan_but"));
-        ascan_but->setGeometry(QRect(700, 20, 111, 41));
+        ascan_but->setGeometry(QRect(740, 20, 111, 41));
         moveToPosition_but = new QPushButton(frame);
         moveToPosition_but->setObjectName(QString::fromUtf8("moveToPosition_but"));
         moveToPosition_but->setGeometry(QRect(160, 70, 111, 41));
@@ -470,10 +479,10 @@ public:
         V_label_10->setStyleSheet(QString::fromUtf8(""));
         traject_z0 = new QLineEdit(frame);
         traject_z0->setObjectName(QString::fromUtf8("traject_z0"));
-        traject_z0->setGeometry(QRect(450, 20, 61, 41));
+        traject_z0->setGeometry(QRect(450, 20, 71, 41));
         traject_r0 = new QLineEdit(frame);
         traject_r0->setObjectName(QString::fromUtf8("traject_r0"));
-        traject_r0->setGeometry(QRect(580, 20, 61, 41));
+        traject_r0->setGeometry(QRect(580, 20, 91, 41));
         isUseScanDetect = new QCheckBox(frame);
         isUseScanDetect->setObjectName(QString::fromUtf8("isUseScanDetect"));
         isUseScanDetect->setGeometry(QRect(1090, 10, 141, 61));
@@ -524,7 +533,7 @@ public:
         creatG_but = new QPushButton(tab_2);
         creatG_but->setObjectName(QString::fromUtf8("creatG_but"));
         creatG_but->setGeometry(QRect(260, 940, 201, 41));
-        tableView = new reason_tbview(tab_2);
+        tableView = new QTableView(tab_2);
         tableView->setObjectName(QString::fromUtf8("tableView"));
         tableView->setGeometry(QRect(0, 0, 731, 871));
         tabWidget->addTab(tab_2, QString());
@@ -572,13 +581,18 @@ public:
         label_14->setText(QApplication::translate("MainWindow", "mm/s", nullptr));
         label_17->setText(QApplication::translate("MainWindow", "mm/s", nullptr));
         AxleVelocity_lin->setText(QApplication::translate("MainWindow", "1", nullptr));
+        V_label_8->setText(QApplication::translate("MainWindow", "\347\233\264\347\272\277\351\200\237\345\272\246: ", nullptr));
+        label_18->setText(QApplication::translate("MainWindow", "mm/s", nullptr));
+        lineVelocity_lin->setText(QApplication::translate("MainWindow", "1", nullptr));
+        label_19->setText(QApplication::translate("MainWindow", "mm/s", nullptr));
+        V_label_11->setText(QApplication::translate("MainWindow", "\345\234\206\345\274\247\351\200\237\345\272\246: ", nullptr));
+        arcVelocity_lin->setText(QApplication::translate("MainWindow", "1", nullptr));
         imageProcess_but->setText(QApplication::translate("MainWindow", "imageProcess", nullptr));
         startScan_But->setText(QApplication::translate("MainWindow", "\345\220\257\345\212\250", nullptr));
         alarmReset_but->setText(QApplication::translate("MainWindow", "\346\212\245\350\255\246\345\244\215\344\275\215", nullptr));
         setOrigin_but->setText(QApplication::translate("MainWindow", "\350\256\276\345\256\232\350\275\264\350\231\232\346\213\237\345\216\237\347\202\271", nullptr));
         stopScan_but->setText(QApplication::translate("MainWindow", "\346\232\202\345\201\234", nullptr));
         endScan_but->setText(QApplication::translate("MainWindow", "\347\273\223\346\235\237", nullptr));
-        more_Button->setText(QString());
         DXFimport_but->setText(QApplication::translate("MainWindow", "\345\257\274\345\205\245DXF", nullptr));
         traject_y0->setText(QApplication::translate("MainWindow", "0", nullptr));
         setTrajecStart_but->setText(QApplication::translate("MainWindow", "\350\256\276\345\256\232\350\275\250\350\277\271\350\265\267\347\202\271", nullptr));

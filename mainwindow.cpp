@@ -2,13 +2,9 @@
 #include "ui_mainwindow.h"
 #include "DataBase.h"
 #include "graphicTool.h"
-#include "arc_item.h"
 #include "CoustomGraphicsView.h"
 #include "dxfhelper.h"
-
-//#include <drw_objects.h>
-//#include "libdxfrw.h"
-//#include "drw_interface.h"
+#include "scandetect_frictionwelding.h"
 
 #include <QModbusDataUnit>
 #include <QDebug>
@@ -137,36 +133,38 @@ MainWindow::MainWindow(QWidget *parent)
     initDb();
 
 
-    scanCtrlHunChuan = new ScanControlHuiChuan();
-    scanCtrlHunChuan->Rsettings=settings;
-    scanCtrlHunChuan->isUseScanDetect=ui->isUseScanDetect->checkState();
+    scanDetectCtrl = new ScanControlHuiChuan();
+    scanDetectCtrl->Rsettings=settings;
+    scanDetectCtrl->isUseScanDetect=ui->isUseScanDetect->checkState();
 
 
-    connect(scanCtrlHunChuan, &ScanControlAbstract::modbusStateChange,this, &MainWindow::modbusStateChange);
-    connect(ui->xAdd_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_xAddBtn_pressed);
-    connect(ui->xAdd_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_xAddBtn_released);
-    connect(ui->xSub_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_xSubBtn_pressed);
-    connect(ui->xSub_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_xSubBtn_released);
-    connect(ui->yAdd_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_yAddBtn_pressed);
-    connect(ui->yAdd_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_yAddBtn_released);
-    connect(ui->ySub_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_ySubBtn_pressed);
-    connect(ui->ySub_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_ySubBtn_released);
-    connect(ui->zAdd_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_zAddBtn_pressed);
-    connect(ui->zAdd_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_zAddBtn_released);
-    connect(ui->zSub_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_zSubBtn_pressed);
-    connect(ui->zSub_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_zSubBtn_released);
-    connect(ui->rAdd_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_rAddBtn_pressed);
-    connect(ui->rAdd_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_rAddBtn_released);
-    connect(ui->rSub_but, &QPushButton::pressed, scanCtrlHunChuan, &ScanControlAbstract::on_rSubBtn_pressed);
-    connect(ui->rSub_but, &QPushButton::released, scanCtrlHunChuan, &ScanControlAbstract::on_rSubBtn_released);
+    connect(scanDetectCtrl, &ScanControlAbstract::modbusStateChange,this, &MainWindow::modbusStateChange);
+    connect(ui->xAdd_but, &QPushButton::pressed, scanDetectCtrl, &ScanControlAbstract::on_xAddBtn_pressed);
+    connect(ui->xAdd_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_xAddBtn_released);
+    connect(ui->xSub_but, &QPushButton::pressed, scanDetectCtrl, &ScanControlAbstract::on_xSubBtn_pressed);
+    connect(ui->xSub_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_xSubBtn_released);
+    connect(ui->yAdd_but, &QPushButton::pressed, scanDetectCtrl, &ScanControlAbstract::on_yAddBtn_pressed);
+    connect(ui->yAdd_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_yAddBtn_released);
+    connect(ui->ySub_but, &QPushButton::pressed, scanDetectCtrl, &ScanControlAbstract::on_ySubBtn_pressed);
+    connect(ui->ySub_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_ySubBtn_released);
+    connect(ui->zAdd_but, &QPushButton::pressed, scanDetectCtrl, &ScanControlAbstract::on_zAddBtn_pressed);
+    connect(ui->zAdd_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_zAddBtn_released);
+    connect(ui->zSub_but, &QPushButton::pressed, scanDetectCtrl, &ScanControlAbstract::on_zSubBtn_pressed);
+    connect(ui->zSub_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_zSubBtn_released);
+    connect(ui->rAdd_but, &QPushButton::pressed, scanDetectCtrl, &ScanControlAbstract::on_rAddBtn_pressed);
+    connect(ui->rAdd_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_rAddBtn_released);
+    connect(ui->rSub_but, &QPushButton::pressed, scanDetectCtrl, &ScanControlAbstract::on_rSubBtn_pressed);
+    connect(ui->rSub_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_rSubBtn_released);
 
     connect(ui->writeInPLC_but, &QPushButton::clicked, this, &MainWindow::pbWriteInPLC);
-    connect(scanCtrlHunChuan, &ScanControlAbstract::positionChange, this, &MainWindow::updatePosition);
-    connect(ui->alarmReset_but, &QPushButton::clicked, scanCtrlHunChuan, &ScanControlAbstract::on_alarmResetBtn_clicked);
-    connect(ui->startScan_But, &QPushButton::clicked, scanCtrlHunChuan, &ScanControlAbstract::on_startScanBtn_clicked);
-    connect(ui->stopScan_but, &QPushButton::clicked, scanCtrlHunChuan, &ScanControlAbstract::on_stopScanBtn_clicked);
-    connect(ui->endScan_but, &QPushButton::clicked, scanCtrlHunChuan, &ScanControlAbstract::on_endScanBtn_clicked);
+    connect(scanDetectCtrl, &ScanControlAbstract::positionChange, this, &MainWindow::updatePosition);
+    connect(ui->alarmReset_but, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_alarmResetBtn_clicked);
+    connect(ui->startScan_But, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_startScanBtn_clicked);
+    connect(ui->stopScan_but, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_stopScanBtn_clicked);
+    connect(ui->endScan_but, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_endScanBtn_clicked);
 
+    connect(ui->lineVelocity_lin, &QLineEdit::editingFinished, this, &MainWindow::PblinVelocity_lin);
+    connect(ui->arcVelocity_lin, &QLineEdit::editingFinished, this, &MainWindow::PbarcVelocity_lin);
     connect(ui->AxleVelocity_lin, &QLineEdit::editingFinished, this, &MainWindow::PbAxleVelocity_lin);
     connect(ui->setOrigin_but, &QPushButton::clicked, this, &MainWindow::PbSetOrigin);
     connect(ui->insertArcPos_but, &QPushButton::clicked, this, &MainWindow::pbAddArcPos);
@@ -180,20 +178,20 @@ MainWindow::MainWindow(QWidget *parent)
 
     addRoute = new addRoute_dialog(this);
 
-    connect(addRoute, &addRoute_dialog::addBut_x_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_xAddBtn_pressed);
-    connect(addRoute, &addRoute_dialog::addBut_x_released, scanCtrlHunChuan, &ScanControlAbstract::on_xAddBtn_released);
-    connect(addRoute, &addRoute_dialog::subBut_x_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_xSubBtn_pressed);
-    connect(addRoute, &addRoute_dialog::subBut_x_released, scanCtrlHunChuan, &ScanControlAbstract::on_xSubBtn_released);
-    connect(addRoute, &addRoute_dialog::addBut_y_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_yAddBtn_pressed);
-    connect(addRoute, &addRoute_dialog::addBut_y_released, scanCtrlHunChuan, &ScanControlAbstract::on_yAddBtn_released);
-    connect(addRoute, &addRoute_dialog::subBut_y_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_ySubBtn_pressed);
-    connect(addRoute, &addRoute_dialog::subBut_y_released, scanCtrlHunChuan, &ScanControlAbstract::on_ySubBtn_released);
-    connect(addRoute, &addRoute_dialog::addBut_z_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_zAddBtn_pressed);
-    connect(addRoute, &addRoute_dialog::subBut_z_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_zSubBtn_pressed);
-    connect(addRoute, &addRoute_dialog::addBut_z_released, scanCtrlHunChuan, &ScanControlAbstract::on_zAddBtn_released);
-    connect(addRoute, &addRoute_dialog::subBut_z_released, scanCtrlHunChuan, &ScanControlAbstract::on_zSubBtn_released);
-    connect(addRoute, &addRoute_dialog::subBut_r_pressed, scanCtrlHunChuan, &ScanControlAbstract::on_rSubBtn_pressed);
-    connect(addRoute, &addRoute_dialog::subBut_r_released, scanCtrlHunChuan, &ScanControlAbstract::on_rSubBtn_released);
+    connect(addRoute, &addRoute_dialog::addBut_x_pressed, scanDetectCtrl, &ScanControlAbstract::on_xAddBtn_pressed);
+    connect(addRoute, &addRoute_dialog::addBut_x_released, scanDetectCtrl, &ScanControlAbstract::on_xAddBtn_released);
+    connect(addRoute, &addRoute_dialog::subBut_x_pressed, scanDetectCtrl, &ScanControlAbstract::on_xSubBtn_pressed);
+    connect(addRoute, &addRoute_dialog::subBut_x_released, scanDetectCtrl, &ScanControlAbstract::on_xSubBtn_released);
+    connect(addRoute, &addRoute_dialog::addBut_y_pressed, scanDetectCtrl, &ScanControlAbstract::on_yAddBtn_pressed);
+    connect(addRoute, &addRoute_dialog::addBut_y_released, scanDetectCtrl, &ScanControlAbstract::on_yAddBtn_released);
+    connect(addRoute, &addRoute_dialog::subBut_y_pressed, scanDetectCtrl, &ScanControlAbstract::on_ySubBtn_pressed);
+    connect(addRoute, &addRoute_dialog::subBut_y_released, scanDetectCtrl, &ScanControlAbstract::on_ySubBtn_released);
+    connect(addRoute, &addRoute_dialog::addBut_z_pressed, scanDetectCtrl, &ScanControlAbstract::on_zAddBtn_pressed);
+    connect(addRoute, &addRoute_dialog::subBut_z_pressed, scanDetectCtrl, &ScanControlAbstract::on_zSubBtn_pressed);
+    connect(addRoute, &addRoute_dialog::addBut_z_released, scanDetectCtrl, &ScanControlAbstract::on_zAddBtn_released);
+    connect(addRoute, &addRoute_dialog::subBut_z_released, scanDetectCtrl, &ScanControlAbstract::on_zSubBtn_released);
+    connect(addRoute, &addRoute_dialog::subBut_r_pressed, scanDetectCtrl, &ScanControlAbstract::on_rSubBtn_pressed);
+    connect(addRoute, &addRoute_dialog::subBut_r_released, scanDetectCtrl, &ScanControlAbstract::on_rSubBtn_released);
 
 
     zomm_gview = new Graphics_view_zoom(ui->graphicsView);
@@ -205,8 +203,10 @@ MainWindow::MainWindow(QWidget *parent)
     //ui->graphicsView->setSceneRect(0, 0, 750, 500);
 
     connect(zomm_gview,SIGNAL(zoomed(void)),this,SLOT(graphics_view_zoom(void)));
+
     connect(ui->tableView->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &MainWindow::tableSelectionChanged);
+
     connect(scene, &QGraphicsScene::selectionChanged,
             this, &MainWindow::graphicsSelectionChanged);
 
@@ -224,7 +224,7 @@ MainWindow::~MainWindow()
     delete addRoute;
     delete scene;
     delete zomm_gview;
-    delete scanCtrlHunChuan;
+    delete scanDetectCtrl;
     delete settings;
     delete ui;
 
@@ -232,8 +232,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
 {
-//        qDebug()<<"updatePosition"<<static_cast<double>(pos.x()-scanCtrlHunChuan->virtualOrigin().x())
-//               <<"y"<<static_cast<double>(pos.y()-scanCtrlHunChuan->virtualOrigin().y())
+//        qDebug()<<"updatePosition"<<static_cast<double>(pos.x()-scanDetectCtrl->virtualOrigin().x())
+//               <<"y"<<static_cast<double>(pos.y()-scanDetectCtrl->virtualOrigin().y())
 //              <<"z"<<cur_z
 //             <<"r"<<cur_r;
 
@@ -362,10 +362,10 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
 
 void MainWindow::PbModbusConnectBtn(){
 
-    scanCtrlHunChuan->setModbusTcpIP(ui->ip_lin->text());
-    scanCtrlHunChuan->setModbusPort(ui->port_lin->text().toInt());
+    scanDetectCtrl->setModbusTcpIP(ui->ip_lin->text());
+    scanDetectCtrl->setModbusPort(ui->port_lin->text().toInt());
 
-    scanCtrlHunChuan->on_connectBtn_clicked();
+    scanDetectCtrl->on_connectBtn_clicked();
 
 
     settings->setValue("ip", ui->ip_lin->text());
@@ -388,7 +388,7 @@ void MainWindow::pbAddElliptical()
 
 void MainWindow::pbAddArcPos()
 {
-    if(!scanCtrlHunChuan->modbusState()){
+    if(!scanDetectCtrl->modbusState()){
         QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
         return;
     }
@@ -399,7 +399,7 @@ void MainWindow::pbAddArcPos()
 
 void MainWindow::pbAddLinePos()
 {
-    if(!scanCtrlHunChuan->modbusState()){
+    if(!scanDetectCtrl->modbusState()){
         QMessageBox::warning(nullptr, "error",QString::fromLocal8Bit( " 通讯未连接   "));
         return;
     }
@@ -488,11 +488,11 @@ void MainWindow::pbWriteInPLC()
 {
 
 
-    if(!scanCtrlHunChuan->modbusState()){
+    if(!scanDetectCtrl->modbusState()){
         QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
         return;}
 
-    if(!scanCtrlHunChuan->modbusState()){
+    if(!scanDetectCtrl->modbusState()){
         QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
         return;}
 
@@ -556,7 +556,7 @@ void MainWindow::pbWriteInPLC()
 
 
 
-    scanCtrlHunChuan->writeRegisterGroup(3000,modelDates,1);
+    scanDetectCtrl->writeRegisterGroup(3000,modelDates,1);
 
 
 }
@@ -603,13 +603,13 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
 
         if(type=="line"){
 
-            line_item* line = new line_item(start_pos,end_pos,row,scene);
+            line_item* line = new line_item(start_pos,end_pos,i,scene);
             scene->addItem(line);
             rownum_itme_lst.append(row);
         }else if(type=="arc"){
 
 
-            arc_item* arc = new arc_item(start_pos,trans_pos,end_pos,row,scene);
+            arc_item* arc = new arc_item(start_pos,trans_pos,end_pos,i,scene);
             scene->addItem(arc);
             rownum_itme_lst.append(row);
 
@@ -749,7 +749,7 @@ void MainWindow::pbDXFimportBut()
                 model->setData (model->index(i,10),end.x());
                 model->setData (model->index(i,11),end.y());
 
-                line_item *itme =new line_item(start,end,i+1,scene);
+                line_item *itme =new line_item(start,end,i,scene);
                 scene->addItem(itme);
 
                 qDebug()<<"***lin:*****start_x="<<start.x()<<"   start_y"<<start.y()<<"    end_x="<<end.x()<<"end_y:"<<end.y()<<" i "<<i;
@@ -780,7 +780,7 @@ void MainWindow::pbDXFimportBut()
                 model->setData (model->index(i,11),end_arc.y());
 
                 qDebug()<<"***arc:*****start_arc="<<start_arc<<"trans_arc="<<trans_arc<<"end_arc="<<end_arc<<" i "<<i;;
-                arc_item *itme =new arc_item(start_arc,trans_arc,end_arc,i+1,scene);
+                arc_item *itme =new arc_item(start_arc,trans_arc,end_arc,i,scene);
                 scene->addItem(itme);
             }
 
@@ -985,17 +985,48 @@ void MainWindow::cleanTable(){
 
 void MainWindow::PbAxleVelocity_lin(){
 
-    if(!scanCtrlHunChuan->modbusState()){
+    if(!scanDetectCtrl->modbusState()){
         QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
         return;
     }
 
     qDebug()<<"AxleV"<<ui->AxleVelocity_lin->text().toFloat();
-    scanCtrlHunChuan->on_x_velocity_editingFinished(ui->AxleVelocity_lin->text().toFloat());
-    scanCtrlHunChuan->on_y_velocity_editingFinished(ui->AxleVelocity_lin->text().toFloat());
+    scanDetectCtrl->on_jog_velocity_editingFinished(ui->AxleVelocity_lin->text().toFloat());
     settings->setValue("AxleV", ui->AxleVelocity_lin->text());
     //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 速度已设置   "));
     ui->messText_lin->setText(QString::fromLocal8Bit(" 速度已设置   "));
+
+
+}
+
+void MainWindow::PblinVelocity_lin(){
+
+    if(!scanDetectCtrl->modbusState()){
+        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
+        return;
+    }
+
+    qDebug()<<"PblinVelocity_lin"<<ui->lineVelocity_lin->text().toFloat();
+    scanDetectCtrl->on_x_or_line_velocity_editingFinished(ui->lineVelocity_lin->text().toFloat());
+    settings->setValue("AxleV", ui->lineVelocity_lin->text());
+    //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 直线速度已设置   "));
+    ui->messText_lin->setText(QString::fromLocal8Bit(" 直线速度已设置   "));
+
+
+}
+
+void MainWindow::PbarcVelocity_lin(){
+
+    if(!scanDetectCtrl->modbusState()){
+        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
+        return;
+    }
+
+    qDebug()<<"PbarcVelocity_lin"<<ui->arcVelocity_lin->text().toFloat();
+    scanDetectCtrl->on_y_or_arc_velocity_editingFinished(ui->arcVelocity_lin->text().toFloat());
+    settings->setValue("AxleV", ui->arcVelocity_lin->text());
+    //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 圆弧速度已设置   "));
+    ui->messText_lin->setText(QString::fromLocal8Bit(" 圆弧速度已设置   "));
 
 
 }
@@ -1089,13 +1120,13 @@ void MainWindow::PbMoveToPosition(){
 
     qDebug()<<"x"<<x<<"y"<<y;
     // 调用运动控制，设置目标位置
-    scanCtrlHunChuan->runTargetPosition(x, y, z, r);
+    scanDetectCtrl->runTargetPosition(x, y, z, r);
 
 }
 void MainWindow::PbSetOrigin(){
 
 
-    scanCtrlHunChuan->on_setOriginBtn_clicked(0,0,true);
+    scanDetectCtrl->on_setOriginBtn_clicked(0,0,true);
 
 
 
@@ -1106,7 +1137,7 @@ void MainWindow::PbSetOrigin(){
 void MainWindow::isUseScanDetect(bool isUseScanMove){
 
 
-    scanCtrlHunChuan->isUseScanDetect=scanCtrlHunChuan;
+    scanDetectCtrl->isUseScanDetect=scanDetectCtrl;
 
 
 }
@@ -1118,7 +1149,7 @@ void MainWindow::isUseScanDetect(bool isUseScanMove){
 //{
 
 
-//    if(!scanCtrlHunChuan->modbusState()){
+//    if(!scanDetectCtrl->modbusState()){
 //        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
 //        return;}
 
@@ -1190,7 +1221,7 @@ void MainWindow::isUseScanDetect(bool isUseScanMove){
 //        float y = pt[1];
 //        float z = pt[2];
 //        float r = pt[3];
-//        scanCtrlHunChuan->runTargetPosition(x,y,z,r);
+//        scanDetectCtrl->runTargetPosition(x,y,z,r);
 //        currentTargetPos.x=x;
 //        currentTargetPos.y=y;
 //        currentTargetPos.z=z;
@@ -1267,7 +1298,7 @@ void MainWindow::isUseScanDetect(bool isUseScanMove){
 //void MainWindow::pbIpLineEdit(const QString &arg1)
 //{
 //    qDebug()<<"on_ipLineEdit_textChanged";
-//    scanCtrlHunChuan->setModbusTcpIP(arg1);
+//    scanDetectCtrl->setModbusTcpIP(arg1);
 //}
 //void MainWindow::readPendingDatagrams()
 //{

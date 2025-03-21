@@ -585,7 +585,7 @@
     <widget class="QLabel" name="V_label_8">
      <property name="geometry">
       <rect>
-       <x>570</x>
+       <x>610</x>
        <y>10</y>
        <width>131</width>
        <height>26</height>
@@ -601,7 +601,93 @@
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>轴速度: </string>
+      <string>直线速度: </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_18">
+     <property name="geometry">
+      <rect>
+       <x>850</x>
+       <y>10</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>SansSerif</family>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>mm/s</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineVelocity_lin">
+     <property name="geometry">
+      <rect>
+       <x>730</x>
+       <y>10</y>
+       <width>111</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_19">
+     <property name="geometry">
+      <rect>
+       <x>1190</x>
+       <y>10</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>SansSerif</family>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>mm/s</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="V_label_11">
+     <property name="geometry">
+      <rect>
+       <x>950</x>
+       <y>10</y>
+       <width>131</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>SansSerif</family>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>圆弧速度: </string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="arcVelocity_lin">
+     <property name="geometry">
+      <rect>
+       <x>1070</x>
+       <y>10</y>
+       <width>111</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1</string>
      </property>
     </widget>
    </widget>
@@ -623,7 +709,7 @@
     <widget class="QPushButton" name="imageProcess_but">
      <property name="geometry">
       <rect>
-       <x>830</x>
+       <x>870</x>
        <y>20</y>
        <width>121</width>
        <height>41</height>
@@ -674,9 +760,9 @@
     <widget class="QPushButton" name="setOrigin_but">
      <property name="geometry">
       <rect>
-       <x>500</x>
+       <x>520</x>
        <y>70</y>
-       <width>141</width>
+       <width>181</width>
        <height>41</height>
       </rect>
      </property>
@@ -728,63 +814,10 @@
       <string>结束</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="more_Button">
-     <property name="geometry">
-      <rect>
-       <x>640</x>
-       <y>30</y>
-       <width>24</width>
-       <height>30</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <family>Arial</family>
-       <pointsize>9</pointsize>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>:/img/unfold-01.png</normaloff>:/img/unfold-01.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>12</width>
-       <height>12</height>
-      </size>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-    </widget>
     <widget class="Line" name="line_3">
      <property name="geometry">
       <rect>
-       <x>650</x>
+       <x>700</x>
        <y>20</y>
        <width>20</width>
        <height>81</height>
@@ -818,7 +851,7 @@
       <rect>
        <x>320</x>
        <y>20</y>
-       <width>61</width>
+       <width>71</width>
        <height>41</height>
       </rect>
      </property>
@@ -850,7 +883,7 @@
       <rect>
        <x>190</x>
        <y>20</y>
-       <width>61</width>
+       <width>81</width>
        <height>41</height>
       </rect>
      </property>
@@ -905,7 +938,7 @@
     <widget class="QPushButton" name="ascan_but">
      <property name="geometry">
       <rect>
-       <x>700</x>
+       <x>740</x>
        <y>20</y>
        <width>111</width>
        <height>41</height>
@@ -996,7 +1029,7 @@
       <rect>
        <x>450</x>
        <y>20</y>
-       <width>61</width>
+       <width>71</width>
        <height>41</height>
       </rect>
      </property>
@@ -1009,7 +1042,7 @@
       <rect>
        <x>580</x>
        <y>20</y>
-       <width>61</width>
+       <width>91</width>
        <height>41</height>
       </rect>
      </property>
@@ -1202,7 +1235,7 @@
        <string>GCode运行（plc）</string>
       </property>
      </widget>
-     <widget class="reason_tbview" name="tableView">
+     <widget class="QTableView" name="tableView">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -1217,11 +1250,6 @@
   </widget>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>reason_tbview</class>
-   <extends>QTableView</extends>
-   <header>reason_tbview.h</header>
-  </customwidget>
   <customwidget>
    <class>TGraphicsViewRefactor</class>
    <extends>QGraphicsView</extends>

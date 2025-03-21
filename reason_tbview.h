@@ -1,4 +1,4 @@
-#ifndef REASON_TBVIEW
+﻿#ifndef REASON_TBVIEW
 #define REASON_TBVIEW
 #include <QMenu>
 #include <QTableView>

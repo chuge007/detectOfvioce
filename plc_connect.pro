@@ -19,33 +19,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Graphics_view_zoom.cpp \
-    QTableViewSpe.cpp \
     addroute_dialog.cpp \
-    booleandelegate.cpp \
-    centeredcheckboxwidget.cpp \
     dxflib/dl_dxf.cpp \
     dxflib/dl_writer_ascii.cpp \
     dxflib/dxfhelper.cpp \
     dxflib/dxfreader.cpp \
-    floatpointdelegate.cpp \
-    graphicTool.cpp \
-    icondelegate.cpp \
     main.cpp \
     mainwindow.cpp \
-    reason_tbview.cpp \
-    route_worksence.cpp \
-    scancontrolhuichuan.cpp \
-    tgraphicsviewrefactor.cpp
+    scanMovecontrl/scancontrolhuichuan.cpp \
+    scanMovecontrl/scandetect_frictionwelding.cpp \
+    widgetDefin/Graphics_view_zoom.cpp \
+    widgetDefin/QTableViewSpe.cpp \
+    widgetDefin/graphicTool.cpp \
+    widgetDefin/route_worksence.cpp \
+    widgetDefin/tgraphicsviewrefactor.cpp
 
 HEADERS += \
-    CoustomGraphicsView.h \
     DataBase.h \
-    Graphics_view_zoom.h \
-    QTableViewSpe.h \
     addroute_dialog.h \
-    booleandelegate.h \
-    centeredcheckboxwidget.h \
     dxflib/dl_attributes.h \
     dxflib/dl_codes.h \
     dxflib/dl_creationadapter.h \
@@ -59,16 +50,17 @@ HEADERS += \
     dxflib/dl_writer_ascii.h \
     dxflib/dxfhelper.h \
     dxflib/dxfreader.h \
-    floatpointdelegate.h \
-    graphicTool.h \
-    icondelegate.h \
     mainwindow.h \
-    modbusconfig.h \
-    reason_tbview.h \
-    route_worksence.h \
-    scancontrolabstract.h \
-    scancontrolhuichuan.h \
-    tgraphicsviewrefactor.h
+    scanMovecontrl/modbusconfig.h \
+    scanMovecontrl/scancontrolabstract.h \
+    scanMovecontrl/scancontrolhuichuan.h \
+    scanMovecontrl/scandetect_frictionwelding.h \
+    widgetDefin/CoustomGraphicsView.h \
+    widgetDefin/Graphics_view_zoom.h \
+    widgetDefin/QTableViewSpe.h \
+    widgetDefin/graphicTool.h \
+    widgetDefin/route_worksence.h \
+    widgetDefin/tgraphicsviewrefactor.h
 
 FORMS += \
     addroute_dialog.ui \

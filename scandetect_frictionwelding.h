@@ -1,21 +1,21 @@
-﻿#ifndef ScanControlHuiChuan_H
-#define ScanControlHuiChuan_H
+﻿#ifndef scanDetect_frictionWelding_H
+#define scanDetect_frictionWelding_H
 
 #include "scancontrolabstract.h"
 #include <QProgressDialog>
 #include <QDebug>
 
 
-class ScanControlHuiChuan : public ScanControlAbstract  // 修改继承关系
+class scanDetect_frictionWelding : public ScanControlAbstract  // 修改继承关系
 {
     Q_OBJECT
 
 
 
 public:
-    explicit ScanControlHuiChuan(QObject *parent = nullptr);
+    explicit scanDetect_frictionWelding(QObject *parent = nullptr);
 
-    ~ScanControlHuiChuan();
+    ~scanDetect_frictionWelding();
 
     void setModbusTcpIP(QString ip) { PlcIP = ip;}   //设置IP
     void setModbusPort(int port) { PlcPort = port;}   //设置端口
@@ -33,7 +33,7 @@ public:
     void setYAxisVelocity(float vel);       //设置Y轴速度
     void setJogVelocity(float vel);         //设置点动速度
 
-    void setAxisJogStep(int step);          //设置轴寸动步进
+
 
     bool isXCrossed();   //判断扫查区域的X轴是否越界
     bool isYCrossed();   //判断扫查区域的Y轴是否越界
@@ -45,10 +45,7 @@ public:
     bool haveMachine() const { return isHaveMachine;}   //是否有设置机械原点
     bool haveLimit() const {return isHaveLimit;}        //是否有设置机械极限位
 
-    void setManualModel(bool states);
-    bool nextScan();
 
-    bool sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, int address);
     void writeRegisterGroup( int startAddress,
                             const QVector<modelDate> &modelDates, int serverAddress);
     bool isRunTarget = false;   //执行目标点
@@ -82,9 +79,7 @@ public slots:
     void on_addSub_velocity_editingFinished(float val) {Q_UNUSED(val)}     //点动加减速
     //-----End
 
-    void on_jogStep_1_clicked();    //点动步进1
-    void on_jogStep_5_clicked();    //点动步进5
-    void on_jogStep_10_clicked();   //点动不经10
+
 
     //寸动
     void on_xAddBtn_clicked();  //X+
@@ -112,7 +107,7 @@ public slots:
     void on_alarmResetBtn_clicked();    //报警复位
     void on_setLimitBtn_clicked();      //设置机械极限位
     void on_setMachineBtn_clicked();    //设置机械极原点
-    void on_singleScan_toggled(bool checked);   //单边模式
+
 
     void runTargetPosition(double x, double y,double z, double r);
 
@@ -134,11 +129,11 @@ private:
     float readModbusFloatData(int v1, int v2);
     QPair<quint16, quint16> writeModbusFloatData(float value);
     void writeHoldingRegistersData(int address, quint16 size, float data);
-    void readAxisRunStatus(int address, quint16 size);
-    void writeAxisStopStatus(int address);
-    void writeEndScanStatus();
-    void writeBackZero();
-    void readAxisEndState();
+
+
+
+
+
     void writeAxisVelocity(int address, quint16 size, float data);
     void readAxisVelocity(int address, quint16 size);
     void readAxisJogStatus(int address);
@@ -151,16 +146,13 @@ private:
 
     void initTasks();               //初始化任务
 
-    void creataTasksTable();        //创建自动扫查任务
-    void perfromStartScanTasks();   //执行自动扫查任务
+
     void updataCurrentPos();        //更新当前点位置
 
-    void perfromStopScanTasks();    //执行暂停
-    void perfromEndScanTasks();     //结束扫查
 
     void perfromJogTasks();         //点动
 
-
+    bool sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, int address);
 
 
 
@@ -211,8 +203,27 @@ private:
 
 };
 
-#endif // ScanControlHuiChuan_H
+#endif // scanDetect_frictionWelding_H
 
+
+
+//    void readAxisEndState();
+//    void writeBackZero();
+//    void writeEndScanStatus();
+
+//    void writeAxisStopStatus(int address);
+//    void readAxisRunStatus(int address, quint16 size);
+    //bool nextScan();
+    //void setManualModel(bool states);
+//void on_singleScan_toggled(bool checked);   //单边模式
+//    void setAxisJogStep(int step);          //设置轴寸动步进
+//void on_jogStep_1_clicked();    //点动步进1
+//void on_jogStep_5_clicked();    //点动步进5
+//void on_jogStep_10_clicked();   //点动不经10
+//    void creataTasksTable();        //创建自动扫查任务
+//    void perfromStartScanTasks();   //执行自动扫查任务
+//    void perfromStopScanTasks();    //执行暂停
+//    void perfromEndScanTasks();     //结束扫查
 //    void writeNameRegisterGroup(QModbusClient *modbusDevice, int serverAddress,QList<QString> nameList);
 //    void writeRegisterGroup(QModbusClient *modbusDevice, int startAddress, int remainingRegisters, QVector<uint16_t> data, int serverAddress);
 

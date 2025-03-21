@@ -99,6 +99,9 @@ public:
 
     virtual void setManualModel(bool states) = 0;   //设置手动模式
     virtual bool nextScan() = 0;                    //扫查下一步
+//____________________
+    virtual bool sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, int address)=0;
+
     bool isUseScanDetect;
     struct modelDate {
         QString type;                        // 保存 "arc" 或 "line" 字符串
@@ -127,8 +130,8 @@ public slots:
     virtual void setYLenght(float lenght)  = 0;     //设置扫查Y轴
     virtual void setYStep(float step)      = 0;     //设置扫查步进
 
-    virtual void on_x_velocity_editingFinished(float val) = 0;   // 设置X轴速度
-    virtual void on_y_velocity_editingFinished(float val) = 0;   // 设置Y轴速度
+    virtual void on_x_or_line_velocity_editingFinished(float val) = 0;   // 设置X轴速度
+    virtual void on_y_or_arc_velocity_editingFinished(float val) = 0;   // 设置Y轴速度
     virtual void on_jog_velocity_editingFinished(float val) = 0; // 设置点动速度
     //台达速度设置接口
     virtual void on_backOrigin_velocity_editingFinished(float val) = 0; //回原点速度

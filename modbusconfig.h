@@ -80,7 +80,7 @@
 
 
 
-//摩擦焊定义
+//汇川摩擦焊定义
 
 //D区
 #define frictionWeldingMovePointDate   3000
