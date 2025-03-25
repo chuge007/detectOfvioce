@@ -133,7 +133,7 @@ MainWindow::MainWindow(QWidget *parent)
     initDb();
 
 
-    scanDetectCtrl = new ScanControlHuiChuan();
+    scanDetectCtrl = new scanDetect_frictionWelding();
     scanDetectCtrl->Rsettings=settings;
     scanDetectCtrl->isUseScanDetect=ui->isUseScanDetect->checkState();
 
@@ -232,10 +232,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
 {
-//        qDebug()<<"updatePosition"<<static_cast<double>(pos.x()-scanDetectCtrl->virtualOrigin().x())
-//               <<"y"<<static_cast<double>(pos.y()-scanDetectCtrl->virtualOrigin().y())
-//              <<"z"<<cur_z
-//             <<"r"<<cur_r;
+    //        qDebug()<<"updatePosition"<<static_cast<double>(pos.x()-scanDetectCtrl->virtualOrigin().x())
+    //               <<"y"<<static_cast<double>(pos.y()-scanDetectCtrl->virtualOrigin().y())
+    //              <<"z"<<cur_z
+    //             <<"r"<<cur_r;
 
     ui->xCurPos_lab->setText(QString::number(static_cast<double>(pos.x()), 'f', 3));
     ui->yCurPos_lab->setText(QString::number(static_cast<double>(pos.y()), 'f', 3));
@@ -247,6 +247,19 @@ void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
     addRoute->set_Zcurpos(QString::number(static_cast<double>(cur_z), 'f', 3));
     addRoute->set_Rcurpos(QString::number(static_cast<double>(cur_r), 'f', 3));
 
+    // 删除之前的圆圈（如果有）
+    QList<QGraphicsItem*> items = scene->items();
+    for (QGraphicsItem* item : items) {
+        if (item->type() == QGraphicsEllipseItem::Type) {
+            scene->removeItem(item);
+            delete item;
+        }
+    }
+
+    // 在新位置绘制红色小圆圈
+    QGraphicsEllipseItem* circle = new QGraphicsEllipseItem(pos.x() - 5, pos.y() - 5, 10, 10); // 半径为 5 的小圆圈
+    circle->setBrush(QBrush(Qt::red));  // 红色
+    scene->addItem(circle);
 
 }
 
@@ -850,21 +863,29 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
     gCode += "N10 G90\n";//绝对坐标模式\n
 
     int row_count =model->rowCount();
-    float x0,y0,z0,r0,x1,y1,z1,r1;
+    float x0,y0,z0,r0,x1,y1,z1,r1,x2,y2,z2,r2;
     QString name;
     QPointF start_pos,end_pos,trans_pos ;
     int firstNum=10;
-    if(row_count>0){
+    if(row_count<0){return "";}
         for(int i = 0; i < row_count; ++i)
         {
             name=model->data(model->index(i, 1), Qt::DisplayRole).toString();
             x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
             y0=model->data(model->index(i, 3), Qt::DisplayRole).toFloat();
-            r0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
+            z0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
+            r0=model->data(model->index(i, 5), Qt::DisplayRole).toFloat();
+
             x1=model->data(model->index(i, 6), Qt::DisplayRole).toFloat();
             y1=model->data(model->index(i, 7), Qt::DisplayRole).toFloat();
-            r1=model->data(model->index(i, 8), Qt::DisplayRole).toFloat();
-            //int row= model->data(model->index(i, 16), Qt::DisplayRole).toInt();
+            z1=model->data(model->index(i, 8), Qt::DisplayRole).toFloat();
+            r1=model->data(model->index(i, 9), Qt::DisplayRole).toFloat();
+
+            x2=model->data(model->index(i, 10), Qt::DisplayRole).toFloat();
+            y2=model->data(model->index(i, 11), Qt::DisplayRole).toFloat();
+            z2=model->data(model->index(i, 12), Qt::DisplayRole).toFloat();
+            r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
+
 
             if(i==0){
                 start_pos = QPointF( 0,0 );
@@ -874,11 +895,11 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
                 start_pos = QPointF( start_x,start_y);
             }
             if(name=="line"){
-                end_pos = QPointF( x0,y0 );
+                end_pos = QPointF( x2,y2 );
                 gCode += QString("N%1 G01 X%2 Y%3\n").arg(firstNum).arg(end_pos.x()).arg(end_pos.y());
 
             }else{
-                end_pos = QPointF( x0,y0 );
+                end_pos = QPointF( x2,y2 );
                 trans_pos= QPointF( x1,y1 );
                 QPointF A, B, C;
                 A=start_pos;
@@ -935,36 +956,55 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
             }
             firstNum+=10;
         }
-    }
+
     gCode += "M30";//程序结束
     return gCode;
 }
 
 
-void MainWindow::exportGCodeToFile(const QString& filePath, const QString& gCode)
+void MainWindow::exportGCodeToFile(const QString& Path, const QString& gCode)
 {
-    QFile file(filePath);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        out << gCode;
-        file.close();
-    } else {
-        //qDebug() << "无法打开文件：" << filePath;
-        qDebug()<<"can not open file:"<<filePath;
-    }
+
+
+        // 指定目标文件夹路径
+        QString folderPath = "C:/ProgramData/CODESYS/Simulation/PlcLogic/";
+
+        if(Path!=""){folderPath=Path;}
+        // 确保文件夹存在，如果不存在则创建
+        QDir dir(folderPath);
+        if (!dir.exists()) {
+            if (!dir.mkpath(folderPath)) {
+                qDebug() << "Failed to create directory:" << folderPath;
+                return;
+            }
+        }
+
+        // 设置文件的完整路径，可以指定一个固定文件名或根据需要动态生成文件名
+         QString filePath = folderPath + "gcode_output.cnc"; // 这里的文件名是固定的 "gcode_output.gcode"
+
+        // 打开文件并写入内容
+        QFile file(filePath);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&file);
+            out << gCode;
+            file.close();
+        } else {
+            qDebug() << "Can not open file:" << filePath;
+        }
+
+
 }
 
 
 void MainWindow::PbCreatGcode()
 {
-    QString filePath = QFileDialog::getSaveFileName(
-                this, "导出 G 代码", "", "G Code Files (*.gcode);;All Files (*)");
 
-    if (!filePath.isEmpty()) {
+
         QString gCode = generateGCode(/*trackSegments*/); // 假设 trackSegments 存储了轨迹
-        exportGCodeToFile(filePath, gCode);
-        QMessageBox::information(this, "导出成功", "G 代码已成功导出！");
-    }
+        exportGCodeToFile("", gCode);
+        QMessageBox::warning(nullptr, "", QString::fromLocal8Bit("导出成功，可启动执行"));
+
+
 }
 
 

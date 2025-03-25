@@ -8,19 +8,17 @@
 #include <QUdpSocket>
 #include <QSqlTableModel>
 
-#include "sn_dialog.h"
-#include "openDefaut_tested_dialog.h"
 #include "floatpointdelegate.h"
 #include "icondelegate.h"
 #include "booleandelegate.h"
-#include "scancontrolhuichuan.h"
 #include "addroute_dialog.h"
 #include "Graphics_view_zoom.h"
 #include "route_worksence.h"
 
+#include "scancontrolabstract.h"
+#include <QProgressDialog>
 
-
-using modelDate = ScanControlAbstract::modelDate;
+//using modelDate = ScanControlAbstract::modelDate;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

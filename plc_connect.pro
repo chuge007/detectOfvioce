@@ -26,7 +26,6 @@ SOURCES += \
     dxflib/dxfreader.cpp \
     main.cpp \
     mainwindow.cpp \
-    scanMovecontrl/scancontrolhuichuan.cpp \
     scanMovecontrl/scandetect_frictionwelding.cpp \
     widgetDefin/Graphics_view_zoom.cpp \
     widgetDefin/QTableViewSpe.cpp \
@@ -53,7 +52,6 @@ HEADERS += \
     mainwindow.h \
     scanMovecontrl/modbusconfig.h \
     scanMovecontrl/scancontrolabstract.h \
-    scanMovecontrl/scancontrolhuichuan.h \
     scanMovecontrl/scandetect_frictionwelding.h \
     widgetDefin/CoustomGraphicsView.h \
     widgetDefin/Graphics_view_zoom.h \
@@ -308,6 +306,10 @@ else:unix:!macx: QMAKE_CXXFLAGS+= -fopenmp -O2
 
 #message("include path: $$UT_SDK_INCLUDE_PATH $${NEXT_QT_DEPENDT_PATH}")
 INCLUDEPATH += $${UT_SDK_INCLUDE_PATH} $$PWD/PublicModules
+INCLUDEPATH += $$PWD/widgetDefin
+INCLUDEPATH += $$PWD/scanMovecontrl
+INCLUDEPATH += $$PWD/dxflib
+
 DEPENDPATH += $${NEXT_QT_DEPENDT_PATH}
 win32:CONFIG(release, debug|release): LIBS +=
 else:win32:CONFIG(debug, debug|release): LIBS += -lqBreakpad

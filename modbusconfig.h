@@ -1,6 +1,12 @@
 ﻿#ifndef MODBUSCONFIG_H
 #define MODBUSCONFIG_H
 
+
+#define HuiChuan_IP "192.168.1.88"
+#define TaiDa_IP    "192.168.1.5"
+
+#define HuiChuan_Port 502
+#define TaiDa_Port    502
 //汇川寄存器地址
 #define R_REGISTER_BASE 0x3000  //寄存器R的基地址
 #define X_TARTPOS 2002  //设置X轴位置

@@ -6,10 +6,7 @@
 #include <QTimer>
 #include <QProgressDialog>
 #include <QCoreApplication>
-struct modelDate {
-    QString type;                        // 保存 "arc" 或 "line" 字符串
-    QVector<QVector<float>> points;        // 保存相关点，每个点包含 4 个 float
-};
+
 
 scanDetect_frictionWelding::scanDetect_frictionWelding(QObject *parent):
     ScanControlAbstract(parent)  // 调用基类构造函数
