@@ -1,4 +1,4 @@
-#include "QTableViewSpe.h"
+﻿#include "QTableViewSpe.h"
 #include <QDebug>
 #include <QtGui>
 
@@ -9,6 +9,9 @@ QTableViewSpe::QTableViewSpe(QWidget *parent):QTableView(parent)
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     connect(this, SIGNAL(entered (QModelIndex)), this, SLOT(loadCol(QModelIndex)));
     connect(this, SIGNAL(pressed (QModelIndex)), this, SLOT(eraseCol(QModelIndex)));
+
+
+
 }
 
 

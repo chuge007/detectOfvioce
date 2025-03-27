@@ -32,7 +32,7 @@
 #include <QWaitCondition>
 
 
-void MainWindow::initDb()
+void MainWindow::init()
 {
     // 使用用户数据目录存放数据库文件
     QString appDataPath = QCoreApplication::applicationDirPath();
@@ -56,10 +56,6 @@ void MainWindow::initDb()
         createnewdb(targetPath);
         opendb(targetDb);
     }
-    settings=new QSettings(appDataPath+"/settings.ini", QSettings::IniFormat);
-
-    settings->setValue("targetDb", targetDb);
-    settings->setValue("targetPath", targetPath);
 
 
     // 创建一个表名为 "2d" 的表，包含主键 id，其他字段可以根据需要添加
@@ -110,16 +106,22 @@ void MainWindow::initDb()
     ui->tableView->sortByColumn(0, Qt::AscendingOrder);  // 第 4 列是 sort_order
     ui->tableView->verticalHeader()->setVisible(false);
 
+    settings=new QSettings(appDataPath+"/settings.ini", QSettings::IniFormat);
+
+    settings->setValue("targetDb", targetDb);
+    settings->setValue("targetPath", targetPath);
+
     config.loadConfig(appDataPath+"/settings.ini");
 
     QVariant axleV = settings->value("AxleV");
     QVariant ip = settings->value("ip");
     QVariant port = settings->value("port");
+    QVariant plcType =settings->value("plcType")=0;
 
     ui->AxleVelocity_lin->setText(axleV.toString());
     ui->ip_lin->setText(ip.toString());
     ui->port_lin->setText(port.toString());
-
+    ui->plcType_cb->setCurrentIndex( plcType.toInt());
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -130,13 +132,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    initDb();
+    init();
 
 
     scanDetectCtrl = new scanDetect_frictionWelding();
     scanDetectCtrl->Rsettings=settings;
-    scanDetectCtrl->isUseScanDetect=ui->isUseScanDetect->checkState();
-
 
     connect(scanDetectCtrl, &ScanControlAbstract::modbusStateChange,this, &MainWindow::modbusStateChange);
     connect(ui->xAdd_but, &QPushButton::pressed, scanDetectCtrl, &ScanControlAbstract::on_xAddBtn_pressed);
@@ -174,7 +174,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->cleanTable_but, &QPushButton::clicked, this, &MainWindow::cleanTable);
     connect(ui->connect_but, &QPushButton::clicked, this, &MainWindow::PbModbusConnectBtn);
     connect(ui->moveToPosition_but, &QPushButton::clicked, this, &MainWindow::PbMoveToPosition);
-    connect(ui->isUseScanDetect, &QCheckBox::toggled, this, &MainWindow::isUseScanDetect);
+    connect(ui->plcType_cb, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::cbSelectPlcType);
+    connect(ui->moveUpTabelRow_btu, &QPushButton::clicked, this, &MainWindow::pbmoveUpForSort);
+    connect(ui->moveDownTabelRow_btu,&QPushButton::clicked, this, &MainWindow::pbmoveDownForSort);
+    connect(ui->setTrajecStart_but,&QPushButton::clicked, this, &MainWindow::on_setTrajec_start_clicked);
+
+
+
 
     addRoute = new addRoute_dialog(this);
 
@@ -214,6 +220,8 @@ MainWindow::MainWindow(QWidget *parent)
             this, SLOT(updateSence()));
 
     updateSence();
+
+    cbSelectPlcType(ui->plcType_cb->currentIndex());
 }
 
 MainWindow::~MainWindow()
@@ -462,7 +470,7 @@ void MainWindow::on_delete_but_clicked()
     }
 
 
-    int ok = QMessageBox::warning(this,tr("删除选中的行!"),tr("你确定删除当前选取中的行吗?"),QMessageBox::Yes,QMessageBox::No);
+    int ok = QMessageBox::warning(this,QString::fromLocal8Bit("删除选中的行!"),QString::fromLocal8Bit("你确定删除当前选取中的行吗?"),QMessageBox::Yes,QMessageBox::No);
     if(ok == QMessageBox::Yes)
     {
         int prev = -1;
@@ -805,11 +813,42 @@ void MainWindow::pbDXFimportBut()
         qDebug()<<"***dxf file do not open*****";
         return;
     }
+    model->submitAll();
+    model->select();
 
     if (!db.commit()) {
         qDebug() << "Failed to commit transaction:" << db.lastError().text();
         QMessageBox::critical(this, "Error", "事务提交失败:" + db.lastError().text());
         db.rollback();
+    }
+
+    for (int i = 1; i < model->rowCount(); ++i) {
+        QSqlRecord prevRecord = model->record(i - 1);
+        QSqlRecord currRecord = model->record(i);
+
+        // 将文本转换为数值（假定存的是数字字符串）
+        double currStartX = currRecord.value("起点x").toDouble();
+        double currStartY = currRecord.value("起点y").toDouble();
+        double currStartZ = currRecord.value("起点z").toDouble();
+        double currStartR = currRecord.value("起点r").toDouble();
+
+        double prevEndX = prevRecord.value("终点x").toDouble();
+        double prevEndY = prevRecord.value("终点y").toDouble();
+        double prevEndZ = prevRecord.value("终点z").toDouble();
+        double prevEndR = prevRecord.value("终点r").toDouble();
+
+
+        const double eps = 0.01;
+        if (!(fabs(currStartX - prevEndX) < eps &&
+            fabs(currStartY - prevEndY) < eps &&
+            fabs(currStartZ - prevEndZ) < eps &&
+            fabs(currStartR - prevEndR) < eps)) {
+            QMessageBox::warning(nullptr, QString::fromLocal8Bit("数据不一致性警告"),
+                                 QString::fromLocal8Bit("第%1行的起点与第%2行的终点不相同！")
+                                 .arg(i)
+                                 .arg(i - 1));
+
+        }
     }
 
 }
@@ -818,40 +857,54 @@ void MainWindow::pbDXFimportBut()
 
 void MainWindow::on_setTrajec_start_clicked()
 {
+    // 开始数据库事务
     db.transaction();
+
+    // 获取用户输入的数据
     bool ok;
-    double _x0= ui->traject_x0->text().toDouble(&ok);
-    double _y0= ui->traject_y0->text().toDouble(&ok);
-    double _z0= ui->traject_z0->text().toDouble(&ok);
-    double _r0= ui->traject_r0->text().toDouble(&ok);
+    double _x0 = ui->traject_x0->text().toDouble(&ok);
+    double _y0 = ui->traject_y0->text().toDouble(&ok);
+    double _z0 = ui->traject_z0->text().toDouble(&ok);
+    double _r0 = ui->traject_r0->text().toDouble(&ok);
+
+    // 获取第一行的终点数据
+    double x2 = model->data(model->index(0, 2), Qt::DisplayRole).toDouble();
+    double y2 = model->data(model->index(0, 3), Qt::DisplayRole).toDouble();
+    double z2 = model->data(model->index(0, 4), Qt::DisplayRole).toDouble();
+    double r2 = model->data(model->index(0, 5), Qt::DisplayRole).toDouble();
+
+    model->insertRow(model->rowCount());
+    // 将现有记录的 id 值加 1，并将记录向下移动一行
+    for (int i = model->rowCount() - 1; i >= 0; --i) {
+        QSqlRecord record = model->record(i);
+        int currentId = record.value("id").toInt();
+        record.setValue("id", currentId + 1);
+        model->setRecord(i + 1, record);
+    }
+    // 在第一行插入新行
 
 
-    double x2 =model->data(model->index(0, 10), Qt::DisplayRole).toFloat();
-    double y2 =model->data(model->index(0, 11), Qt::DisplayRole).toFloat();
-    double z2 =model->data(model->index(0, 12), Qt::DisplayRole).toFloat();
-    double r2 =model->data(model->index(0, 13), Qt::DisplayRole).toFloat();
-
-
+    // 设置新插入行的数据
     model->setData(model->index(0, 1), "line");
     model->setData(model->index(0, 2), _x0);
     model->setData(model->index(0, 3), _y0);
     model->setData(model->index(0, 4), _z0);
     model->setData(model->index(0, 5), _r0);
-
-
     model->setData(model->index(0, 10), x2);
     model->setData(model->index(0, 11), y2);
     model->setData(model->index(0, 12), z2);
     model->setData(model->index(0, 13), r2);
 
+    // 提交更改并更新视图
     model->submitAll();
+    model->select();
 
-    updateSence();
-
+    // 提交数据库事务
     db.commit();
 
-    settings->setValue("startX", _x0);
-    settings->setValue("startY", _y0);
+    // 更新场景视图
+    updateSence();
+
 }
 
 
@@ -868,94 +921,94 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
     QPointF start_pos,end_pos,trans_pos ;
     int firstNum=10;
     if(row_count<0){return "";}
-        for(int i = 0; i < row_count; ++i)
-        {
-            name=model->data(model->index(i, 1), Qt::DisplayRole).toString();
-            x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
-            y0=model->data(model->index(i, 3), Qt::DisplayRole).toFloat();
-            z0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
-            r0=model->data(model->index(i, 5), Qt::DisplayRole).toFloat();
+    for(int i = 0; i < row_count; ++i)
+    {
+        name=model->data(model->index(i, 1), Qt::DisplayRole).toString();
+        x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
+        y0=model->data(model->index(i, 3), Qt::DisplayRole).toFloat();
+        z0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
+        r0=model->data(model->index(i, 5), Qt::DisplayRole).toFloat();
 
-            x1=model->data(model->index(i, 6), Qt::DisplayRole).toFloat();
-            y1=model->data(model->index(i, 7), Qt::DisplayRole).toFloat();
-            z1=model->data(model->index(i, 8), Qt::DisplayRole).toFloat();
-            r1=model->data(model->index(i, 9), Qt::DisplayRole).toFloat();
+        x1=model->data(model->index(i, 6), Qt::DisplayRole).toFloat();
+        y1=model->data(model->index(i, 7), Qt::DisplayRole).toFloat();
+        z1=model->data(model->index(i, 8), Qt::DisplayRole).toFloat();
+        r1=model->data(model->index(i, 9), Qt::DisplayRole).toFloat();
 
-            x2=model->data(model->index(i, 10), Qt::DisplayRole).toFloat();
-            y2=model->data(model->index(i, 11), Qt::DisplayRole).toFloat();
-            z2=model->data(model->index(i, 12), Qt::DisplayRole).toFloat();
-            r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
+        x2=model->data(model->index(i, 10), Qt::DisplayRole).toFloat();
+        y2=model->data(model->index(i, 11), Qt::DisplayRole).toFloat();
+        z2=model->data(model->index(i, 12), Qt::DisplayRole).toFloat();
+        r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
 
 
-            if(i==0){
-                start_pos = QPointF( 0,0 );
-            }else{
-                float start_x=model->data(model->index(i-1, 2), Qt::DisplayRole).toFloat();
-                float start_y=model->data(model->index(i-1, 3), Qt::DisplayRole).toFloat();
-                start_pos = QPointF( start_x,start_y);
-            }
-            if(name=="line"){
-                end_pos = QPointF( x2,y2 );
-                gCode += QString("N%1 G01 X%2 Y%3\n").arg(firstNum).arg(end_pos.x()).arg(end_pos.y());
-
-            }else{
-                end_pos = QPointF( x2,y2 );
-                trans_pos= QPointF( x1,y1 );
-                QPointF A, B, C;
-                A=start_pos;
-                B=trans_pos;
-                C=end_pos;
-                double area = (B.x() - A.x()) * (C.y() - A.y()) - (B.y() - A.y()) * (C.x() - A.x());
-                if (fabs(area) < 1e-9) {
-                    //throw std::runtime_error("三点共线，无法构成圆弧");
-                    qDebug()<<"Three points are not collinear";
-                }
-                //计算中点和垂直方向向量
-                QPointF M1((A.x() + B.x()) / 2, (A.y() + B.y()) / 2);
-                QPointF M2((B.x() + C.x()) / 2, (B.y() + C.y()) / 2);
-
-                QPointF d1(B.y() - A.y(), A.x() - B.x()); // AB 的垂直向量
-                QPointF d2(C.y() - B.y(), B.x() - C.x()); // BC 的垂直向量
-
-                // 求两条中垂线的交点
-                double det = d1.x() * d2.y() - d1.y() * d2.x();
-                if (fabs(det) < 1e-9) {
-                    //throw std::runtime_error("计算中垂线交点失败");
-                    qDebug()<<"Failed to calculate the intersection point of the perpendicular line in the middle";
-                }
-
-                double t = ((M2.x() - M1.x()) * d2.y() - (M2.y() - M1.y()) * d2.x()) / det;
-                QPointF center(M1.x() + t * d1.x(), M1.y() + t * d1.y());
-
-                // 计算半径
-                //double radius = std::hypot(center.x() - A.x(), center.y() - A.y());
-
-                // 判断旋转方向
-                double crossProduct = (B.x() - A.x()) * (C.y() - B.y()) - (B.y() - A.y()) * (C.x() - B.x());
-                QString direction = crossProduct > 0 ? "CCW" : "CW";
-
-                double i = center.x() - A.x();
-                double j = center.y() - A.y();
-                if(direction=="CW"){
-                    gCode += QString("N%1 G02 X%2 Y%3 I%4 J%5\n")
-                            .arg(firstNum)
-                            .arg(C.x())
-                            .arg(C.y())
-                            .arg(i)
-                            .arg(j);
-                }
-                else if(direction=="CCW"){
-                    gCode += QString("N%1 G03 X%2 Y%3 I%4 J%5\n")
-                            .arg(firstNum)
-                            .arg(C.x())
-                            .arg(C.y())
-                            .arg(i)
-                            .arg(j);
-                }
-
-            }
-            firstNum+=10;
+        if(i==0){
+            start_pos = QPointF( 0,0 );
+        }else{
+            float start_x=model->data(model->index(i-1, 2), Qt::DisplayRole).toFloat();
+            float start_y=model->data(model->index(i-1, 3), Qt::DisplayRole).toFloat();
+            start_pos = QPointF( start_x,start_y);
         }
+        if(name=="line"){
+            end_pos = QPointF( x2,y2 );
+            gCode += QString("N%1 G01 X%2 Y%3\n").arg(firstNum).arg(end_pos.x()).arg(end_pos.y());
+
+        }else{
+            end_pos = QPointF( x2,y2 );
+            trans_pos= QPointF( x1,y1 );
+            QPointF A, B, C;
+            A=start_pos;
+            B=trans_pos;
+            C=end_pos;
+            double area = (B.x() - A.x()) * (C.y() - A.y()) - (B.y() - A.y()) * (C.x() - A.x());
+            if (fabs(area) < 1e-9) {
+                //throw std::runtime_error("三点共线，无法构成圆弧");
+                qDebug()<<"Three points are not collinear";
+            }
+            //计算中点和垂直方向向量
+            QPointF M1((A.x() + B.x()) / 2, (A.y() + B.y()) / 2);
+            QPointF M2((B.x() + C.x()) / 2, (B.y() + C.y()) / 2);
+
+            QPointF d1(B.y() - A.y(), A.x() - B.x()); // AB 的垂直向量
+            QPointF d2(C.y() - B.y(), B.x() - C.x()); // BC 的垂直向量
+
+            // 求两条中垂线的交点
+            double det = d1.x() * d2.y() - d1.y() * d2.x();
+            if (fabs(det) < 1e-9) {
+                //throw std::runtime_error("计算中垂线交点失败");
+                qDebug()<<"Failed to calculate the intersection point of the perpendicular line in the middle";
+            }
+
+            double t = ((M2.x() - M1.x()) * d2.y() - (M2.y() - M1.y()) * d2.x()) / det;
+            QPointF center(M1.x() + t * d1.x(), M1.y() + t * d1.y());
+
+            // 计算半径
+            //double radius = std::hypot(center.x() - A.x(), center.y() - A.y());
+
+            // 判断旋转方向
+            double crossProduct = (B.x() - A.x()) * (C.y() - B.y()) - (B.y() - A.y()) * (C.x() - B.x());
+            QString direction = crossProduct > 0 ? "CCW" : "CW";
+
+            double i = center.x() - A.x();
+            double j = center.y() - A.y();
+            if(direction=="CW"){
+                gCode += QString("N%1 G02 X%2 Y%3 I%4 J%5\n")
+                        .arg(firstNum)
+                        .arg(C.x())
+                        .arg(C.y())
+                        .arg(i)
+                        .arg(j);
+            }
+            else if(direction=="CCW"){
+                gCode += QString("N%1 G03 X%2 Y%3 I%4 J%5\n")
+                        .arg(firstNum)
+                        .arg(C.x())
+                        .arg(C.y())
+                        .arg(i)
+                        .arg(j);
+            }
+
+        }
+        firstNum+=10;
+    }
 
     gCode += "M30";//程序结束
     return gCode;
@@ -966,31 +1019,31 @@ void MainWindow::exportGCodeToFile(const QString& Path, const QString& gCode)
 {
 
 
-        // 指定目标文件夹路径
-        QString folderPath = "C:/ProgramData/CODESYS/Simulation/PlcLogic/";
+    // 指定目标文件夹路径
+    QString folderPath = "C:/ProgramData/CODESYS/Simulation/PlcLogic/";
 
-        if(Path!=""){folderPath=Path;}
-        // 确保文件夹存在，如果不存在则创建
-        QDir dir(folderPath);
-        if (!dir.exists()) {
-            if (!dir.mkpath(folderPath)) {
-                qDebug() << "Failed to create directory:" << folderPath;
-                return;
-            }
+    if(Path!=""){folderPath=Path;}
+    // 确保文件夹存在，如果不存在则创建
+    QDir dir(folderPath);
+    if (!dir.exists()) {
+        if (!dir.mkpath(folderPath)) {
+            qDebug() << "Failed to create directory:" << folderPath;
+            return;
         }
+    }
 
-        // 设置文件的完整路径，可以指定一个固定文件名或根据需要动态生成文件名
-         QString filePath = folderPath + "gcode_output.cnc"; // 这里的文件名是固定的 "gcode_output.gcode"
+    // 设置文件的完整路径，可以指定一个固定文件名或根据需要动态生成文件名
+    QString filePath = folderPath + "1.cnc"; // 这里的文件名是固定的 "gcode_output.gcode"
 
-        // 打开文件并写入内容
-        QFile file(filePath);
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QTextStream out(&file);
-            out << gCode;
-            file.close();
-        } else {
-            qDebug() << "Can not open file:" << filePath;
-        }
+    // 打开文件并写入内容
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << gCode;
+        file.close();
+    } else {
+        qDebug() << "Can not open file:" << filePath;
+    }
 
 
 }
@@ -1000,9 +1053,9 @@ void MainWindow::PbCreatGcode()
 {
 
 
-        QString gCode = generateGCode(/*trackSegments*/); // 假设 trackSegments 存储了轨迹
-        exportGCodeToFile("", gCode);
-        QMessageBox::warning(nullptr, "", QString::fromLocal8Bit("导出成功，可启动执行"));
+    QString gCode = generateGCode(/*trackSegments*/); // 假设 trackSegments 存储了轨迹
+    exportGCodeToFile("", gCode);
+    QMessageBox::warning(nullptr, "", QString::fromLocal8Bit("导出成功，可启动执行"));
 
 
 }
@@ -1047,7 +1100,7 @@ void MainWindow::PblinVelocity_lin(){
     }
 
     qDebug()<<"PblinVelocity_lin"<<ui->lineVelocity_lin->text().toFloat();
-    scanDetectCtrl->on_x_or_line_velocity_editingFinished(ui->lineVelocity_lin->text().toFloat());
+    scanDetectCtrl->on_line_velocity_editingFinished(ui->lineVelocity_lin->text().toFloat());
     settings->setValue("AxleV", ui->lineVelocity_lin->text());
     //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 直线速度已设置   "));
     ui->messText_lin->setText(QString::fromLocal8Bit(" 直线速度已设置   "));
@@ -1063,7 +1116,7 @@ void MainWindow::PbarcVelocity_lin(){
     }
 
     qDebug()<<"PbarcVelocity_lin"<<ui->arcVelocity_lin->text().toFloat();
-    scanDetectCtrl->on_y_or_arc_velocity_editingFinished(ui->arcVelocity_lin->text().toFloat());
+    scanDetectCtrl->on_arc_velocity_editingFinished(ui->arcVelocity_lin->text().toFloat());
     settings->setValue("AxleV", ui->arcVelocity_lin->text());
     //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 圆弧速度已设置   "));
     ui->messText_lin->setText(QString::fromLocal8Bit(" 圆弧速度已设置   "));
@@ -1172,15 +1225,207 @@ void MainWindow::PbSetOrigin(){
 
 }
 
+void MainWindow::cbSelectPlcType(int index){
+
+    if (index == 0) {
+        // 直接将 h5u 数据复制到 basePlc
+        memcpy(&scanDetectCtrl->basePlcData, &scanDetectCtrl->h5uData, sizeof(h5u));
+    }
+    else if (index == 1) {
+        // 直接将 ac700 数据复制到 basePlc
+        memcpy(&scanDetectCtrl->basePlcData, &scanDetectCtrl->ac700Data, sizeof(ac700));
+    }
+
+    settings->setValue("plcType", index);
 
 
-void MainWindow::isUseScanDetect(bool isUseScanMove){
-
-
-    scanDetectCtrl->isUseScanDetect=scanDetectCtrl;
-
-
+    qDebug() << "MovePointDate:" << scanDetectCtrl->basePlcData.MovePointDate;
+    qDebug() << "Start:" << scanDetectCtrl->basePlcData.Start;
+    qDebug() << "Stop:" << scanDetectCtrl->basePlcData.Stop;
+    qDebug() << "End:" << scanDetectCtrl->basePlcData.End;
+    qDebug() << "AlarmReset:" << scanDetectCtrl->basePlcData.AlarmReset;
+    qDebug() << "SetOrigin:" << scanDetectCtrl->basePlcData.SetOrigin;
+    qDebug() << "ZdetctHight:" << scanDetectCtrl->basePlcData.ZdetctHight;
+    qDebug() << "LineV:" << scanDetectCtrl->basePlcData.LineV;
+    qDebug() << "ArcV:" << scanDetectCtrl->basePlcData.ArcV;
+    qDebug() << "xV:" << scanDetectCtrl->basePlcData.xV;
+    qDebug() << "yV:" << scanDetectCtrl->basePlcData.yV;
+    qDebug() << "jv:" << scanDetectCtrl->basePlcData.jv;
+    qDebug() << "EndNumber:" << scanDetectCtrl->basePlcData.EndNumber;
+    qDebug() << "XOrigin:" << scanDetectCtrl->basePlcData.XOrigin;
+    qDebug() << "YOrigin:" << scanDetectCtrl->basePlcData.YOrigin;
+    qDebug() << "ZOrigin:" << scanDetectCtrl->basePlcData.ZOrigin;
+    qDebug() << "ROrigin:" << scanDetectCtrl->basePlcData.ROrigin;
+    qDebug() << "moveType:" << scanDetectCtrl->basePlcData.moveType;
+    qDebug() << "singeMove:" << scanDetectCtrl->basePlcData.singeMove;
+    qDebug() << "curX:" << scanDetectCtrl->basePlcData.curX;
+    qDebug() << "curY:" << scanDetectCtrl->basePlcData.curY;
+    qDebug() << "curZ:" << scanDetectCtrl->basePlcData.curZ;
+    qDebug() << "curR:" << scanDetectCtrl->basePlcData.curR;
+    qDebug() << "AxiSid:" << scanDetectCtrl->basePlcData.AxiSid;
+    qDebug() << "X_ADD:" << scanDetectCtrl->basePlcData.X_ADD;
+    qDebug() << "X_SUB:" << scanDetectCtrl->basePlcData.X_SUB;
+    qDebug() << "Y_ADD:" << scanDetectCtrl->basePlcData.Y_ADD;
+    qDebug() << "Y_SUB:" << scanDetectCtrl->basePlcData.Y_SUB;
+    qDebug() << "Z_ADD:" << scanDetectCtrl->basePlcData.Z_ADD;
+    qDebug() << "Z_SUB:" << scanDetectCtrl->basePlcData.Z_SUB;
+    qDebug() << "R_ADD:" << scanDetectCtrl->basePlcData.R_ADD;
+    qDebug() << "R_SUB:" << scanDetectCtrl->basePlcData.R_SUB;
+    qDebug() << "X_VIRTUAL_ORIGIN:" << scanDetectCtrl->basePlcData.X_VIRTUAL_ORIGIN;
+    qDebug() << "Y_VIRTUAL_ORIGIN:" << scanDetectCtrl->basePlcData.Y_VIRTUAL_ORIGIN;
+    qDebug() << "MACHINE_ORIGIN:" << scanDetectCtrl->basePlcData.MACHINE_ORIGIN;
+    qDebug() << "LIMIT_POINT:" << scanDetectCtrl->basePlcData.LIMIT_POINT;
+    qDebug() << "xDone:" << scanDetectCtrl->basePlcData.xDone;
+    qDebug() << "YDone:" << scanDetectCtrl->basePlcData.YDone;
 }
+
+
+// 上移按钮点击事件
+void MainWindow::pbmoveUpForSort()
+{
+    // 获取当前选中的行
+    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedIndexes();
+    if (selectedIndexes.isEmpty()) return;
+
+    int row = selectedIndexes.first().row();
+    int rowCount = model->rowCount();
+    if (row ==0) {return;  }
+
+    // 获取当前行和下一行的数据
+    QSqlRecord currentRecord = model->record(row);
+    QSqlRecord nextRecord = model->record(row -1);
+
+    // 开始执行交换操作
+    QSqlQuery query(db);
+
+    // 先将当前行的 id 设置为临时值 -1
+    query.prepare("UPDATE table2d SET id=-1 WHERE id=:id");
+    query.bindValue(":id", currentRecord.value("id"));
+    if (!query.exec()) {
+        qDebug() << "Error updating current row to temp id: " << query.lastError().text();
+        return;
+    }
+
+    // 将下一行的 id 设置为当前行的 id
+    query.prepare("UPDATE table2d SET id=:id WHERE id=:next_id");
+    query.bindValue(":id", currentRecord.value("id"));
+    query.bindValue(":next_id", nextRecord.value("id"));
+    if (!query.exec()) {
+        qDebug() << "Error updating next row to current id: " << query.lastError().text();
+        return;
+    }
+
+    // 将临时 id (-1) 设置为下一行的 id
+    query.prepare("UPDATE table2d SET id=:id WHERE id=-1");
+    query.bindValue(":id", nextRecord.value("id"));
+    if (!query.exec()) {
+        qDebug() << "Error updating temp id to next id: " << query.lastError().text();
+        return;
+    }
+
+    // 提交更改并调试
+    if (model->submitAll()) {
+        qDebug() << "Changes submitted successfully.";
+    } else {
+        qDebug() << "Error submitting changes: " << model->lastError().text();
+    }
+
+
+    // 重新选择数据以更新视图
+    model->select();
+    updateSence();
+}
+
+// 下移按钮点击事件
+void MainWindow::pbmoveDownForSort()
+{
+    // 获取当前选中的行
+    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedIndexes();
+    if (selectedIndexes.isEmpty()) return;
+
+    int row = selectedIndexes.first().row();
+    int rowCount = model->rowCount();
+    if (row ==rowCount) {return;  }
+
+    // 获取当前行和下一行的数据
+    QSqlRecord currentRecord = model->record(row);
+    QSqlRecord nextRecord = model->record(row +1);
+
+
+    // 开始执行交换操作
+    QSqlQuery query(db);
+
+    // 先将当前行的 id 设置为临时值 -1
+    query.prepare("UPDATE table2d SET id=-1 WHERE id=:id");
+    query.bindValue(":id", currentRecord.value("id"));
+    if (!query.exec()) {
+        qDebug() << "Error updating current row to temp id: " << query.lastError().text();
+        return;
+    }
+
+    // 将下一行的 id 设置为当前行的 id
+    query.prepare("UPDATE table2d SET id=:id WHERE id=:next_id");
+    query.bindValue(":id", currentRecord.value("id"));
+    query.bindValue(":next_id", nextRecord.value("id"));
+    if (!query.exec()) {
+        qDebug() << "Error updating next row to current id: " << query.lastError().text();
+        return;
+    }
+
+    // 将临时 id (-1) 设置为下一行的 id
+    query.prepare("UPDATE table2d SET id=:id WHERE id=-1");
+    query.bindValue(":id", nextRecord.value("id"));
+    if (!query.exec()) {
+        qDebug() << "Error updating temp id to next id: " << query.lastError().text();
+        return;
+    }
+
+    // 提交更改并调试
+    if (model->submitAll()) {
+        qDebug() << "Changes submitted successfully.";
+    } else {
+        qDebug() << "Error submitting changes: " << model->lastError().text();
+    }
+
+
+    // 重新选择数据以更新视图
+    model->select();
+    updateSence();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

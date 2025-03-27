@@ -7,46 +7,87 @@
 
 #define HuiChuan_Port 502
 #define TaiDa_Port    502
+
+
 //汇川寄存器地址
-#define R_REGISTER_BASE 0x3000  //寄存器R的基地址
-#define X_TARTPOS 2002  //设置X轴位置
-#define Y_TARTPOS 2004  //设置Y轴位置
-#define X_VELOCITY 2006 //设置X轴速度
-#define Y_VELOCITY 2008 //设置Y轴速度
-#define JOG_VELOCITY 2014   //设置点动速度
-#define X_CUR_POS 300   //当前绝对位置X
-#define Y_CUR_POS 302   //当前绝对位置Y
-#define Z_CUR_POS 298
-#define R_CUR_POS 296
 
-#define X_AXIS_DONE 100     //X轴动作完成位
-#define Y_AXIS_DONE 101     //Y轴动作完成位
 
-#define X_VIRTUAL_ORIGIN 304    //虚拟0点X
-#define Y_VIRTUAL_ORIGIN 306    //虚拟0点Y
+//D区 汇川摩擦焊定义
+#define h5uMovePointDate   3000
+#define h5uStart           4216
+#define h5uStop            4220
+#define h5uEnd             4222
+#define h5uAlarmReset      4218
+#define h5uSetOrigin        4224
 
-#define X_START 2   //X轴开始
-#define Y_START 3   //Y轴开始
-#define X_STOP 4    //X轴暂停
-#define Y_STOP 5    //Y轴暂停
-#define END_SCAN 6  //结束扫查
-#define MACHINE_ORIGIN  7   //设置机械原点
-#define AXIS_RESET 8        //轴复位
-#define LIMIT_POINT 9       //设置机械极限
+#define h5uZdetctHight       4208
+#define h5uLineV             4210
+#define h5uArcV              4212
+#define h5uEndNumber         4214
+#define h5uXOrigin           4200
+#define h5uYOrigin           4202
+#define h5uZOrigin           4204
+#define h5uROrigin           4206
+//汇川摩擦焊定义
 
-#define X_ADD 13    //X+
-#define X_SUB 14    //X-
-#define Y_ADD 15    //Y+
-#define Y_SUB 16    //Y-
-#define Z_ADD 17    //Z+
-#define Z_SUB 18    //Z-
-#define R_ADD 19    //R+
-#define R_SUB 20    //R-
+#define h5uX_CUR_POS 300   //当前绝对位置X
+#define h5uY_CUR_POS 302   //当前绝对位置Y
+#define h5uZ_CUR_POS 298    //当前绝对位置Z
+#define h5uR_CUR_POS 296    //当前绝对位置R
 
-#define AXIS_ERROR_ID 308   //轴错误ID
-#define MACHINE_START 310   //机械按键开始
-#define MACHINE_STOP 311    //机械按键开始
+#define h5uJOG_VELOCITY 2014   //设置点动速度
+//R区
+#define h5uR_REGISTER_BASE 0x3000  //寄存器R的基地址
+#define h5uX_TARTPOS 2002  //设置X轴位置
+#define h5uY_TARTPOS 2004  //设置Y轴位置
 
+
+#define h5uX_VELOCITY 2006 //设置X轴速度
+#define h5uY_VELOCITY 2008 //设置Y轴速度
+#define h5uX_VIRTUAL_ORIGIN 304    //虚拟0点X
+#define h5uY_VIRTUAL_ORIGIN 306    //虚拟0点Y
+
+//M区
+#define h5uMoveType         1000
+
+#define h5uX_ADD 13    //X+
+#define h5uX_SUB 14    //X-
+#define h5uY_ADD 15    //Y+
+#define h5uY_SUB 16    //Y-
+#define h5uZ_ADD 17    //Z+
+#define h5uZ_SUB 18    //Z-
+#define h5uR_ADD 19    //R+
+#define h5uR_SUB 20    //R-
+#define h5uAXIS_ERROR_ID 308   //轴错误ID
+
+#define h5uLIMIT_POINT 9       //设置机械极限
+#define h5uMACHINE_ORIGIN  7   //设置机械原点
+
+#define h5uX_AXIS_DONE 100     //X轴动作完成位
+#define h5uY_AXIS_DONE 101     //Y轴动作完成位
+
+#define h5uX_START 2   //X轴开始
+#define h5uY_START 3   //Y轴开始
+#define h5uX_STOP 4    //X轴暂停
+#define h5uY_STOP 5    //Y轴暂停
+#define h5uZ_STOP 44    //Z轴暂停
+#define h5uR_STOP 45    //R轴暂停
+
+#define h5uEND_SCAN 6  //结束扫查
+#define h5uAXIS_RESET 8        //轴复位
+
+#define h5uMACHINE_START 310   //机械按键开始
+#define h5uMACHINE_STOP 311    //机械按键开始
+
+
+
+
+
+
+
+
+
+//------------------------------------------------------------
 //台大寄存器地址
 #define WORKPIECEHIGH 650
 #define WORKPIECEWIDE 652
@@ -85,27 +126,6 @@
 
 
 
-
-//汇川摩擦焊定义
-
-//D区
-#define frictionWeldingMovePointDate   3000
-#define frictionWeldingStart           4216
-#define frictionWeldingStop            4220
-#define frictionWeldingEnd             4222
-#define frictionWeldingAlarmReset      4218
-#define frictionWeldinSetOrigin        4224
-
-#define frictionWeldinZdetctHight       4208
-#define frictionWeldinLineV             4210
-#define frictionWeldinArcV              4212
-#define frictionWeldinEndNumber         4214
-#define frictionWeldinXOrigin           4200
-#define frictionWeldinYOrigin           4202
-#define frictionWeldinZOrigin           4204
-#define frictionWeldinROrigin           4206
-//M区
-#define frictionWeldinMoveType         1000
 
 
 

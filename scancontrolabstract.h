@@ -58,6 +58,138 @@ struct modelDate {
 };
 
 
+struct basePlc {
+    int MovePointDate ;
+    int Start ;
+    int Stop ;
+    int End ;
+    int AlarmReset ;
+    int SetOrigin ;
+    int ZdetctHight ;
+    int LineV ;
+    int ArcV ;
+    int xV;
+    int yV;
+    int jv;
+    int EndNumber ;
+    int XOrigin ;
+    int YOrigin ;
+    int ZOrigin ;
+    int ROrigin ;
+    int moveType;
+    int singeMove;
+    int curX;
+    int curY;
+    int curZ;
+    int curR;
+    int AxiSid;
+    int  X_ADD;
+    int  X_SUB;
+    int  Y_ADD;
+    int  Y_SUB;
+    int  Z_ADD;
+    int  Z_SUB;
+    int  R_ADD;
+    int  R_SUB;
+    int  X_VIRTUAL_ORIGIN;
+    int  Y_VIRTUAL_ORIGIN;
+    int  MACHINE_ORIGIN;
+    int  LIMIT_POINT;
+    int  xDone;
+    int  YDone;
+    int  zDone;
+    int  rDone;
+};
+
+
+
+struct h5u {
+    int MovePointDate = h5uMovePointDate;
+    int Start = h5uStart;
+    int Stop = h5uStop;
+    int End = h5uEnd;
+    int AlarmReset = h5uAlarmReset;
+    int SetOrigin = h5uSetOrigin;
+    int ZdetctHight = h5uZdetctHight;
+    int LineV = h5uLineV;
+    int ArcV = h5uArcV;
+    int xV=h5uR_REGISTER_BASE+h5uX_VELOCITY;
+    int yV=h5uR_REGISTER_BASE+h5uY_VELOCITY;
+    int jV=h5uR_REGISTER_BASE+h5uJOG_VELOCITY;
+    int EndNumber = h5uEndNumber;
+    int XOrigin = h5uXOrigin;
+    int YOrigin = h5uYOrigin;
+    int ZOrigin = h5uZOrigin;
+    int ROrigin = h5uROrigin;
+    int moveType=h5uMoveType;
+    int singeMove=h5uR_REGISTER_BASE+h5uX_TARTPOS;
+    int curX=h5uR_REGISTER_BASE+h5uX_TARTPOS;
+    int curY=h5uR_REGISTER_BASE+h5uY_TARTPOS;
+    int curZ=h5uZ_CUR_POS;
+    int curR=h5uR_CUR_POS;
+    int AxiSid=h5uAXIS_ERROR_ID;
+    int  X_ADD=h5uX_ADD;
+    int  X_SUB=h5uX_SUB;
+    int  Y_ADD=h5uY_ADD;
+    int  Y_SUB=h5uY_SUB;
+    int  Z_ADD=h5uZ_ADD;
+    int  Z_SUB=h5uZ_SUB;
+    int  R_ADD=h5uR_ADD;
+    int  R_SUB=h5uR_SUB;
+    int  X_VIRTUAL_ORIGIN=h5uX_VIRTUAL_ORIGIN;
+    int  Y_VIRTUAL_ORIGIN=h5uY_VIRTUAL_ORIGIN;
+    int  MACHINE_ORIGIN=h5uMACHINE_ORIGIN;
+    int  LIMIT_POINT=h5uLIMIT_POINT;
+    int  xDone=h5uX_AXIS_DONE;
+    int  YDone=h5uY_AXIS_DONE;
+    int  zDone=h5uZ_STOP;
+    int  rDone=h5uR_STOP;
+};
+
+
+struct ac700 {
+    int MovePointDate ;
+    int Start ;
+    int Stop ;
+    int End ;
+    int AlarmReset ;
+    int SetOrigin ;
+    int ZdetctHight ;
+    int LineV ;
+    int ArcV ;
+    int xV;
+    int yV;
+    int EndNumber ;
+    int XOrigin ;
+    int YOrigin ;
+    int ZOrigin ;
+    int ROrigin ;
+    int moveType;
+    int singeMove;
+    int curX;
+    int curY;
+    int curZ;
+    int curR;
+    int AxiSid;
+    int  X_ADD;
+    int  X_SUB;
+    int  Y_ADD;
+    int  Y_SUB;
+    int  Z_ADD;
+    int  Z_SUB;
+    int  R_ADD;
+    int  R_SUB;
+    int  X_VIRTUAL_ORIGIN;
+    int  Y_VIRTUAL_ORIGIN;
+    int  MACHINE_ORIGIN;
+    int  LIMIT_POINT;
+    int xDone;
+    int YDone;
+    int zDone;
+    int rDone;
+};
+
+
 
 class ScanControlAbstract : public QObject
 {
@@ -75,7 +207,6 @@ public:
 
     virtual void setModbusTcpIP(QString ip)  = 0;   //设置IP
     virtual void setModbusPort(int port)  = 0;      //设置端口
-    virtual void disConncet() = 0;
 
     virtual void setXAxisVelocity(float vel) = 0;   //设置X轴速度
     virtual void setYAxisVelocity(float vel) = 0;   //设置Y轴速度
@@ -94,8 +225,11 @@ public:
 
     QSettings *Rsettings;
     bool isRunTarget;
-    bool isUseScanDetect;
 
+public:
+    h5u h5uData;
+    ac700 ac700Data;
+    basePlc basePlcData;
 
 public slots:
     virtual void init() = 0;   //初始化设置
@@ -109,8 +243,8 @@ public slots:
 
     virtual void on_setOriginBtn_clicked(float x,float y,bool isCurrPosi) = 0;     //设置零点
 
-    virtual void on_x_or_line_velocity_editingFinished(float val) = 0;   // 设置X轴速度
-    virtual void on_y_or_arc_velocity_editingFinished(float val) = 0;   // 设置Y轴速度
+    virtual void on_line_velocity_editingFinished(float val) = 0;   // 设置X轴速度
+    virtual void on_arc_velocity_editingFinished(float val) = 0;   // 设置Y轴速度
     virtual void on_jog_velocity_editingFinished(float val) = 0; // 设置点动速度
 
 

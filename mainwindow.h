@@ -88,9 +88,17 @@ private slots:
     void pbAscan();
     void updateSence();
     void cleanTable();
-    void isUseScanDetect(bool isUseScanMove);
 
     void PbModbusConnectBtn();
+
+    void cbSelectPlcType(int index);
+
+    void pbmoveUpForSort();
+
+    void pbmoveDownForSort();
+
+
+
 
 private:
     Ui::MainWindow *ui;
@@ -100,7 +108,7 @@ private:
 
     ScanControlAbstract *scanDetectCtrl;
 
-    void initDb();
+    void init();
 
     QList<QString>  startPoint;
     QString current_db_name;

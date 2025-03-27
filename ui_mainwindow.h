@@ -11,7 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
@@ -100,20 +100,22 @@ public:
     QLabel *V_label_10;
     QLineEdit *traject_z0;
     QLineEdit *traject_r0;
-    QCheckBox *isUseScanDetect;
+    QPushButton *writeInPLC_but;
+    QPushButton *creatG_but;
     TGraphicsViewRefactor *graphicsView;
     QTabWidget *tabWidget;
-    QWidget *tab;
     QWidget *tab_2;
     QPushButton *add_but;
     QPushButton *insertArcPos_but;
     QPushButton *delete_but;
-    QPushButton *writeInPLC_but;
     QPushButton *cleanTable_but;
     QPushButton *insertLinePos_but;
     QPushButton *editPos_but;
-    QPushButton *creatG_but;
     QTableView *tableView;
+    QPushButton *moveUpTabelRow_btu;
+    QPushButton *moveDownTabelRow_btu;
+    QComboBox *plcType_cb;
+    QLabel *label_3;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -344,60 +346,60 @@ public:
         widget->setGeometry(QRect(10, 1270, 1601, 51));
         V_label_2 = new QLabel(widget);
         V_label_2->setObjectName(QString::fromUtf8("V_label_2"));
-        V_label_2->setGeometry(QRect(10, 10, 71, 26));
+        V_label_2->setGeometry(QRect(10, 10, 131, 26));
         V_label_2->setFont(font1);
         V_label_2->setStyleSheet(QString::fromUtf8(""));
         scanVelocity_lin = new QLineEdit(widget);
         scanVelocity_lin->setObjectName(QString::fromUtf8("scanVelocity_lin"));
-        scanVelocity_lin->setGeometry(QRect(80, 10, 81, 31));
+        scanVelocity_lin->setGeometry(QRect(120, 10, 81, 31));
         V_label_7 = new QLabel(widget);
         V_label_7->setObjectName(QString::fromUtf8("V_label_7"));
-        V_label_7->setGeometry(QRect(270, 10, 131, 26));
+        V_label_7->setGeometry(QRect(310, 10, 131, 26));
         V_label_7->setFont(font1);
         V_label_7->setStyleSheet(QString::fromUtf8(""));
         label_14 = new QLabel(widget);
         label_14->setObjectName(QString::fromUtf8("label_14"));
-        label_14->setGeometry(QRect(170, 10, 91, 31));
+        label_14->setGeometry(QRect(210, 10, 91, 31));
         label_14->setFont(font1);
         label_17 = new QLabel(widget);
         label_17->setObjectName(QString::fromUtf8("label_17"));
-        label_17->setGeometry(QRect(520, 10, 71, 31));
+        label_17->setGeometry(QRect(560, 10, 71, 31));
         label_17->setFont(font1);
         AxleVelocity_lin = new QLineEdit(widget);
         AxleVelocity_lin->setObjectName(QString::fromUtf8("AxleVelocity_lin"));
-        AxleVelocity_lin->setGeometry(QRect(400, 10, 111, 31));
+        AxleVelocity_lin->setGeometry(QRect(440, 10, 111, 31));
         V_label_8 = new QLabel(widget);
         V_label_8->setObjectName(QString::fromUtf8("V_label_8"));
-        V_label_8->setGeometry(QRect(610, 10, 131, 26));
+        V_label_8->setGeometry(QRect(650, 10, 131, 26));
         V_label_8->setFont(font1);
         V_label_8->setStyleSheet(QString::fromUtf8(""));
         label_18 = new QLabel(widget);
         label_18->setObjectName(QString::fromUtf8("label_18"));
-        label_18->setGeometry(QRect(850, 10, 71, 31));
+        label_18->setGeometry(QRect(890, 10, 71, 31));
         label_18->setFont(font1);
         lineVelocity_lin = new QLineEdit(widget);
         lineVelocity_lin->setObjectName(QString::fromUtf8("lineVelocity_lin"));
-        lineVelocity_lin->setGeometry(QRect(730, 10, 111, 31));
+        lineVelocity_lin->setGeometry(QRect(770, 10, 111, 31));
         label_19 = new QLabel(widget);
         label_19->setObjectName(QString::fromUtf8("label_19"));
-        label_19->setGeometry(QRect(1190, 10, 71, 31));
+        label_19->setGeometry(QRect(1230, 10, 71, 31));
         label_19->setFont(font1);
         V_label_11 = new QLabel(widget);
         V_label_11->setObjectName(QString::fromUtf8("V_label_11"));
-        V_label_11->setGeometry(QRect(950, 10, 131, 26));
+        V_label_11->setGeometry(QRect(990, 10, 131, 26));
         V_label_11->setFont(font1);
         V_label_11->setStyleSheet(QString::fromUtf8(""));
         arcVelocity_lin = new QLineEdit(widget);
         arcVelocity_lin->setObjectName(QString::fromUtf8("arcVelocity_lin"));
-        arcVelocity_lin->setGeometry(QRect(1070, 10, 111, 31));
+        arcVelocity_lin->setGeometry(QRect(1110, 10, 111, 31));
         frame = new QFrame(centralwidget);
         frame->setObjectName(QString::fromUtf8("frame"));
-        frame->setGeometry(QRect(10, 1120, 1911, 121));
+        frame->setGeometry(QRect(10, 1120, 1891, 121));
         frame->setFrameShape(QFrame::StyledPanel);
         frame->setFrameShadow(QFrame::Raised);
         imageProcess_but = new QPushButton(frame);
         imageProcess_but->setObjectName(QString::fromUtf8("imageProcess_but"));
-        imageProcess_but->setGeometry(QRect(870, 20, 121, 41));
+        imageProcess_but->setGeometry(QRect(980, 20, 211, 41));
         startScan_But = new QPushButton(frame);
         startScan_But->setObjectName(QString::fromUtf8("startScan_But"));
         startScan_But->setGeometry(QRect(1270, 20, 101, 41));
@@ -456,7 +458,7 @@ public:
         V_label_4->setStyleSheet(QString::fromUtf8(""));
         ascan_but = new QPushButton(frame);
         ascan_but->setObjectName(QString::fromUtf8("ascan_but"));
-        ascan_but->setGeometry(QRect(740, 20, 111, 41));
+        ascan_but->setGeometry(QRect(740, 20, 201, 41));
         moveToPosition_but = new QPushButton(frame);
         moveToPosition_but->setObjectName(QString::fromUtf8("moveToPosition_but"));
         moveToPosition_but->setGeometry(QRect(160, 70, 111, 41));
@@ -483,9 +485,12 @@ public:
         traject_r0 = new QLineEdit(frame);
         traject_r0->setObjectName(QString::fromUtf8("traject_r0"));
         traject_r0->setGeometry(QRect(580, 20, 91, 41));
-        isUseScanDetect = new QCheckBox(frame);
-        isUseScanDetect->setObjectName(QString::fromUtf8("isUseScanDetect"));
-        isUseScanDetect->setGeometry(QRect(1090, 10, 141, 61));
+        writeInPLC_but = new QPushButton(frame);
+        writeInPLC_but->setObjectName(QString::fromUtf8("writeInPLC_but"));
+        writeInPLC_but->setGeometry(QRect(980, 70, 211, 41));
+        creatG_but = new QPushButton(frame);
+        creatG_but->setObjectName(QString::fromUtf8("creatG_but"));
+        creatG_but->setGeometry(QRect(740, 70, 201, 41));
         graphicsView = new TGraphicsViewRefactor(centralwidget);
         graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
         graphicsView->setEnabled(true);
@@ -501,12 +506,9 @@ public:
         graphicsView->setInteractive(true);
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
-        tabWidget->setGeometry(QRect(1170, 110, 751, 1001));
+        tabWidget->setGeometry(QRect(1150, 110, 751, 1011));
         tabWidget->setLayoutDirection(Qt::LeftToRight);
         tabWidget->setTabPosition(QTabWidget::West);
-        tab = new QWidget();
-        tab->setObjectName(QString::fromUtf8("tab"));
-        tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
         add_but = new QPushButton(tab_2);
@@ -518,9 +520,6 @@ public:
         delete_but = new QPushButton(tab_2);
         delete_but->setObjectName(QString::fromUtf8("delete_but"));
         delete_but->setGeometry(QRect(120, 940, 101, 41));
-        writeInPLC_but = new QPushButton(tab_2);
-        writeInPLC_but->setObjectName(QString::fromUtf8("writeInPLC_but"));
-        writeInPLC_but->setGeometry(QRect(500, 940, 211, 41));
         cleanTable_but = new QPushButton(tab_2);
         cleanTable_but->setObjectName(QString::fromUtf8("cleanTable_but"));
         cleanTable_but->setGeometry(QRect(120, 880, 101, 41));
@@ -530,18 +529,29 @@ public:
         editPos_but = new QPushButton(tab_2);
         editPos_but->setObjectName(QString::fromUtf8("editPos_but"));
         editPos_but->setGeometry(QRect(10, 940, 85, 41));
-        creatG_but = new QPushButton(tab_2);
-        creatG_but->setObjectName(QString::fromUtf8("creatG_but"));
-        creatG_but->setGeometry(QRect(260, 940, 201, 41));
         tableView = new QTableView(tab_2);
         tableView->setObjectName(QString::fromUtf8("tableView"));
         tableView->setGeometry(QRect(0, 0, 731, 871));
+        moveUpTabelRow_btu = new QPushButton(tab_2);
+        moveUpTabelRow_btu->setObjectName(QString::fromUtf8("moveUpTabelRow_btu"));
+        moveUpTabelRow_btu->setGeometry(QRect(260, 940, 201, 41));
+        moveDownTabelRow_btu = new QPushButton(tab_2);
+        moveDownTabelRow_btu->setObjectName(QString::fromUtf8("moveDownTabelRow_btu"));
+        moveDownTabelRow_btu->setGeometry(QRect(500, 940, 211, 41));
         tabWidget->addTab(tab_2, QString());
+        plcType_cb = new QComboBox(centralwidget);
+        plcType_cb->addItem(QString());
+        plcType_cb->addItem(QString());
+        plcType_cb->setObjectName(QString::fromUtf8("plcType_cb"));
+        plcType_cb->setGeometry(QRect(1780, 40, 111, 41));
+        label_3 = new QLabel(centralwidget);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+        label_3->setGeometry(QRect(1720, 10, 141, 31));
         MainWindow->setCentralWidget(centralwidget);
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -605,17 +615,21 @@ public:
         V_label_10->setText(QApplication::translate("MainWindow", "z:", nullptr));
         traject_z0->setText(QApplication::translate("MainWindow", "0", nullptr));
         traject_r0->setText(QApplication::translate("MainWindow", "0", nullptr));
-        isUseScanDetect->setText(QApplication::translate("MainWindow", " \346\230\257\345\220\246\345\220\257\347\224\250\350\266\205\345\243\260\346\211\253\346\237\245", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Rect Scan", nullptr));
-        add_but->setText(QApplication::translate("MainWindow", "\346\240\267\346\235\241", nullptr));
+        writeInPLC_but->setText(QApplication::translate("MainWindow", " \345\257\204\345\255\230\345\231\250\350\277\220\350\241\214\357\274\210plc\357\274\211", nullptr));
+        creatG_but->setText(QApplication::translate("MainWindow", "GCode\350\277\220\350\241\214\357\274\210plc\357\274\211", nullptr));
+        add_but->setText(QApplication::translate("MainWindow", " \346\211\253\346\237\245", nullptr));
         insertArcPos_but->setText(QApplication::translate("MainWindow", "\346\217\222\345\205\245\345\234\206\345\274\247", nullptr));
         delete_but->setText(QApplication::translate("MainWindow", "Delete", nullptr));
-        writeInPLC_but->setText(QApplication::translate("MainWindow", " \345\257\204\345\255\230\345\231\250\350\277\220\350\241\214\357\274\210plc\357\274\211", nullptr));
         cleanTable_but->setText(QApplication::translate("MainWindow", "\346\270\205\347\251\272\350\241\250\346\240\274", nullptr));
         insertLinePos_but->setText(QApplication::translate("MainWindow", "\346\217\222\345\205\245\347\233\264\347\272\277", nullptr));
         editPos_but->setText(QApplication::translate("MainWindow", "Edit", nullptr));
-        creatG_but->setText(QApplication::translate("MainWindow", "GCode\350\277\220\350\241\214\357\274\210plc\357\274\211", nullptr));
+        moveUpTabelRow_btu->setText(QApplication::translate("MainWindow", "\345\220\221\344\270\212\347\247\273\345\212\250\350\241\214", nullptr));
+        moveDownTabelRow_btu->setText(QApplication::translate("MainWindow", "\345\220\221\344\270\213\347\247\273\345\212\250\350\241\214", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("MainWindow", "Trajectory Scan", nullptr));
+        plcType_cb->setItemText(0, QApplication::translate("MainWindow", "h5u", nullptr));
+        plcType_cb->setItemText(1, QApplication::translate("MainWindow", "ac700", nullptr));
+
+        label_3->setText(QApplication::translate("MainWindow", "plc\347\261\273\345\236\213\357\274\232", nullptr));
     } // retranslateUi
 
 };

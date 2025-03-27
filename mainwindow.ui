@@ -479,7 +479,7 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>71</width>
+       <width>131</width>
        <height>26</height>
       </rect>
      </property>
@@ -499,7 +499,7 @@
     <widget class="QLineEdit" name="scanVelocity_lin">
      <property name="geometry">
       <rect>
-       <x>80</x>
+       <x>120</x>
        <y>10</y>
        <width>81</width>
        <height>31</height>
@@ -512,7 +512,7 @@
     <widget class="QLabel" name="V_label_7">
      <property name="geometry">
       <rect>
-       <x>270</x>
+       <x>310</x>
        <y>10</y>
        <width>131</width>
        <height>26</height>
@@ -534,7 +534,7 @@
     <widget class="QLabel" name="label_14">
      <property name="geometry">
       <rect>
-       <x>170</x>
+       <x>210</x>
        <y>10</y>
        <width>91</width>
        <height>31</height>
@@ -553,7 +553,7 @@
     <widget class="QLabel" name="label_17">
      <property name="geometry">
       <rect>
-       <x>520</x>
+       <x>560</x>
        <y>10</y>
        <width>71</width>
        <height>31</height>
@@ -572,7 +572,7 @@
     <widget class="QLineEdit" name="AxleVelocity_lin">
      <property name="geometry">
       <rect>
-       <x>400</x>
+       <x>440</x>
        <y>10</y>
        <width>111</width>
        <height>31</height>
@@ -585,7 +585,7 @@
     <widget class="QLabel" name="V_label_8">
      <property name="geometry">
       <rect>
-       <x>610</x>
+       <x>650</x>
        <y>10</y>
        <width>131</width>
        <height>26</height>
@@ -607,7 +607,7 @@
     <widget class="QLabel" name="label_18">
      <property name="geometry">
       <rect>
-       <x>850</x>
+       <x>890</x>
        <y>10</y>
        <width>71</width>
        <height>31</height>
@@ -626,7 +626,7 @@
     <widget class="QLineEdit" name="lineVelocity_lin">
      <property name="geometry">
       <rect>
-       <x>730</x>
+       <x>770</x>
        <y>10</y>
        <width>111</width>
        <height>31</height>
@@ -639,7 +639,7 @@
     <widget class="QLabel" name="label_19">
      <property name="geometry">
       <rect>
-       <x>1190</x>
+       <x>1230</x>
        <y>10</y>
        <width>71</width>
        <height>31</height>
@@ -658,7 +658,7 @@
     <widget class="QLabel" name="V_label_11">
      <property name="geometry">
       <rect>
-       <x>950</x>
+       <x>990</x>
        <y>10</y>
        <width>131</width>
        <height>26</height>
@@ -680,7 +680,7 @@
     <widget class="QLineEdit" name="arcVelocity_lin">
      <property name="geometry">
       <rect>
-       <x>1070</x>
+       <x>1110</x>
        <y>10</y>
        <width>111</width>
        <height>31</height>
@@ -696,7 +696,7 @@
      <rect>
       <x>10</x>
       <y>1120</y>
-      <width>1911</width>
+      <width>1891</width>
       <height>121</height>
      </rect>
     </property>
@@ -709,9 +709,9 @@
     <widget class="QPushButton" name="imageProcess_but">
      <property name="geometry">
       <rect>
-       <x>870</x>
+       <x>980</x>
        <y>20</y>
-       <width>121</width>
+       <width>211</width>
        <height>41</height>
       </rect>
      </property>
@@ -875,7 +875,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>设定轨迹起点</string>
+      <string>设定起点</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="traject_x0">
@@ -940,7 +940,7 @@
       <rect>
        <x>740</x>
        <y>20</y>
-       <width>111</width>
+       <width>201</width>
        <height>41</height>
       </rect>
      </property>
@@ -1050,17 +1050,30 @@
       <string>0</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="isUseScanDetect">
+    <widget class="QPushButton" name="writeInPLC_but">
      <property name="geometry">
       <rect>
-       <x>1090</x>
-       <y>10</y>
-       <width>141</width>
-       <height>61</height>
+       <x>980</x>
+       <y>70</y>
+       <width>211</width>
+       <height>41</height>
       </rect>
      </property>
      <property name="text">
-      <string> 是否启用超声扫查</string>
+      <string> 寄存器运行（plc）</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="creatG_but">
+     <property name="geometry">
+      <rect>
+       <x>740</x>
+       <y>70</y>
+       <width>201</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>GCode运行（plc）</string>
      </property>
     </widget>
    </widget>
@@ -1107,10 +1120,10 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>1170</x>
+      <x>1150</x>
       <y>110</y>
       <width>751</width>
-      <height>1001</height>
+      <height>1011</height>
      </rect>
     </property>
     <property name="layoutDirection">
@@ -1120,13 +1133,8 @@
      <enum>QTabWidget::West</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Rect Scan</string>
-     </attribute>
-    </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
       <string>Trajectory Scan</string>
@@ -1141,7 +1149,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>样条</string>
+       <string> 扫查</string>
       </property>
      </widget>
      <widget class="QPushButton" name="insertArcPos_but">
@@ -1168,19 +1176,6 @@
       </property>
       <property name="text">
        <string>Delete</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="writeInPLC_but">
-      <property name="geometry">
-       <rect>
-        <x>500</x>
-        <y>940</y>
-        <width>211</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string> 寄存器运行（plc）</string>
       </property>
      </widget>
      <widget class="QPushButton" name="cleanTable_but">
@@ -1222,19 +1217,6 @@
        <string>Edit</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="creatG_but">
-      <property name="geometry">
-       <rect>
-        <x>260</x>
-        <y>940</y>
-        <width>201</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>GCode运行（plc）</string>
-      </property>
-     </widget>
      <widget class="QTableView" name="tableView">
       <property name="geometry">
        <rect>
@@ -1245,7 +1227,66 @@
        </rect>
       </property>
      </widget>
+     <widget class="QPushButton" name="moveUpTabelRow_btu">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>940</y>
+        <width>201</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>向上移动行</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="moveDownTabelRow_btu">
+      <property name="geometry">
+       <rect>
+        <x>500</x>
+        <y>940</y>
+        <width>211</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>向下移动行</string>
+      </property>
+     </widget>
     </widget>
+   </widget>
+   <widget class="QComboBox" name="plcType_cb">
+    <property name="geometry">
+     <rect>
+      <x>1780</x>
+      <y>40</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>h5u</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>ac700</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>1720</x>
+      <y>10</y>
+      <width>141</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>plc类型：</string>
+    </property>
    </widget>
   </widget>
  </widget>

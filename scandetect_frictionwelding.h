@@ -19,31 +19,18 @@ public:
 
     void setModbusTcpIP(QString ip) { PlcIP = ip;}   //设置IP
     void setModbusPort(int port) { PlcPort = port;}   //设置端口
-    void disConncet();
 
     QPointF virtualOrigin() const { return zeroPoint; }     //虚拟0点
-    QPointF limitRegion() const { return limitPoint; }      //极限区域
     QPointF currentPosition() const { return currentPos;}   //当前位置
-
-    float xLenght() const { return xScanLenght;}
-    float yLenght() const { return yScanLenght;}
-    float yStep()   const { return yScanStep;}
 
     void setXAxisVelocity(float vel);       //设置X轴速度
     void setYAxisVelocity(float vel);       //设置Y轴速度
     void setJogVelocity(float vel);         //设置点动速度
 
 
-
     bool isXCrossed();   //判断扫查区域的X轴是否越界
     bool isYCrossed();   //判断扫查区域的Y轴是否越界
     bool isJogCrossed(int &address, float &data);
-
-    ScanModel currentScanModel() const{ return scanModel;}      //当前扫查模式
-    QSettings* scanControlSetting() const{ return Rsettings;}    //配置表句柄
-
-    bool haveMachine() const { return isHaveMachine;}   //是否有设置机械原点
-    bool haveLimit() const {return isHaveLimit;}        //是否有设置机械极限位
 
 
     void writeRegisterGroup( int startAddress,
@@ -65,20 +52,10 @@ public slots:
 
     void on_setOriginBtn_clicked(float x,float y,bool isCurrPosi);     //设置零点
 
-    void setXLenght(float lenght) { xScanLenght = lenght;}  //设置扫查X轴
-    void setYLenght(float lenght) { yScanLenght = lenght;}  //设置扫查Y轴
-    void setYStep(float step)     { yScanStep = step;}      //设置扫查步进
 
-    void on_x_or_line_velocity_editingFinished(float val); // 设置X轴速度
-    void on_y_or_arc_velocity_editingFinished(float val); // 设置Y轴速度
+    void on_line_velocity_editingFinished(float val); // 设置直线速度
+    void on_arc_velocity_editingFinished(float val); // 设置圆弧速度
     void on_jog_velocity_editingFinished(float val); // 设置点动速度
-
-    //台达速度设置接口
-    void on_backOrigin_velocity_editingFinished(float val) { Q_UNUSED(val)} //回原点速度
-    void on_scan_velocity_editingFinished(float val) {Q_UNUSED(val)}       //扫查速度
-    void on_addSub_velocity_editingFinished(float val) {Q_UNUSED(val)}     //点动加减速
-    //-----End
-
 
 
     //寸动
@@ -142,42 +119,37 @@ private:
     void writeAxisLimitPosition();
     void writeAxisMachineOrigin();
     void writeAxisJog(int address, bool data);
-    //void writeTargetPosition(double x, double y,double z, double r);
-
-    void initTasks();               //初始化任务
 
 
     void updataCurrentPos();        //更新当前点位置
 
-
     void perfromJogTasks();         //点动
 
-    bool sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, int address);
+    bool sendPulseCommand(QModbusClient *modbusClient,
+                          QModbusDataUnit::RegisterType rGtype, int address);
 
-
+    bool sendCommandValue(QModbusClient *modbusClient,
+                          QModbusDataUnit::RegisterType rGtype, int address,float value);
 
 
 private:
     QModbusTcpClient *modbusClient = nullptr;
     QString PlcIP;
     int PlcPort = 502;
+
     QSettings *Rsettings = nullptr;
     QTimer *timer = nullptr;
 
-    float xScanLenght = 0;
-    float yScanLenght = 0;
-    float yScanStep = 0;
+
     float xVelocity = 20;
     float yVelocity = 20;
     float jogVelocity = 20;
     int jopStep = 1;
-    double keepTime = 0;
 
-    bool isInit = true;         //链接服务初始化
+
+
     bool isStartScan = false;   //开始扫查标志位
-    bool isPerform = false;     //任务执行标志位
     bool isStopScan = false;    //暂停扫查标志位
-    bool isKeepScan = false;    //继续扫查标志位
     bool isAxisStop = false;    //轴停止状态
     bool updateCurPos = false;  //更新轴位置
     bool isEndScan = false;     //结束扫查标志位
@@ -189,8 +161,6 @@ private:
     bool isHaveLimit = true;    //判断是否有机械极限
 
     bool manState[2] = {false, false};  //手动状态位
-
-    QQueue<QPair<QString, float>> tasks;    //任务列表
 
     ScanModel scanModel = ScanModel::NormalScan;    //扫查模式
     AxisJog axisInch = AxisJog::NotAxisJog;      //寸动

@@ -28,35 +28,36 @@ TGraphicsViewRefactor::TGraphicsViewRefactor(QWidget *parent)
 
 void TGraphicsViewRefactor::SetDefaultItem()
 {
-    QGraphicsScene *s = scene();
+
 //    s->setForegroundBrush(Qt::transparent);
 //    QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
 //    opacityEffect->setOpacity(0.0); // 设置透明度，范围为 0.0（完全透明）到 1.0（完全不透明）
 //    this->setGraphicsEffect(opacityEffect);
-    QScopedPointer<QGraphicsSvgItem> svgItem(new QGraphicsSvgItem("C:\\Users\\admin\\Desktop\\SvgPng04.svg"));
+    //QScopedPointer<QGraphicsSvgItem> svgItem(new QGraphicsSvgItem("C:\\Users\\admin\\Desktop\\SvgPng04.svg"));
+//    QGraphicsSvgItem *m_svgItem = svgItem.take();
+//    m_svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
+//    m_svgItem->setCacheMode(QGraphicsItem::NoCache);
+//    m_svgItem->setZValue(0);
 
-    if (!svgItem->renderer()->isValid())
-       return ;
+//    if (!svgItem->renderer()->isValid())
+//       return ;
 
-    s->clear();
-    resetTransform();
+//    QGraphicsScene *s = scene();
+//    s->clear();
+//    resetTransform();
 
-    QGraphicsSvgItem *m_svgItem = svgItem.take();
-    m_svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
-    m_svgItem->setCacheMode(QGraphicsItem::NoCache);
-    m_svgItem->setZValue(0);
 
-    s->addItem(m_svgItem);
+//    s->addItem(m_svgItem);
 
-    QGraphicsRectItem * item=new QGraphicsRectItem();
-    item->setRect(0,0,300,200);
-    item->setPos(500, 0);
-    item->setBrush(Qt::red);
-    m_svgItem->setZValue(0);
+//    QGraphicsRectItem * item=new QGraphicsRectItem();
+//    item->setRect(0,0,300,200);
+//    item->setPos(500, 0);
+//    item->setBrush(Qt::red);
+//    m_svgItem->setZValue(0);
 
-    s->addItem(item);
+//    s->addItem(item);
 
-    repaint();
+//    repaint();
 }
 
 ///////////////////////////////////////////// 缩放相关  /////////////////////////////////////////////
