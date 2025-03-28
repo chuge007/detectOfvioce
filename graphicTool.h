@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** FreeSCH - Free SCHematic drawing program for electronic circuits.
 **
@@ -45,7 +45,6 @@ protected:
     float imgbg_scale_f ,arrow_length ;
 
 private:
-    QPolygonF get_Polygon() const;
     QRectF shape_rect;
     bool is_hover;
 };

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>841</width>
+    <width>816</width>
     <height>499</height>
    </rect>
   </property>
@@ -348,7 +348,7 @@
     <rect>
      <x>20</x>
      <y>170</y>
-     <width>481</width>
+     <width>541</width>
      <height>81</height>
     </rect>
    </property>
@@ -363,8 +363,8 @@
      <rect>
       <x>10</x>
       <y>16</y>
-      <width>61</width>
-      <height>31</height>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
@@ -381,9 +381,9 @@
    <widget class="QLineEdit" name="yTrans_lin">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>190</x>
       <y>20</y>
-      <width>91</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -394,9 +394,9 @@
    <widget class="QLineEdit" name="xTrans_lin">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>80</x>
       <y>20</y>
-      <width>81</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -407,9 +407,9 @@
    <widget class="QLineEdit" name="rTrans_lin">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>420</x>
       <y>20</y>
-      <width>91</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -420,9 +420,9 @@
    <widget class="QLineEdit" name="zTrans_lin">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>300</x>
       <y>20</y>
-      <width>91</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -436,7 +436,7 @@
     <rect>
      <x>20</x>
      <y>80</y>
-     <width>481</width>
+     <width>541</width>
      <height>80</height>
     </rect>
    </property>
@@ -449,7 +449,7 @@
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>110</x>
       <y>0</y>
       <width>21</width>
       <height>31</height>
@@ -473,7 +473,7 @@
      <rect>
       <x>10</x>
       <y>36</y>
-      <width>51</width>
+      <width>91</width>
       <height>31</height>
      </rect>
     </property>
@@ -491,9 +491,9 @@
    <widget class="QLineEdit" name="rEnd_lin">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>420</x>
       <y>40</y>
-      <width>91</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -504,9 +504,9 @@
    <widget class="QLineEdit" name="xEnd_lin">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>80</x>
       <y>40</y>
-      <width>81</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -517,7 +517,7 @@
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>450</x>
       <y>0</y>
       <width>21</width>
       <height>31</height>
@@ -539,9 +539,9 @@
    <widget class="QLineEdit" name="yEnd_lin">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>190</x>
       <y>40</y>
-      <width>91</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -552,7 +552,7 @@
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>220</x>
       <y>0</y>
       <width>21</width>
       <height>31</height>
@@ -574,9 +574,9 @@
    <widget class="QLineEdit" name="zEnd_lin">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>300</x>
       <y>40</y>
-      <width>91</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -587,7 +587,7 @@
    <widget class="QLabel" name="label_17">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>330</x>
       <y>0</y>
       <width>21</width>
       <height>31</height>
@@ -610,7 +610,7 @@
   <widget class="QPushButton" name="setCurposToEnd_but">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>120</x>
      <y>280</y>
      <width>161</width>
      <height>41</height>
@@ -661,7 +661,7 @@
   <widget class="QPushButton" name="setCursPosToTrans_but">
    <property name="geometry">
     <rect>
-     <x>220</x>
+     <x>350</x>
      <y>280</y>
      <width>151</width>
      <height>41</height>

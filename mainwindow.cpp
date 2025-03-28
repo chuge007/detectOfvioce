@@ -96,32 +96,13 @@ void MainWindow::init()
         QMessageBox::critical(this, "Error", "无法开启数据库事务");
         return;
     }
-    ui->tableView->clearSpans();
-    ui->tableView->setSelectionBehavior( QAbstractItemView::SelectRows ) ;
-    ui->tableView->setEditTriggers (QAbstractItemView::NoEditTriggers ) ;
-    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableView->horizontalHeader()->setStretchLastSection(true);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui->tableView->setSortingEnabled(true);
-    ui->tableView->sortByColumn(0, Qt::AscendingOrder);  // 第 4 列是 sort_order
-    ui->tableView->verticalHeader()->setVisible(false);
+
 
     settings=new QSettings(appDataPath+"/settings.ini", QSettings::IniFormat);
 
-    settings->setValue("targetDb", targetDb);
-    settings->setValue("targetPath", targetPath);
+    //config.loadConfig(appDataPath+"/settings.ini");
 
-    config.loadConfig(appDataPath+"/settings.ini");
 
-    QVariant axleV = settings->value("AxleV");
-    QVariant ip = settings->value("ip");
-    QVariant port = settings->value("port");
-    QVariant plcType =settings->value("plcType")=0;
-
-    ui->AxleVelocity_lin->setText(axleV.toString());
-    ui->ip_lin->setText(ip.toString());
-    ui->port_lin->setText(port.toString());
-    ui->plcType_cb->setCurrentIndex( plcType.toInt());
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -178,6 +159,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->moveUpTabelRow_btu, &QPushButton::clicked, this, &MainWindow::pbmoveUpForSort);
     connect(ui->moveDownTabelRow_btu,&QPushButton::clicked, this, &MainWindow::pbmoveDownForSort);
     connect(ui->setTrajecStart_but,&QPushButton::clicked, this, &MainWindow::on_setTrajec_start_clicked);
+    connect(ui->getCurryPoint_but,&QPushButton::clicked, this, &MainWindow::pbGetCurryPoint);
 
 
 
@@ -219,15 +201,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->graphicsView, SIGNAL(zoomChanged(qreal)),
             this, SLOT(updateSence()));
 
-    updateSence();
 
-    cbSelectPlcType(ui->plcType_cb->currentIndex());
+    initSetting();
+
 }
 
 MainWindow::~MainWindow()
 {
 
-
+    saveSetting();
     delete model;
     delete addRoute;
     delete scene;
@@ -389,8 +371,7 @@ void MainWindow::PbModbusConnectBtn(){
     scanDetectCtrl->on_connectBtn_clicked();
 
 
-    settings->setValue("ip", ui->ip_lin->text());
-    settings->setValue("port", ui->port_lin->text());
+
 }
 
 void MainWindow::pbAddSpline()
@@ -1085,7 +1066,6 @@ void MainWindow::PbAxleVelocity_lin(){
 
     qDebug()<<"AxleV"<<ui->AxleVelocity_lin->text().toFloat();
     scanDetectCtrl->on_jog_velocity_editingFinished(ui->AxleVelocity_lin->text().toFloat());
-    settings->setValue("AxleV", ui->AxleVelocity_lin->text());
     //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 速度已设置   "));
     ui->messText_lin->setText(QString::fromLocal8Bit(" 速度已设置   "));
 
@@ -1101,7 +1081,6 @@ void MainWindow::PblinVelocity_lin(){
 
     qDebug()<<"PblinVelocity_lin"<<ui->lineVelocity_lin->text().toFloat();
     scanDetectCtrl->on_line_velocity_editingFinished(ui->lineVelocity_lin->text().toFloat());
-    settings->setValue("AxleV", ui->lineVelocity_lin->text());
     //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 直线速度已设置   "));
     ui->messText_lin->setText(QString::fromLocal8Bit(" 直线速度已设置   "));
 
@@ -1117,7 +1096,6 @@ void MainWindow::PbarcVelocity_lin(){
 
     qDebug()<<"PbarcVelocity_lin"<<ui->arcVelocity_lin->text().toFloat();
     scanDetectCtrl->on_arc_velocity_editingFinished(ui->arcVelocity_lin->text().toFloat());
-    settings->setValue("AxleV", ui->arcVelocity_lin->text());
     //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 圆弧速度已设置   "));
     ui->messText_lin->setText(QString::fromLocal8Bit(" 圆弧速度已设置   "));
 
@@ -1236,7 +1214,6 @@ void MainWindow::cbSelectPlcType(int index){
         memcpy(&scanDetectCtrl->basePlcData, &scanDetectCtrl->ac700Data, sizeof(ac700));
     }
 
-    settings->setValue("plcType", index);
 
 
     qDebug() << "MovePointDate:" << scanDetectCtrl->basePlcData.MovePointDate;
@@ -1395,13 +1372,62 @@ void MainWindow::pbmoveDownForSort()
 
 
 
+void MainWindow::pbGetCurryPoint(){
 
 
+    if(ui->xCurPos_lab->text()!=""&&ui->yCurPos_lab->text()!=""&&
+            ui->zCurPos_lab->text()!=""&&ui->rCurPos_lab->text()!=""){
+
+        ui->traject_x0->setText(ui->xCurPos_lab->text());
+        ui->traject_y0->setText(ui->yCurPos_lab->text());
+        ui->traject_z0->setText(ui->zCurPos_lab->text());
+        ui->traject_r0->setText(ui->rCurPos_lab->text());
+
+    }
+}
 
 
+void MainWindow::saveSetting(){
 
 
+    settings->setValue("ip", ui->ip_lin->text());
+    settings->setValue("port", ui->port_lin->text());
+    settings->setValue("AxleV", ui->AxleVelocity_lin->text());
+    settings->setValue("AxleV", ui->lineVelocity_lin->text());
+    settings->setValue("AxleV", ui->arcVelocity_lin->text());
+    settings->setValue("plcType", ui->plcType_cb->currentIndex());
+    settings->setValue("traject_x0", ui->traject_x0->text());
+    settings->setValue("traject_y0", ui->traject_y0->text());
+    settings->setValue("traject_z0", ui->traject_z0->text());
+    settings->setValue("traject_r0", ui->traject_r0->text());
+}
 
+
+void MainWindow::initSetting(){
+
+
+    QVariant axleV = settings->value("AxleV");
+    QVariant ip = settings->value("ip");
+    QVariant port = settings->value("port");
+    QVariant plcType =settings->value("plcType")=0;
+
+    ui->AxleVelocity_lin->setText(axleV.toString());
+    ui->ip_lin->setText(ip.toString());
+    ui->port_lin->setText(port.toString());
+    ui->plcType_cb->setCurrentIndex( plcType.toInt());
+    cbSelectPlcType(ui->plcType_cb->currentIndex());
+    ui->tableView->clearSpans();
+    ui->tableView->setSelectionBehavior( QAbstractItemView::SelectRows ) ;
+    ui->tableView->setEditTriggers (QAbstractItemView::NoEditTriggers ) ;
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->setSortingEnabled(true);
+    ui->tableView->sortByColumn(0, Qt::AscendingOrder);  // 第 4 列是 sort_order
+    ui->tableView->verticalHeader()->setVisible(false);
+    updateSence();
+
+}
 
 
 

@@ -709,7 +709,7 @@
     <widget class="QPushButton" name="imageProcess_but">
      <property name="geometry">
       <rect>
-       <x>980</x>
+       <x>1090</x>
        <y>20</y>
        <width>211</width>
        <height>41</height>
@@ -722,7 +722,7 @@
     <widget class="QPushButton" name="startScan_But">
      <property name="geometry">
       <rect>
-       <x>1270</x>
+       <x>1390</x>
        <y>20</y>
        <width>101</width>
        <height>41</height>
@@ -779,7 +779,7 @@
     <widget class="QPushButton" name="stopScan_but">
      <property name="geometry">
       <rect>
-       <x>1450</x>
+       <x>1510</x>
        <y>20</y>
        <width>101</width>
        <height>41</height>
@@ -798,7 +798,7 @@
     <widget class="QPushButton" name="endScan_but">
      <property name="geometry">
       <rect>
-       <x>1610</x>
+       <x>1630</x>
        <y>20</y>
        <width>101</width>
        <height>41</height>
@@ -817,7 +817,7 @@
     <widget class="Line" name="line_3">
      <property name="geometry">
       <rect>
-       <x>700</x>
+       <x>850</x>
        <y>20</y>
        <width>20</width>
        <height>81</height>
@@ -938,7 +938,7 @@
     <widget class="QPushButton" name="ascan_but">
      <property name="geometry">
       <rect>
-       <x>740</x>
+       <x>870</x>
        <y>20</y>
        <width>201</width>
        <height>41</height>
@@ -1053,7 +1053,7 @@
     <widget class="QPushButton" name="writeInPLC_but">
      <property name="geometry">
       <rect>
-       <x>980</x>
+       <x>1090</x>
        <y>70</y>
        <width>211</width>
        <height>41</height>
@@ -1066,7 +1066,7 @@
     <widget class="QPushButton" name="creatG_but">
      <property name="geometry">
       <rect>
-       <x>740</x>
+       <x>870</x>
        <y>70</y>
        <width>201</width>
        <height>41</height>
@@ -1074,6 +1074,25 @@
      </property>
      <property name="text">
       <string>GCode运行（plc）</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="getCurryPoint_but">
+     <property name="geometry">
+      <rect>
+       <x>700</x>
+       <y>20</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>获取当前点</string>
      </property>
     </widget>
    </widget>
@@ -1175,7 +1194,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Delete</string>
+       <string>删除</string>
       </property>
      </widget>
      <widget class="QPushButton" name="cleanTable_but">
@@ -1214,7 +1233,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Edit</string>
+       <string>编辑</string>
       </property>
      </widget>
      <widget class="QTableView" name="tableView">

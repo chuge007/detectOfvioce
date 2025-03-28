@@ -120,24 +120,3 @@ void QTableViewSpe::focusOutEvent(QFocusEvent */*e*/)
     qDebug()<<"******allwelds_lostfocus";
     emit allwelds_lostfocus();
 }
-/*void QTableViewSpe::mousePressEvent(QMouseEvent *event)
-{
-    QTableView::mousePressEvent(event);
-
-    QPoint point = this->mapFromGlobal(QCursor::pos());//得到窗口坐标
-    int height = this->horizontalHeader()->height();
-    QPoint pt2(0,height);
-    point -= pt2;
-    int curRow = this->indexAt(point).row();
-
-    qDebug()<<point<<curRow<<"*******";
-    if(curRow  > 0)
-    {
-        this->setEditTriggers(QAbstractItemView::DoubleClicked |QAbstractItemView::EditKeyPressed |QAbstractItemView::AnyKeyPressed);
-    }
-    else
-    {
-        this->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-    }
-}*/

@@ -98,8 +98,11 @@ private slots:
     void pbmoveDownForSort();
 
 
+    void pbGetCurryPoint();
 
+    void saveSetting();
 
+    void initSetting();
 private:
     Ui::MainWindow *ui;
 

@@ -17,47 +17,22 @@ TGraphicsViewRefactor::TGraphicsViewRefactor(QWidget *parent)
     setRenderHint(QPainter::Antialiasing);
     setCacheMode(QGraphicsView::CacheBackground);
     setScene(new QGraphicsScene());
-    // 设置一个较大的场景区域，确保绘制的网格超出视口边界，从而支持拖动
-    scene()->setSceneRect(-100000, 100000, 50000, 50000);
     SetDefaultItem();
-    setMinimumSize(QSize(500,500));
+
     this->setMouseTracking(true);
     setStyleSheet("margin:10");
-
+    viewport()->setMouseTracking(true);
+    setDragMode(QGraphicsView::ScrollHandDrag);  // 已设置
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse); // 缩放围绕鼠标
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    fitInView(sceneRect(), Qt::KeepAspectRatio); // 自动适配场景
 }
 
 void TGraphicsViewRefactor::SetDefaultItem()
 {
 
-//    s->setForegroundBrush(Qt::transparent);
-//    QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
-//    opacityEffect->setOpacity(0.0); // 设置透明度，范围为 0.0（完全透明）到 1.0（完全不透明）
-//    this->setGraphicsEffect(opacityEffect);
-    //QScopedPointer<QGraphicsSvgItem> svgItem(new QGraphicsSvgItem("C:\\Users\\admin\\Desktop\\SvgPng04.svg"));
-//    QGraphicsSvgItem *m_svgItem = svgItem.take();
-//    m_svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
-//    m_svgItem->setCacheMode(QGraphicsItem::NoCache);
-//    m_svgItem->setZValue(0);
 
-//    if (!svgItem->renderer()->isValid())
-//       return ;
-
-//    QGraphicsScene *s = scene();
-//    s->clear();
-//    resetTransform();
-
-
-//    s->addItem(m_svgItem);
-
-//    QGraphicsRectItem * item=new QGraphicsRectItem();
-//    item->setRect(0,0,300,200);
-//    item->setPos(500, 0);
-//    item->setBrush(Qt::red);
-//    m_svgItem->setZValue(0);
-
-//    s->addItem(item);
-
-//    repaint();
 }
 
 ///////////////////////////////////////////// 缩放相关  /////////////////////////////////////////////
@@ -576,50 +551,46 @@ void TGraphicsViewRefactor::DrawCanvasRect(QPainter &painter)
 
 ///////////////////////////////////////////// 拖拽视窗 /////////////////////////////////////////////
 
-// mousePressEvent 改为检测 event->button()
+
 void TGraphicsViewRefactor::mousePressEvent(QMouseEvent *event)
 {
     // 只有当中键按下时才开始拖动
     if(event->button() == Qt::MiddleButton)
     {
-        IsMoveView = true;
-        viewport()->setCursor(Qt::ClosedHandCursor);
+        IsMoveView=!IsMoveView;
         // 记录按下时的视图坐标
-        C_Movepos = event->pos();
-        C_Downpos = event->pos();
+        C_Movepos = mapToScene(event->pos()) - event->pos() + QPointF(width() / 2, height() / 2);
+        C_Downpos  = event->pos();
+
+        return;
     }
     QGraphicsView::mousePressEvent(event);
 }
-
 
 void TGraphicsViewRefactor::mouseMoveEvent(QMouseEvent *event)
 {
     if (IsMoveView)
     {
-        // 计算本次移动差值（使用视图坐标，其delta计算简单而直观）
-        QPointF delta = event->pos() - C_Movepos;
-        // 调用 translate() 修改视图变换（注意：平移方向可能需要负值）
-        this->translate(-delta.x(), -delta.y());
-        // 更新起始位置以便下次计算 delta
-        C_Movepos = event->pos();
-        qDebug() << "Moved delta:" << delta;
+        QPointF offsetPos = event->pos() - C_Downpos;
 
-        // 不再重复调用基类的 mouseMoveEvent
-        return;
+        setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+        centerOn(C_Movepos - offsetPos);
+
+        qDebug()<<"IsMoveView"<<IsMoveView;
     }
     QGraphicsView::mouseMoveEvent(event);
 }
 
-
 void TGraphicsViewRefactor::mouseReleaseEvent(QMouseEvent *event)
-{
+{   qDebug() << "mouseReleaseEvent :"<<IsMoveView;
     if (event->button() == Qt::MiddleButton)
     {
-        IsMoveView = false;
+        //IsMoveView = false;
         viewport()->setCursor(Qt::ArrowCursor);
+        event->accept();
+        return;
     }
     QGraphicsView::mouseReleaseEvent(event);
 }
-
 
 
