@@ -160,6 +160,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->moveDownTabelRow_btu,&QPushButton::clicked, this, &MainWindow::pbmoveDownForSort);
     connect(ui->setTrajecStart_but,&QPushButton::clicked, this, &MainWindow::on_setTrajec_start_clicked);
     connect(ui->getCurryPoint_but,&QPushButton::clicked, this, &MainWindow::pbGetCurryPoint);
+    connect(ui->moveDirectionNot_but,&QPushButton::clicked, this, &MainWindow::pbMoveDirectionNot);
 
 
 
@@ -803,36 +804,283 @@ void MainWindow::pbDXFimportBut()
         db.rollback();
     }
 
-    for (int i = 1; i < model->rowCount(); ++i) {
-        QSqlRecord prevRecord = model->record(i - 1);
-        QSqlRecord currRecord = model->record(i);
 
-        // 将文本转换为数值（假定存的是数字字符串）
-        double currStartX = currRecord.value("起点x").toDouble();
-        double currStartY = currRecord.value("起点y").toDouble();
-        double currStartZ = currRecord.value("起点z").toDouble();
-        double currStartR = currRecord.value("起点r").toDouble();
+    sortModelLine();
 
-        double prevEndX = prevRecord.value("终点x").toDouble();
-        double prevEndY = prevRecord.value("终点y").toDouble();
-        double prevEndZ = prevRecord.value("终点z").toDouble();
-        double prevEndR = prevRecord.value("终点r").toDouble();
+}
 
 
-        const double eps = 0.01;
-        if (!(fabs(currStartX - prevEndX) < eps &&
-            fabs(currStartY - prevEndY) < eps &&
-            fabs(currStartZ - prevEndZ) < eps &&
-            fabs(currStartR - prevEndR) < eps)) {
-            QMessageBox::warning(nullptr, QString::fromLocal8Bit("数据不一致性警告"),
-                                 QString::fromLocal8Bit("第%1行的起点与第%2行的终点不相同！")
-                                 .arg(i)
-                                 .arg(i - 1));
 
+void MainWindow::sortModelLine()
+{
+    qDebug() << "开始排序模型图形链...";
+    db.transaction();
+
+    const double eps = 0.01;
+    int rowCount = model->rowCount();
+    qDebug() << "模型行数:" << rowCount;
+
+    // 保存所有点（“x_y”格式）和单独保存起点与终点列表
+    QList<QString> startKeys;
+    QList<QString> endKeys;
+    for (int i = 0; i < rowCount; ++i) {
+        QSqlRecord rec = model->record(i);
+
+        // 获取并转换起点和终点坐标
+        double startX = rec.value(2).toDouble();
+        double startY = rec.value(3).toDouble();
+        double endX   = rec.value(10).toDouble();
+        double endY   = rec.value(11).toDouble();
+
+        // 格式化为保留两位小数的字符串
+        QString startXStr = QString::number(startX, 'f', 2);
+        QString startYStr = QString::number(startY, 'f', 2);
+        QString endXStr   = QString::number(endX, 'f', 2);
+        QString endYStr   = QString::number(endY, 'f', 2);
+
+        // 构造键
+        QString startKey = startXStr + "_" + startYStr;
+        QString endKey   = endXStr + "_" + endYStr;
+
+        startKeys.append(startKey);
+        endKeys.append(endKey);
+
+        qDebug() << "第" << i << "行:" << "startKey:" << startKey << " endKey:" << endKey;
+    }
+
+    // 统计所有点的频次
+    QMap<QString, int> pointFreq;
+    for (const QString &pt : startKeys)
+        pointFreq[pt] += 1;
+    for (const QString &pt : endKeys)
+        pointFreq[pt] += 1;
+
+    qDebug() << "所有点频次统计:";
+    for (auto it = pointFreq.constBegin(); it != pointFreq.constEnd(); ++it) {
+        qDebug() << "点:" << it.key() << "频次:" << it.value();
+    }
+
+    // 提取出现频次为1的点（候选首尾）
+    QList<QString> uniquePoints;
+    for (auto it = pointFreq.constBegin(); it != pointFreq.constEnd(); ++it) {
+        if (it.value() == 1)
+            uniquePoints.append(it.key());
+    }
+    qDebug() << "候选唯一点:" << uniquePoints;
+
+
+
+    // 检查非唯一点是否均出现两次
+    for (auto it = pointFreq.constBegin(); it != pointFreq.constEnd(); ++it) {
+        if (it.value() != 1 && it.value() != 2) {
+            QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit("数据有误：非首尾相连！"));
+            db.rollback();
+            return;
         }
     }
 
+    if (uniquePoints.size() != 2) {
+
+        if(uniquePoints.size()==0){
+            QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit("完全闭环轨迹！"));
+            db.rollback();
+            return;
+        }else {
+
+
+        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit("数据有误：确定不了起点和终点！"));
+        db.rollback();
+        return;
+        }
+    }
+
+    // 候选的两个点
+    QString candidatePoint1 = uniquePoints.at(0);
+    QString candidatePoint2 = uniquePoints.at(1);
+    qDebug() << "候选点1:" << candidatePoint1 << "候选点2:" << candidatePoint2;
+
+    // 询问用户选择哪个点作为轨迹起点
+    QString chosenStartKey;
+    QMessageBox::StandardButton reply = QMessageBox::question(
+                nullptr,
+                QString::fromLocal8Bit("起点选择"),
+                QString::fromLocal8Bit("发现两个候选起点：%1 和 %2。\n是否以坐标 %1 作为轨迹起点？否则选择%2作轨迹起点")
+                .arg(candidatePoint1, candidatePoint2),
+                QMessageBox::Yes | QMessageBox::No
+                );
+
+    if (reply == QMessageBox::Yes) {
+        chosenStartKey = candidatePoint1;
+    } else {
+        chosenStartKey = candidatePoint2;
+    }
+    qDebug() << "用户选择的起点:" << chosenStartKey;
+
+    // 解析 chosenStartKey 得到起始坐标（这里仅用于调试，后续链条匹配直接使用字符串比较）
+    QStringList parts = chosenStartKey.split("_");
+    if (parts.size() < 2) {
+        db.rollback();
+        return;
+    }
+    double chosenStartX = parts[0].toDouble();
+    double chosenStartY = parts[1].toDouble();
+    QPointF chosenStart(chosenStartX, chosenStartY);
+    qDebug() << "解析起点:" << chosenStart;
+
+    // 构造链式排序：保存新顺序（存储原模型行号）
+    QList<int> newOrder;
+    QSet<int> usedRows;
+
+    // 首先在模型中查找包含 chosenStartKey 的记录
+    int startRow = -1;
+    for (int i = 0; i < rowCount; ++i) {
+        if (usedRows.contains(i))
+            continue;
+        QSqlRecord rec = model->record(i);
+        double sx = rec.value(2).toDouble();
+        double sy = rec.value(3).toDouble();
+        QString sKey = QString::number(sx, 'f', 2) + "_" + QString::number(sy, 'f', 2);
+        double ex = rec.value(10).toDouble();
+        double ey = rec.value(11).toDouble();
+        QString eKey = QString::number(ex, 'f', 2) + "_" + QString::number(ey, 'f', 2);
+
+        if (sKey == chosenStartKey || eKey == chosenStartKey) {
+            // 如果起点在记录中出现在终点，则交换，使之成为起点
+            if (eKey == chosenStartKey) {
+                qDebug() << QString::fromLocal8Bit("记录") << i <<QString::fromLocal8Bit(
+                                "中，候选起点在终点，进行交换。");
+                double tmpX = sx, tmpY = sy;
+                sx = ex;
+                sy = ey;
+                ex = tmpX;
+                ey = tmpY;
+                sKey = QString::number(sx, 'f', 2) + "_" + QString::number(sy, 'f', 2);
+                eKey = QString::number(ex, 'f', 2) + "_" + QString::number(ey, 'f', 2);
+
+                // 更新模型中该记录的起点和终点
+                model->setData(model->index(i, 2), sx);
+                model->setData(model->index(i, 3), sy);
+                model->setData(model->index(i, 10), ex);
+                model->setData(model->index(i, 11), ey);
+                model->submitAll();
+                model->select();
+            }
+            startRow = i;
+            newOrder.append(i);
+            usedRows.insert(i);
+            // 更新当前链头为该记录的终点
+            chosenStartX = ex;
+            chosenStartY = ey;
+            qDebug()<<"sx"<<sx<<"  "<<"sy"<<sy<<"  "<<"ex"<<ex<<"  "<<"ey"<<ey;
+            qDebug() << QString::fromLocal8Bit("找到起始记录:" )<< i <<QString::fromLocal8Bit( ", 新链头:")
+                     << QString::number(chosenStartX, 'f', 2)
+                     << "_" << QString::number(chosenStartY, 'f', 2);
+            break;
+        }
+    }
+    if (startRow == -1) {
+        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit("未找到包含用户选择起点的记录。"));
+        db.rollback();
+        return;
+    }
+
+
+    // 链式排序：依次查找未使用记录中，与当前链头匹配的记录
+    QString currentChainKey = QString::number(chosenStartX, 'f', 2) + "_" + QString::number(chosenStartY, 'f', 2);
+    qDebug() << "初始链头:" << currentChainKey;
+    while (newOrder.size() < rowCount) {
+        bool found = false;
+        for (int i = 0; i < rowCount; ++i) {
+            if (usedRows.contains(i))
+                continue;
+            QSqlRecord rec = model->record(i);
+            double sx = rec.value(2).toDouble();
+            double sy = rec.value(3).toDouble();
+            double ex = rec.value(10).toDouble();
+            double ey = rec.value(11).toDouble();
+            QString sKey = QString::number(sx, 'f', 2) + "_" + QString::number(sy, 'f', 2);
+            QString eKey = QString::number(ex, 'f', 2) + "_" + QString::number(ey, 'f', 2);
+
+            if (sKey == currentChainKey || eKey == currentChainKey) {
+                // 如果匹配记录中当前链头在终点，则交换使其出现在起点
+                if (eKey == currentChainKey) {
+                    qDebug() << "记录" << i << "中链头在终点，进行交换。";
+                    double tmpX = sx, tmpY = sy;
+                    sx = ex;
+                    sy = ey;
+                    ex = tmpX;
+                    ey = tmpY;
+                    sKey = QString::number(sx, 'f', 2) + "_" + QString::number(sy, 'f', 2);
+                    eKey = QString::number(ex, 'f', 2) + "_" + QString::number(ey, 'f', 2);
+
+                    // 更新模型中该记录的起点和终点
+                    model->setData(model->index(i, 2), sx);
+                    model->setData(model->index(i, 3), sy);
+                    model->setData(model->index(i, 10), ex);
+                    model->setData(model->index(i, 11), ey);
+                    model->submitAll();
+                    model->select();
+                }
+                newOrder.append(i);
+                usedRows.insert(i);
+                currentChainKey = eKey;
+                qDebug() << "添加记录" << i << ", 更新链头为:" << currentChainKey;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            qDebug() << "链条构造中断，当前链头:" << currentChainKey;
+            break;
+        }
+    }
+
+
+    qDebug() << "最终链条记录数:" << newOrder.size();
+    if (newOrder.size() != rowCount) {
+        QMessageBox::warning(nullptr, "错误", QString::fromLocal8Bit("图形链条不完整，数据可能非首尾相连。"));
+        db.rollback();
+        return;
+    }
+
+    // 将排序后的记录存入临时变量，并更新记录中的 id（假设 id 在第0列）
+    QList<QSqlRecord> sortedRecords;
+    for (int newId = 0; newId < newOrder.size(); ++newId) {
+        int rowIndex = newOrder[newId];
+        QSqlRecord rec = model->record(rowIndex);
+        rec.setValue(0, newId);
+        sortedRecords.append(rec);
+        qDebug() << "新顺序: 新 id:" << newId << " 原行:" << rowIndex;
+    }
+
+
+    // 将临时变量中的记录写回原模型
+    for (int i = 0; i < sortedRecords.size(); ++i) {
+        QSqlRecord rec = sortedRecords.at(i);
+        model->setRecord(i, rec);
+    }
+
+    QSqlRecord rec = sortedRecords[0];
+    qDebug()<<"rec.value(2).toDouble()"<<rec.value(2).toDouble()
+                   <<"  "<<"rec.value(3).toDouble()"<<rec.value(3).toDouble()
+                  <<"  "<<"rec.value(10).toDouble()"<<rec.value(10).toDouble()<<"  "
+                 <<"rec.value(11).toDouble()"<<rec.value(11).toDouble();
+    model->submitAll();
+    model->select();
+
+
+
+    if (!db.commit()) {
+        qDebug() << "事务提交失败:" << db.lastError().text();
+        QMessageBox::critical(this, "错误", "事务提交失败:" + db.lastError().text());
+        db.rollback();
+    } else {
+        qDebug() << "排序及更新完成，事务提交成功！";
+    }
+
+    updateSence();
 }
+
 
 
 
@@ -1371,6 +1619,68 @@ void MainWindow::pbmoveDownForSort()
 }
 
 
+void MainWindow::pbMoveDirectionNot(){
+
+
+    // 获取当前选中的行
+    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedIndexes();
+    if (selectedIndexes.isEmpty()) {
+        qDebug() << "没有选中行";
+        return;
+    }
+    int row = selectedIndexes.first().row();
+    qDebug() << "选中行:" << row;
+
+    // 读取当前行中起点与终点的 xyzr 数据
+    double startX = model->data(model->index(row, 2)).toDouble();
+    double startY = model->data(model->index(row, 3)).toDouble();
+    double startZ = model->data(model->index(row, 4)).toDouble();
+    double startR = model->data(model->index(row, 5)).toDouble();
+
+    double endX   = model->data(model->index(row, 10)).toDouble();
+    double endY   = model->data(model->index(row, 11)).toDouble();
+    double endZ   = model->data(model->index(row, 12)).toDouble();
+    double endR   = model->data(model->index(row, 13)).toDouble();
+
+    qDebug() << "交换前:";
+    qDebug() << "起点: " << startX << startY << startZ << startR;
+    qDebug() << "终点: " << endX << endY << endZ << endR;
+
+    // 进行互换操作：将起点数据设置为旧终点的数据，终点数据设置为旧起点的数据
+    model->setData(model->index(row, 2), endX);
+    model->setData(model->index(row, 3), endY);
+    model->setData(model->index(row, 4), endZ);
+    model->setData(model->index(row, 5), endR);
+
+    model->setData(model->index(row, 10), startX);
+    model->setData(model->index(row, 11), startY);
+    model->setData(model->index(row, 12), startZ);
+    model->setData(model->index(row, 13), startR);
+
+    // 调试信息，检查更新后的数据
+    qDebug() << "交换后:";
+    qDebug() << "起点: " << model->data(model->index(row, 2)).toDouble()
+             << model->data(model->index(row, 3)).toDouble()
+             << model->data(model->index(row, 4)).toDouble()
+             << model->data(model->index(row, 5)).toDouble();
+    qDebug() << "终点: " << model->data(model->index(row, 10)).toDouble()
+             << model->data(model->index(row, 11)).toDouble()
+             << model->data(model->index(row, 12)).toDouble()
+             << model->data(model->index(row, 13)).toDouble();
+
+    // 提交更改并刷新模型视图
+    if (model->submitAll()) {
+        qDebug() << "数据更新成功";
+    } else {
+        qDebug() << "数据更新失败:" << model->lastError().text();
+    }
+    model->select();
+    updateSence();
+
+
+
+
+}
 
 void MainWindow::pbGetCurryPoint(){
 

@@ -97,8 +97,11 @@ private slots:
 
     void pbmoveDownForSort();
 
+    void sortModelLine();
 
     void pbGetCurryPoint();
+
+    void pbMoveDirectionNot();
 
     void saveSetting();
 
