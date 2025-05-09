@@ -25,8 +25,10 @@ addRoute_dialog::addRoute_dialog(QWidget *parent) :
     connect(ui->RrSub_btn, &QPushButton::released, this, &addRoute_dialog::subBut_r_released);
     connect(ui->RzAdd_btn, &QPushButton::released, this, &addRoute_dialog::addBut_z_released);
     connect(ui->RzSub_Btn, &QPushButton::released, this, &addRoute_dialog::subBut_z_released);
-    connect(ui->setCurposToEnd_but, &QPushButton::released, this, &addRoute_dialog::pbSetCurposToEndPos);
-    connect(ui->setCursPosToTrans_but, &QPushButton::released, this, &addRoute_dialog::pbSetCurposToTransPos);
+    connect(ui->setCurposToEnd_but, &QPushButton::pressed, this, &addRoute_dialog::pbSetCurposToEndPos);
+    connect(ui->setCursPosToTrans_but, &QPushButton::pressed, this, &addRoute_dialog::pbSetCurposToTransPos);
+    connect(ui->pb_accept, &QPushButton::pressed, this, &addRoute_dialog::on_pushButton_accept);
+    connect(ui->pb_reject, &QPushButton::pressed, this, &addRoute_dialog::on_pushButton_reject);
 
 
 
@@ -37,11 +39,10 @@ addRoute_dialog::~addRoute_dialog()
     delete ui;
 }
 
-void addRoute_dialog::on_pushButton_clicked()
+void addRoute_dialog::on_pushButton_accept()
 {
-//    if(){
-//        QMessageBox::information(this," 提示 "," 有至少两个点重合，请检查 ");return;}
 
+    qDebug()<<"accept";
     accept();
 }
 
@@ -59,8 +60,9 @@ void addRoute_dialog::closeEvent(QCloseEvent *event)
     hide();
 }
 
-void addRoute_dialog::on_pushButton_2_clicked()
+void addRoute_dialog::on_pushButton_reject()
 {
+    qDebug()<<"reject";
     reject();
 }
 

@@ -24,6 +24,9 @@ SOURCES += \
     dxflib/dl_writer_ascii.cpp \
     dxflib/dxfhelper.cpp \
     dxflib/dxfreader.cpp \
+    gcodemodulation.cpp \
+    imageProcessing.cpp \
+    imageprocessing.cpp \
     main.cpp \
     mainwindow.cpp \
     scanMovecontrl/scandetect_frictionwelding.cpp \
@@ -49,6 +52,9 @@ HEADERS += \
     dxflib/dl_writer_ascii.h \
     dxflib/dxfhelper.h \
     dxflib/dxfreader.h \
+    gcodemodulation.h \
+    imageProcessing.h \
+    imageprocessing.h \
     mainwindow.h \
     scanMovecontrl/modbusconfig.h \
     scanMovecontrl/scancontrolabstract.h \
@@ -61,7 +67,12 @@ HEADERS += \
     widgetDefin/tgraphicsviewrefactor.h
 
 FORMS += \
+    ImageProcessing.ui \
     addroute_dialog.ui \
+    gcodemodulation.ui \
+    imageProcessing.ui \
+    imageprocessing.ui \
+    imageprocessing.ui \
     mainwindow.ui
 
 #INCLUDEPATH += $$PWD/include

@@ -58,8 +58,8 @@ public:
     QPushButton *setCurposToEnd_but;
     QWidget *layoutWidget;
     QHBoxLayout *horizontalLayout;
-    QPushButton *pushButton;
-    QPushButton *pushButton_2;
+    QPushButton *pb_accept;
+    QPushButton *pb_reject;
     QPushButton *setCursPosToTrans_but;
     QLabel *label_15;
     QLabel *label_16;
@@ -241,15 +241,15 @@ public:
         horizontalLayout = new QHBoxLayout(layoutWidget);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        pushButton = new QPushButton(layoutWidget);
-        pushButton->setObjectName(QString::fromUtf8("pushButton"));
+        pb_accept = new QPushButton(layoutWidget);
+        pb_accept->setObjectName(QString::fromUtf8("pb_accept"));
 
-        horizontalLayout->addWidget(pushButton);
+        horizontalLayout->addWidget(pb_accept);
 
-        pushButton_2 = new QPushButton(layoutWidget);
-        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
+        pb_reject = new QPushButton(layoutWidget);
+        pb_reject->setObjectName(QString::fromUtf8("pb_reject"));
 
-        horizontalLayout->addWidget(pushButton_2);
+        horizontalLayout->addWidget(pb_reject);
 
         setCursPosToTrans_but = new QPushButton(addRoute_dialog);
         setCursPosToTrans_but->setObjectName(QString::fromUtf8("setCursPosToTrans_but"));
@@ -324,8 +324,8 @@ public:
         zEnd_lin->setText(QString());
         label_17->setText(QApplication::translate("addRoute_dialog", "Z", nullptr));
         setCurposToEnd_but->setText(QApplication::translate("addRoute_dialog", "\350\256\276\345\256\232\344\270\272\347\273\210\347\202\271", nullptr));
-        pushButton->setText(QApplication::translate("addRoute_dialog", "OK", nullptr));
-        pushButton_2->setText(QApplication::translate("addRoute_dialog", "Cancel", nullptr));
+        pb_accept->setText(QApplication::translate("addRoute_dialog", "OK", nullptr));
+        pb_reject->setText(QApplication::translate("addRoute_dialog", "Cancel", nullptr));
         setCursPosToTrans_but->setText(QApplication::translate("addRoute_dialog", "\350\256\276\345\256\232\344\270\272\350\277\207\345\272\246\347\202\271", nullptr));
         label_15->setText(QApplication::translate("addRoute_dialog", "Z\357\274\232", nullptr));
         label_16->setText(QApplication::translate("addRoute_dialog", "mm", nullptr));

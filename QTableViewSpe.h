@@ -1,4 +1,4 @@
-#ifndef HEADER_QTABLEVIEWSPE
+﻿#ifndef HEADER_QTABLEVIEWSPE
 #define HEADER_QTABLEVIEWSPE
 
 #include <QTableView>
@@ -34,7 +34,7 @@ class QTableViewSpe: public QTableView
         int numColMax;
 
         virtual void focusOutEvent(QFocusEvent *e);
-        //void mousePressEvent(QMouseEvent *event);
+        //void mousePressEvent(QMouseEvent *event)override;
 signals:
     void allwelds_lostfocus();
 

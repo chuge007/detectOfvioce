@@ -120,3 +120,6 @@ void QTableViewSpe::focusOutEvent(QFocusEvent */*e*/)
     qDebug()<<"******allwelds_lostfocus";
     emit allwelds_lostfocus();
 }
+
+
+

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>imageprocessing</class>
+ <widget class="QWidget" name="imageprocessing">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1463</width>
+    <height>1149</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>-110</x>
+     <y>0</y>
+     <width>1611</width>
+     <height>1151</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:rgb(254, 254, 254)</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QGraphicsView" name="gVimageprocess">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>0</y>
+      <width>1131</width>
+      <height>1221</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:rgb(234, 234, 234)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pBimagesProcess">
+    <property name="geometry">
+     <rect>
+      <x>1260</x>
+      <y>1060</y>
+      <width>151</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>超声图像分析</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pBtestReport">
+    <property name="geometry">
+     <rect>
+      <x>1420</x>
+      <y>1060</y>
+      <width>151</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>生成检测报告</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pBsetImagePath">
+    <property name="geometry">
+     <rect>
+      <x>1380</x>
+      <y>200</y>
+      <width>191</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>设定处理图像路径</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>1270</x>
+      <y>40</y>
+      <width>151</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>处理的图像：</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbprocessImage">
+    <property name="geometry">
+     <rect>
+      <x>1290</x>
+      <y>70</y>
+      <width>271</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame_2">
+    <property name="geometry">
+     <rect>
+      <x>1250</x>
+      <y>20</y>
+      <width>331</width>
+      <height>291</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255, 255, 255, 0)</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame_3">
+    <property name="geometry">
+     <rect>
+      <x>1250</x>
+      <y>330</y>
+      <width>331</width>
+      <height>681</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255, 255, 255, 0)</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="pbSetRoi">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>50</y>
+       <width>111</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(255, 255, 255, 100)</string>
+     </property>
+     <property name="text">
+      <string>选择区域</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pbCleanRoi">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>50</y>
+       <width>111</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(255, 255, 255, 100)</string>
+     </property>
+     <property name="text">
+      <string>清理区域</string>
+     </property>
+    </widget>
+   </widget>
+   <zorder>frame_2</zorder>
+   <zorder>gVimageprocess</zorder>
+   <zorder>pBimagesProcess</zorder>
+   <zorder>pBtestReport</zorder>
+   <zorder>pBsetImagePath</zorder>
+   <zorder>label</zorder>
+   <zorder>lbprocessImage</zorder>
+   <zorder>frame_3</zorder>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

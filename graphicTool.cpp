@@ -22,7 +22,8 @@ line_item::line_item(const QPointF& startPosition, const QPointF& endPosition,in
     imgbg_scale_f = parent->imgbg_scale_f;
 
 
-    this->setFlags ( ItemIsSelectable  | ItemIgnoresTransformations | ItemSendsGeometryChanges);
+    //this->setFlags ( ItemIsSelectable  | ItemIgnoresTransformations | ItemSendsGeometryChanges);
+    this->setFlags ( ItemIsSelectable  | ItemSendsGeometryChanges);
     this->setSelected ( false );
     this->setAcceptHoverEvents ( true );
     this->setZValue ( 1 );
@@ -34,7 +35,7 @@ void line_item::paint(QPainter *painter, const QStyleOptionGraphicsItem */*optio
 {
 
 
-    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setRenderHint(QPainter::Antialiasing, false);
     QPen pen;
     if (this->isSelected()==true) {
         pen.setColor(Qt::red);
@@ -59,7 +60,7 @@ void line_item::paint(QPainter *painter, const QStyleOptionGraphicsItem */*optio
 
        // 缩放因子：以 200 为基准，当 L==200 时 scale=1
        double scale = L / 50.0;
-       scale = qBound(1.5, scale, 3.0);
+       scale = qBound(0.5, scale, 1.0);
 
 
        // 箭头参数
@@ -179,14 +180,15 @@ arc_item::arc_item(const QPointF& startPosition, const QPointF& transPosition, c
     _start = startPosition;
     _trans =transPosition;
     _sortNum=sortValue;
+    is_hover=false;
     imgbg_scale_f = parent->imgbg_scale_f;
 
-    this->setFlags ( ItemIsSelectable  | ItemIgnoresTransformations | ItemSendsGeometryChanges);
+    //this->setFlags ( ItemIsSelectable  | ItemIgnoresTransformations | ItemSendsGeometryChanges);
+    this->setFlags ( ItemIsSelectable  | ItemSendsGeometryChanges);
     this->setSelected ( false );
     this->setAcceptHoverEvents ( true );
     this->setZValue ( 1 );
-
-    is_hover=false;
+    this->setAcceptedMouseButtons(Qt::LeftButton);
 
 }
 
@@ -195,8 +197,8 @@ void arc_item::paint(QPainter *painter, const QStyleOptionGraphicsItem */*option
 
 
 
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    QPen pen;
+    painter->setRenderHint(QPainter::Antialiasing, false);
+    QPen pen(Qt::black, 0);
     if (this->isSelected()==true) {
         pen.setColor(Qt::red);
     }else if(is_hover) {
@@ -204,10 +206,12 @@ void arc_item::paint(QPainter *painter, const QStyleOptionGraphicsItem */*option
     }else{
         pen.setColor(Qt::black);
     }
+
     pen.setWidth(2);
+    pen.setCosmetic(true);      // 始终 1px，且随缩放变换包围盒
     painter->setPen(pen);
-    pen.setWidth(2);
-    painter->setPen(pen);
+
+
     QPointF A, B, C;
     A=_start;
     B=_trans;
@@ -275,7 +279,7 @@ void arc_item::paint(QPainter *painter, const QStyleOptionGraphicsItem */*option
 
        // 缩放因子：以 200 为基准，当 L==200 时 scale=1
        double scale = L / 50.0;
-       scale = qBound(1.5, scale, 3.0);
+       scale = qBound(0.5, scale, 1.0);
 
        // 箭头参数
        // 箭头偏移量：以 scale 缩放
@@ -337,19 +341,27 @@ void arc_item::paint(QPainter *painter, const QStyleOptionGraphicsItem */*option
        painter->setPen(Qt::green);
        painter->drawText(textRect, Qt::AlignCenter, sortStr);
        painter->restore();
-    }
+}
 
 QRectF arc_item::boundingRect() const
 {
-    return get_rect;
-    //return QRectF( QPointF(0,0) ,_end - _start );
+     //return shape().boundingRect();
+    // 计算直线的起点和终点所在的矩形区域
+    QRectF rect(_start, _end);
+    rect = rect.normalized();
+
+    // 增加额外的边距（例如 4 像素），以确保包括笔宽和悬停区域
+    qreal extra = 4;
+    return rect.adjusted(-extra, -extra, extra, extra);
+
 }
 
 QPainterPath arc_item::shape() const{
-    QPainterPath ret;
-    //QRectF rect( QPointF(0,0) ,_end - _start );
-    ret.addRect(get_rect);
-    return ret;
+    QPainterPath path;
+    path.addRect(get_rect);
+    QPainterPathStroker stroker;
+    stroker.setWidth(8);
+    return stroker.createStroke(path);
 }
 
 void arc_item::mousePressEvent(QGraphicsSceneMouseEvent *event)

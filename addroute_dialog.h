@@ -23,9 +23,9 @@ public:
                    QString xTrans,QString yTrans,QString zTrans,QString rTrans );
     void closeEvent(QCloseEvent *event) override;
 private slots:
-    void on_pushButton_clicked();
+    void on_pushButton_accept();
 
-    void on_pushButton_2_clicked();
+    void on_pushButton_reject();
 
     void pbSetCurposToEndPos();
 

@@ -15,7 +15,8 @@ TGraphicsViewRefactor::TGraphicsViewRefactor(QWidget *parent)
 :QGraphicsView(parent)
 {
     setRenderHint(QPainter::Antialiasing);
-    setCacheMode(QGraphicsView::CacheBackground);
+    //setCacheMode(QGraphicsView::CacheBackground);
+    setCacheMode(QGraphicsView::CacheNone);
     setScene(new QGraphicsScene());
     SetDefaultItem();
 
@@ -24,6 +25,7 @@ TGraphicsViewRefactor::TGraphicsViewRefactor(QWidget *parent)
     viewport()->setMouseTracking(true);
     setDragMode(QGraphicsView::ScrollHandDrag);  // 已设置
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse); // 缩放围绕鼠标
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     fitInView(sceneRect(), Qt::KeepAspectRatio); // 自动适配场景
