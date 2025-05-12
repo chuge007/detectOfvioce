@@ -5,6 +5,12 @@
 #include <QVBoxLayout>
 #include <QSpinBox>
 #include <QPushButton>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QUrl>
+#include <QFile>
+#include <QObject>
 
 struct RangeData {
     int minValue;
@@ -27,10 +33,17 @@ public:
     QString gcodePath;
     QString gcode;
     QString filePath;
+    QString workPiece;
+
     void loadGCodeToPlainText();
     void exportGCodeToFile(const QString& gCode);
     int  getValueByRange(int input);
     double calculateRadius(double endX, double endY, double centerI, double centerJ);
+
+    int uploadFileWithSftp(const QString& localFile,
+                           const QString& remoteUser,
+                           const QString& remoteHost,
+                           const QString& remotePath);
 
 private slots:
     void allInsertPaus();
@@ -40,6 +53,9 @@ private slots:
 
     void addRangeRow();
     void on_saveBtn_clicked();
+
+    void TransmissionFile();
+
 
 private:
     Ui::gCodeModulation *ui;

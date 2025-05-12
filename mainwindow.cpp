@@ -1418,9 +1418,12 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
 {
 
     bool ok;
-    double addV=10;
-    QString gCode = QString("N0 F%1 E%2 E%3\n").arg(ui->AxleVelocity_lin->text()).arg(addV).arg(-addV);
+
+    //double addV=10;
+    //QString gCode = QString("N0 F%1 E%2 E%3\n").arg(ui->AxleVelocity_lin->text()).arg(addV).arg(-addV);
     //double inputR = ui->traject_r0->text().toDouble(&ok); // 角度
+
+    QString gCode;
     double inputR =0;
     int row_count =model->rowCount();
     float x0,y0,z0,r0,x1,y1,z1,r1,x2,y2,z2,r2;
@@ -1818,6 +1821,7 @@ void MainWindow::PbCreatGcode()
 
     QString gCode = generateGCode();
     gcodeEidt->gcode=gCode;
+    gcodeEidt->workPiece=ui->cBworkpiece->currentText();
 
     gcodeEidt->show();
     QTimer::singleShot(0, gcodeEidt, [this](){
@@ -2053,15 +2057,6 @@ void MainWindow::selectWorkpiece(){
     createOrSwitchTable(curryWorkpieceName,false);
 
 
-    settings->beginGroup(curryWorkpieceName);
-    QString axleV = settings->value("AxleV").toString();
-    QString lineV = settings->value("lineV").toString();
-    QString arcV  = settings->value("arcV").toString();
-    settings->endGroup();
-
-    ui->AxleVelocity_lin->setText(axleV);
-    ui->lineVelocity_lin->setText(lineV);
-    ui->arcVelocity_lin->setText(arcV);
 }
 
 void MainWindow::pbnewPiece(){
@@ -2101,7 +2096,7 @@ void MainWindow::pbnewPiece(){
     }
     // 如果用户点击了“取消”，不执行任何操作
 
-
+    saveSetting();
 
 }
 
@@ -2421,15 +2416,6 @@ void MainWindow::pbGetCurryPoint(){
     }
 
 
-//    if(ui->xCurPos_lab->text()!=""&&ui->yCurPos_lab->text()!=""&&
-//            ui->zCurPos_lab->text()!=""&&ui->rCurPos_lab->text()!=""){
-
-//        ui->traject_x0->setText(ui->xCurPos_lab->text());
-//        ui->traject_y0->setText(ui->yCurPos_lab->text());
-//        ui->traject_z0->setText(ui->zCurPos_lab->text());
-//        ui->traject_r0->setText(ui->rCurPos_lab->text());
-
-//    }
 }
 
 void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
@@ -2493,89 +2479,113 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
     }
 
     saveSetting();
-    qDebug() << "finsh submit。";
+    QString activePiece = ui->cBworkpiece->currentText();
+
+    // If the workpiece group doesn't exist, use defaults
+    QStringList groups = settings->childGroups();
+    if (!groups.contains(activePiece)) {
+        ui->AxleVelocity_lin->setText("");
+        ui->lineVelocity_lin->setText("");
+        ui->arcVelocity_lin->setText("");
+        ui->processType_cb->setCurrentIndex(0);
+    } else {
+        settings->beginGroup(activePiece);
+        ui->AxleVelocity_lin->setText(settings->value("AxleV", "").toString());
+        ui->lineVelocity_lin->setText(settings->value("LineV", "").toString());
+        ui->arcVelocity_lin->setText(settings->value("ArcV", "").toString());
+        ui->processType_cb->setCurrentIndex(settings->value("ProcessType", 0).toInt());
+        settings->endGroup();
+    }
     updateSence();
 }
 
 
-void MainWindow::saveSetting(){
-
-
+void MainWindow::saveSetting() {
+    // Save general settings
     settings->setValue("ip", ui->ip_lin->text());
     settings->setValue("port", ui->port_lin->text());
-
-    QString partName = ui->cBworkpiece->currentText();
-
-    settings->beginGroup(partName);  // 以工件名作为一个组
-    settings->setValue("AxleV", ui->AxleVelocity_lin->text());
-    settings->setValue("lineV", ui->lineVelocity_lin->text());
-    settings->setValue("arcV", ui->arcVelocity_lin->text());
-    settings->endGroup();
-
-
     settings->setValue("plcType", ui->plcType_cb->currentIndex());
     settings->setValue("traject_x0", ui->traject_x0->text());
     settings->setValue("traject_y0", ui->traject_y0->text());
     settings->setValue("traject_z0", ui->traject_z0->text());
     settings->setValue("traject_r0", ui->traject_r0->text());
-    settings->setValue("processType", ui->processType_cb->currentIndex());
+
+    // Update workpiece list
+    QString currentPiece = ui->cBworkpiece->currentText();
+    QStringList pieces = settings->value("WorkpieceList", QStringList()).toStringList();
+    if (!pieces.contains(currentPiece)) {
+        pieces.append(currentPiece);
+        settings->setValue("WorkpieceList", pieces);
+    }
+
+    // Save per-workpiece settings
+    settings->beginGroup(currentPiece);
+    settings->setValue("AxleV", ui->AxleVelocity_lin->text());
+    settings->setValue("LineV", ui->lineVelocity_lin->text());
+    settings->setValue("ArcV", ui->arcVelocity_lin->text());
+    settings->setValue("ProcessType", ui->processType_cb->currentIndex());
+    settings->endGroup();
 }
 
+void MainWindow::initSetting() {
+    // Load general settings with defaults
+    ui->ip_lin->setText(settings->value("ip", "").toString());
+    ui->port_lin->setText(settings->value("port", "").toString());
+    ui->plcType_cb->setCurrentIndex(settings->value("plcType", 0).toInt());
+    ui->traject_x0->setText(settings->value("traject_x0", "0").toString());
+    ui->traject_y0->setText(settings->value("traject_y0", "0").toString());
+    ui->traject_z0->setText(settings->value("traject_z0", "0").toString());
+    ui->traject_r0->setText(settings->value("traject_r0", "0").toString());
 
-void MainWindow::initSetting(){
+    // Load workpiece list
+    QStringList pieces = settings->value("WorkpieceList", QStringList()).toStringList();
+    if (pieces.isEmpty()) {
+        // 如果没有保存的工件，则使用默认工件（支持中文）
+        pieces = QStringList() << tr("默认工件");
+        settings->setValue("WorkpieceList", pieces);
+    }
 
+    // Populate workpiece combo box
+    ui->cBworkpiece->clear();
+    ui->cBworkpiece->addItems(pieces);
+    ui->cBworkpiece->setCurrentIndex(0);
 
+    // Determine active workpiece
+    QString activePiece = ui->cBworkpiece->currentText();
 
-    QVariant ip = settings->value("ip");
-    QVariant port = settings->value("port");
-    QVariant plcType =settings->value("plcType");
-    QStringList workpieceList_QString = settings->value("WorkpieceList").toStringList();
-    std::reverse(workpieceList_QString.begin(), workpieceList_QString.end());
-    _translationX=settings->value("_translationX").toDouble();
-    _translationY=settings->value("_translationY").toDouble();
-    currentR=settings->value("currentR").toDouble();
-    GlobeUniquePoints= settings->value("startPoint").toStringList();
+    // If the workpiece group doesn't exist, use defaults
+    QStringList groups = settings->childGroups();
+    if (!groups.contains(activePiece)) {
+        ui->AxleVelocity_lin->setText("");
+        ui->lineVelocity_lin->setText("");
+        ui->arcVelocity_lin->setText("");
+        ui->processType_cb->setCurrentIndex(0);
+    } else {
+        settings->beginGroup(activePiece);
+        ui->AxleVelocity_lin->setText(settings->value("AxleV", "").toString());
+        ui->lineVelocity_lin->setText(settings->value("LineV", "").toString());
+        ui->arcVelocity_lin->setText(settings->value("ArcV", "").toString());
+        ui->processType_cb->setCurrentIndex(settings->value("ProcessType", 0).toInt());
+        settings->endGroup();
+    }
 
-    int processtype=settings->value("processType").toInt();
-
-    ui->ip_lin->setText(ip.toString());
-    ui->port_lin->setText(port.toString());
-    ui->plcType_cb->setCurrentIndex( plcType.toInt());
-
+    // Apply loaded PLC type logic
     cbSelectPlcType(ui->plcType_cb->currentIndex());
 
+    // Initialize table view
     ui->tableView->clearSpans();
-    ui->tableView->setSelectionBehavior( QAbstractItemView::SelectRows ) ;
-    ui->tableView->setEditTriggers (QAbstractItemView::NoEditTriggers ) ;
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->tableView->setSortingEnabled(true);
-    ui->tableView->sortByColumn(0, Qt::AscendingOrder);  // 第 4 列是 sort_order
+    ui->tableView->sortByColumn(0, Qt::AscendingOrder);
     ui->tableView->verticalHeader()->setVisible(false);
-    ui->cBworkpiece->clear();
-    ui->cBworkpiece->addItems(workpieceList_QString);
 
-    WorkpieceList=workpieceList_QString.toVector();;
-
-    settings->beginGroup(ui->cBworkpiece->currentText());
-    QString axleV = settings->value("AxleV").toString();
-    QString lineV = settings->value("lineV").toString();
-    QString arcV  = settings->value("arcV").toString();
-    settings->endGroup();
-
-    ui->AxleVelocity_lin->setText(axleV);
-    ui->lineVelocity_lin->setText(lineV);
-    ui->arcVelocity_lin->setText(arcV);
-    ui->processType_cb->setCurrentIndex(processtype);
-
+    // Update scene if needed
     updateSence();
-
 }
-
-
-
-
 
 
 

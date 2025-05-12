@@ -48,6 +48,7 @@ public:
     QDoubleSpinBox *dsbLineV;
     QDoubleSpinBox *dsbAccV;
     QPlainTextEdit *pTEgcode;
+    QPushButton *TransmissionBtn;
 
     void setupUi(QWidget *gCodeModulation)
     {
@@ -109,13 +110,13 @@ public:
         rangeContainer->setWidget(scrollAreaWidgetContents);
         addRangeBtn = new QPushButton(frame);
         addRangeBtn->setObjectName(QString::fromUtf8("addRangeBtn"));
-        addRangeBtn->setGeometry(QRect(1040, 759, 91, 31));
+        addRangeBtn->setGeometry(QRect(710, 759, 91, 31));
         pbAganStart = new QPushButton(frame);
         pbAganStart->setObjectName(QString::fromUtf8("pbAganStart"));
         pbAganStart->setGeometry(QRect(1060, 230, 91, 51));
         saveVBtn = new QPushButton(frame);
         saveVBtn->setObjectName(QString::fromUtf8("saveVBtn"));
-        saveVBtn->setGeometry(QRect(740, 759, 91, 31));
+        saveVBtn->setGeometry(QRect(880, 759, 91, 31));
         label_6 = new QLabel(frame);
         label_6->setObjectName(QString::fromUtf8("label_6"));
         label_6->setGeometry(QRect(940, 320, 121, 21));
@@ -134,6 +135,9 @@ public:
         pTEgcode->setObjectName(QString::fromUtf8("pTEgcode"));
         pTEgcode->setGeometry(QRect(0, 0, 671, 851));
         pTEgcode->setStyleSheet(QString::fromUtf8("background-color:rgb(231, 231, 231)"));
+        TransmissionBtn = new QPushButton(frame);
+        TransmissionBtn->setObjectName(QString::fromUtf8("TransmissionBtn"));
+        TransmissionBtn->setGeometry(QRect(1060, 760, 91, 31));
 
         retranslateUi(gCodeModulation);
 
@@ -159,6 +163,7 @@ public:
         pbAganStart->setText(QApplication::translate("gCodeModulation", "\345\206\215\345\220\257\345\212\250", nullptr));
         saveVBtn->setText(QApplication::translate("gCodeModulation", "\344\277\235\345\255\230\351\200\237\345\272\246", nullptr));
         label_6->setText(QApplication::translate("gCodeModulation", "\345\212\240\351\200\237\345\272\246\357\274\232", nullptr));
+        TransmissionBtn->setText(QApplication::translate("gCodeModulation", "\345\217\221\351\200\201\346\226\207\344\273\266", nullptr));
     } // retranslateUi
 
 };

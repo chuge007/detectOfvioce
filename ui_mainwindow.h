@@ -760,7 +760,7 @@ public:
         plcType_cb->setItemText(1, QApplication::translate("MainWindow", "ac700", nullptr));
 
         label_3->setText(QApplication::translate("MainWindow", "plc\347\261\273\345\236\213\357\274\232", nullptr));
-        label_15->setText(QApplication::translate("MainWindow", "\350\275\264\351\200\237\345\272\246\357\274\232", nullptr));
+        label_15->setText(QApplication::translate("MainWindow", "\346\211\213\345\212\250\351\200\237\345\272\246\357\274\232", nullptr));
     } // retranslateUi
 
 };

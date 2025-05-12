@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.11.1, 2025-05-09T17:26:46. -->
+<!-- Written by QtCreator 4.11.1, 2025-05-12T17:43:06. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -434,9 +434,8 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">plc_connect2</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/dev/plc_connect/version/22ac702/plc_connet/plc_connect.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">D:/dev/plc_connect/version/22ac702/plc_connet/plc_connect.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/dev/plc_connect/version/23/plc_connet/plc_connect.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">D:/dev/plc_connect/version/23/plc_connet/plc_connect.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -447,7 +446,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default"></value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/dev/plc_connect/version/22ac702/plc_connet</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

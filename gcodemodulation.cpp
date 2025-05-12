@@ -1,6 +1,9 @@
 ﻿#include "gcodemodulation.h"
 #include "ui_gcodemodulation.h"
 #include "mainwindow.h"
+#include "./libssh2_1.11.0_x64/libssh2.h"
+#include "./libssh2_1.11.0_x64/libssh2_publickey.h"
+#include "./libssh2_1.11.0_x64/libssh2_sftp.h"
 
 #include <QMessageBox>
 #include <QTextBlock>  // Include the full definition of QTextBlock
@@ -13,7 +16,14 @@
 #include <QSpinBox>
 #include <QScrollBar>
 #include <QLayout>
-
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QUrl>
+#include <QFile>
+#include <QObject>
+#include <QProcess>
+#pragma comment(lib, "Ws2_32.lib")
 gCodeModulation::gCodeModulation(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::gCodeModulation)
@@ -44,11 +54,12 @@ gCodeModulation::gCodeModulation(QWidget *parent) :
     connect(ui->pbdeleteCodeLine, &QPushButton::clicked, this, &gCodeModulation::deleteLine);
     connect(ui->pbALLPaus, &QPushButton::clicked, this, &gCodeModulation::allInsertPaus);
     connect(ui->pbDeleteALLPaus, &QPushButton::clicked, this, &gCodeModulation::allDeletePaus);
+    connect(ui->TransmissionBtn, &QPushButton::clicked,this, &gCodeModulation::TransmissionFile);
 
-    connect(ui->pbAganStart, &QPushButton::clicked, MainWindow::scanDetectCtrl, &ScanControlAbstract::on_xSubBtn_released);
+    connect(ui->pbAganStart, &QPushButton::clicked, MainWindow::scanDetectCtrl, &ScanControlAbstract::on_aganStartScanBtn_clicked);
 
-    gcodePath="C:/ProgramData/CODESYS/Simulation/PlcLogic/";
-    filePath=gcodePath+"1.cnc";
+    QString gcodePath = QCoreApplication::applicationDirPath() + "/PlcLogic/";
+    filePath=gcodePath+QString("%1.cnc").arg(workPiece);
 }
 
 
@@ -490,4 +501,108 @@ double gCodeModulation::calculateRadius(double endX, double endY, double centerI
     double centerX = endX + centerI;
     double centerY = endY + centerJ;
     return std::hypot(endX - centerX, endY - centerY);
+}
+
+
+int gCodeModulation::uploadFileWithSftp(const QString &localFile,
+                                          const QString &remoteUser,
+                                          const QString &remoteHost,
+                                          const QString &remotePath)
+{
+    const char *username = "update";
+      const char *password = "123456";
+      const char *hostname = "192.168.1.88";
+      const char *remoteFilePath = "./PlcLogic/_cnc/3.cnc";
+      const char *localFilePath = filePath.toUtf8().constData();
+      int port = 22;
+
+      // 初始化 libssh2
+      libssh2_init(0);
+
+      WSADATA wsadata;
+      WSAStartup(MAKEWORD(2, 0), &wsadata);
+
+      // 创建 socket
+      SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+      struct sockaddr_in sin;
+      sin.sin_family = AF_INET;
+      sin.sin_port = htons(port);
+      sin.sin_addr.s_addr = inet_addr(hostname);
+
+      if (::connect(sock, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0) {
+          fprintf(stderr, "Failed to connect to host\n");
+          return 1;
+      }
+
+      // 建立 SSH 会话
+      LIBSSH2_SESSION *session = libssh2_session_init();
+      libssh2_session_handshake(session, sock);
+
+      // 登录
+      if (libssh2_userauth_password(session, username, password)) {
+          fprintf(stderr, "Authentication failed\n");
+          return 1;
+      }
+
+      // 初始化 SFTP
+      LIBSSH2_SFTP *sftp_session = libssh2_sftp_init(session);
+      if (!sftp_session) {
+          fprintf(stderr, "Unable to init SFTP session\n");
+          return 1;
+      }
+
+      // 打开远程文件，准备写入（创建新文件或覆盖）
+      LIBSSH2_SFTP_HANDLE *file_handle = libssh2_sftp_open(sftp_session, remoteFilePath,
+          LIBSSH2_FXF_WRITE | LIBSSH2_FXF_CREAT | LIBSSH2_FXF_TRUNC,
+          LIBSSH2_SFTP_S_IRUSR | LIBSSH2_SFTP_S_IWUSR |
+          LIBSSH2_SFTP_S_IRGRP | LIBSSH2_SFTP_S_IROTH);
+      if (!file_handle) {
+          fprintf(stderr, "Unable to open remote file for writing\n");
+          return 1;
+      }
+
+      // 打开本地文件读取内容
+      FILE *local = fopen(localFilePath, "rb");
+      if (!local) {
+          fprintf(stderr, "Failed to open local file\n");
+          return 1;
+      }
+
+      char buffer[1024];
+      size_t n;
+      while ((n = fread(buffer, 1, sizeof(buffer), local)) > 0) {
+          char *p = buffer;
+          while (n > 0) {
+              ssize_t written = libssh2_sftp_write(file_handle, p, n);
+              if (written < 0) {
+                  fprintf(stderr, "SFTP write error\n");
+                  break;
+              }
+              p += written;
+              n -= written;
+          }
+      }
+
+      fclose(local);
+      libssh2_sftp_close(file_handle);
+      libssh2_sftp_shutdown(sftp_session);
+      libssh2_session_disconnect(session, "Normal Shutdown");
+      libssh2_session_free(session);
+      closesocket(sock);
+      WSACleanup();
+      libssh2_exit();
+
+      printf("File uploaded successfully!\n");
+
+      return 0;
+
+}
+
+
+
+void gCodeModulation::TransmissionFile(){
+
+
+    uploadFileWithSftp(filePath,"update","192.168.1.88","ssh_update");
+
 }

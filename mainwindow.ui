@@ -1550,7 +1550,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>轴速度：</string>
+     <string>手动速度：</string>
     </property>
    </widget>
   </widget>
