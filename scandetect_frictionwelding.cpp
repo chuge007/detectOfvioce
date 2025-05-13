@@ -37,7 +37,7 @@ void scanDetect_frictionWelding::initWidget()
     modbusClient = new QModbusTcpClient(this);
 
     timer = new QTimer(this);
-    timer->setInterval(10);
+    timer->setInterval(50);
 
 }
 
@@ -331,6 +331,7 @@ void scanDetect_frictionWelding::writeAxisReset()
 }
 
 
+
 void scanDetect_frictionWelding::writeAxisJog(int address, bool data)
 {
     if(modbusClient->state() != QModbusDevice::ConnectedState)
@@ -341,33 +342,16 @@ void scanDetect_frictionWelding::writeAxisJog(int address, bool data)
     auto reply = modbusClient->sendWriteRequest(modbusData, 1);
     qDebug()<<"writeAxisJog******address:"<<address<<"data:"<<data;
 
-    if(reply)
-    {
-        if (!reply->isFinished())
-        {
-            connect(reply, &QModbusReply::finished, [=](){
-                if(reply->error() == QModbusDevice::NoError){
-                    axisJog =  AxisJog::NotAxisJog;
-                    updateCurPos = true;
-                }else {
-                    //                  qDebug() << __FUNCTION__ << "SHI BAI";
-                    if(!data){
-                        //                  如果写OFF, 必然要写成功
-                        //                  qDebug() << __FUNCTION__ << data;
-                        writeAxisJog(address, data);
-                    }else {
-                        updateCurPos = true;
-                    }
-                }
-                reply->deleteLater();
-            });
-        }else {
-            reply->deleteLater();
-        }
+    if (!reply) {
+        return ;
     }
+    QEventLoop loop;
+    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();  // 等待finished信号
+    bool success = (reply->error() == QModbusDevice::NoError);
+    reply->deleteLater();
+
 }
-
-
 
 void scanDetect_frictionWelding::on_connectBtn_clicked()
 {
@@ -393,8 +377,7 @@ void scanDetect_frictionWelding::on_connectBtn_clicked()
 bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType rGtype,
                                                   float address) {
 
-    qDebug()<<"sendPulseCommand:"<<address;
-    if(modbusClient->state() != QModbusDevice::ConnectedState)
+     if(modbusClient->state() != QModbusDevice::ConnectedState)
         return false;
 
     auto sendValue = [=](int value) -> bool {
@@ -409,6 +392,9 @@ bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, Q
         loop.exec();  // 等待finished信号
         bool success = (reply->error() == QModbusDevice::NoError);
         reply->deleteLater();
+
+        qDebug()<<"sendPulseCommand:"<<address;
+
         return success;
     };
 
@@ -436,7 +422,59 @@ bool scanDetect_frictionWelding::sendCommandValue(QModbusClient *modbusClient, Q
 void scanDetect_frictionWelding::on_startScanBtn_clicked()
 {
 
-    qDebug()<<"basePlcData.Start"<<basePlcData.Start;
+
+    if (modbusClient->state() != QModbusDevice::ConnectedState)
+        return;
+
+    // 假设要发送的字符串
+    QString strToSend = workPiece;
+
+    // 将字符串转换为 16 位整数数组
+    QVector<quint16> dataToSend;
+    for (int i = 0; i < strToSend.length();  i += 2) {
+        quint16 value = 0;
+        if (i < strToSend.length())  {
+            value |= static_cast<quint16>(strToSend[i].unicode()) << 8;
+        }
+        if (i + 1 < strToSend.length())  {
+            value |= static_cast<quint16>(strToSend[i + 1].unicode());
+        }
+        dataToSend.append(value);
+    }
+
+    // 确保数据长度不超过 20 个寄存器
+    if (dataToSend.size()  > 20) {
+        dataToSend.resize(20);
+    }
+
+
+    QModbusDataUnit command(
+                QModbusDataUnit::HoldingRegisters,
+                workPieceModbusAdress,
+                dataToSend.size()
+                );
+
+    for (int i = 0; i < dataToSend.size();  ++i) {
+        dataToSend[i] = ((dataToSend[i] & 0xFF) << 8) | ((dataToSend[i] >> 8) & 0xFF);
+    }
+
+    for (int i = 0; i < dataToSend.size();  ++i) {
+        command.setValue(i,  dataToSend[i]);
+    }
+
+    // 发送写请求
+    auto *reply = modbusClient->sendWriteRequest(command, 1);
+
+    // 等待请求完成
+    QEventLoop loop;
+    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();   // 等待 finished 信号
+
+    // 检查请求是否成功
+    bool success = (reply->error() == QModbusDevice::NoError);
+    reply->deleteLater();
+
+
     sendPulseCommand(modbusClient,QModbusDataUnit::Coils,basePlcData.Start);
 
 }
@@ -447,15 +485,15 @@ void scanDetect_frictionWelding::on_stopScanBtn_clicked()
 {
 
     sendPulseCommand(modbusClient,QModbusDataUnit::Coils,basePlcData.Stop);
-//    if(stop==0){
-//        sendCommandValue(modbusClient,QModbusDataUnit::Coils,basePlcData.Stop,
-//                         true);
-//        stop=1;
-//    }else{
-//        sendCommandValue(modbusClient,QModbusDataUnit::Coils,basePlcData.Stop,
-//                         false);
-//        stop=0;
-//    }
+    //    if(stop==0){
+    //        sendCommandValue(modbusClient,QModbusDataUnit::Coils,basePlcData.Stop,
+    //                         true);
+    //        stop=1;
+    //    }else{
+    //        sendCommandValue(modbusClient,QModbusDataUnit::Coils,basePlcData.Stop,
+    //                         false);
+    //        stop=0;
+    //    }
 }
 
 
@@ -534,7 +572,7 @@ void scanDetect_frictionWelding::on_xAddBtn_clicked()
 
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisInch = AxisJog::XJogAdd;
 
 }
@@ -547,7 +585,7 @@ void scanDetect_frictionWelding::on_xSubBtn_clicked()
 
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisInch = AxisJog::XJogSub;
 
 }
@@ -560,7 +598,7 @@ void scanDetect_frictionWelding::on_yAddBtn_clicked()
 
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisInch = AxisJog::YJogAdd;
 
 }
@@ -573,7 +611,7 @@ void scanDetect_frictionWelding::on_ySubBtn_clicked()
 
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisInch = AxisJog::YJogSub;
 
 }
@@ -586,7 +624,7 @@ void scanDetect_frictionWelding::on_xAddBtn_pressed()
         return;
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::XJogAddPressed;
     qDebug()<<"on_xAddBtn_pressed";
 }
@@ -599,7 +637,7 @@ void scanDetect_frictionWelding::on_xAddBtn_released()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_xAddBtn_released";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::XJogAddReleased;
 
 }
@@ -612,7 +650,7 @@ void scanDetect_frictionWelding::on_xSubBtn_pressed()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_xSubBtn_pressed";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::XJogSubPressed;
 }
 
@@ -624,7 +662,7 @@ void scanDetect_frictionWelding::on_xSubBtn_released()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_xSubBtn_released";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::XJogSubReleased;
 }
 
@@ -636,7 +674,7 @@ void scanDetect_frictionWelding::on_yAddBtn_pressed()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_yAddBtn_pressed";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::YJogAddPressed;
 }
 
@@ -648,7 +686,7 @@ void scanDetect_frictionWelding::on_yAddBtn_released()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_yAddBtn_released";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::YJogAddReleased;
 }
 
@@ -660,7 +698,7 @@ void scanDetect_frictionWelding::on_ySubBtn_pressed()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_ySubBtn_pressed";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::YJogSubPressed;
 }
 
@@ -672,7 +710,7 @@ void scanDetect_frictionWelding::on_ySubBtn_released()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_ySubBtn_released";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::YJogSubReleased;
 }
 
@@ -684,7 +722,7 @@ void scanDetect_frictionWelding::on_zAddBtn_pressed()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_zAddBtn_pressed";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::ZJogAddPressed;
 }
 
@@ -696,7 +734,7 @@ void scanDetect_frictionWelding::on_zAddBtn_released()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_zAddBtn_released";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::ZJogAddReleased;
 }
 
@@ -708,7 +746,7 @@ void scanDetect_frictionWelding::on_zSubBtn_pressed()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_zSubBtn_pressed";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::ZJogSubPressed;
 }
 
@@ -720,7 +758,7 @@ void scanDetect_frictionWelding::on_zSubBtn_released()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_zSubBtn_released";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::ZJogSubReleased;
 }
 
@@ -732,7 +770,7 @@ void scanDetect_frictionWelding::on_rAddBtn_pressed()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_rAddBtn_pressed";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::RJogAddPressed;
 }
 
@@ -744,7 +782,7 @@ void scanDetect_frictionWelding::on_rAddBtn_released()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_rAddBtn_released";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::RJogAddReleased;
 }
 
@@ -756,7 +794,7 @@ void scanDetect_frictionWelding::on_rSubBtn_pressed()
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_rSubBtn_pressed";
 
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::RJogSubPressed;
 }
 
@@ -767,7 +805,7 @@ void scanDetect_frictionWelding::on_rSubBtn_released()
         return;
     if( isEndScan || isAxisStop || isJogDone || isRunTarget) return;
     qDebug()<<"on_rSubBtn_released";
-    updateCurPos = false;
+    updateCurPos = true;
     axisJog = AxisJog::RJogSubReleased;
 }
 
@@ -802,10 +840,12 @@ void scanDetect_frictionWelding::selectProcessType(int type){
         processTypeBrazing
     };
 
-    for (int i = 0; i < processTypes.size(); ++i) {
-        sendCommandValue(modbusClient, QModbusDataUnit::Coils,
-                         processTypes[i], i == type);
-    }
+//    for (int i = 0; i < processTypes.size(); ++i) {
+//        sendCommandValue(modbusClient, QModbusDataUnit::Coils,
+//                         processTypes[i], i == type);
+//    }
+
+    sendPulseCommand(modbusClient,QModbusDataUnit::Coils,processTypes[0]);
 
     qDebug()<<"select process"<<type;
 }
@@ -962,9 +1002,14 @@ void scanDetect_frictionWelding::performTasks()
 {
 
 
-    perfromJogTasks();
+    if(isAddRoute_dialogOpen||updateCurPos){
 
-    //_sleep(5);
+        //qDebug()<<"isAddRoute_dialogOpen"<<isAddRoute_dialogOpen;
+        perfromJogTasks();
+        updateCurPos=false;
+
+    }
+    //_sleep(500);
     updataCurrentPos();
 
 

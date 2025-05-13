@@ -248,11 +248,15 @@ public:
 
     QSettings *Rsettings;
     bool isRunTarget;
+    bool isAddRoute_dialogOpen;
+
 
 public:
     h5u h5uData;
     ac700 ac700Data;
     basePlc basePlcData;
+
+    QString workPiece;
 
 public slots:
     virtual void init() = 0;   //初始化设置

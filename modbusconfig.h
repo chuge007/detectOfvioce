@@ -11,6 +11,8 @@
 #define processTypeGcode            4824
 #define processTypeFrictionWelding  4825
 #define processTypeBrazing          4826
+#define workPieceModbusAdress       150
+
 
 //汇川寄存器地址h5u
 //D区 汇川摩擦焊定义

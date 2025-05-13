@@ -40,10 +40,14 @@ public:
     int  getValueByRange(int input);
     double calculateRadius(double endX, double endY, double centerI, double centerJ);
 
-    int uploadFileWithSftp(const QString& localFile,
-                           const QString& remoteUser,
-                           const QString& remoteHost,
-                           const QString& remotePath);
+    int uploadFileWithSftp();
+
+    int uploadFileWithSftpUPdate( QString localFile,
+                                            QString remoteUser,
+                                            QString remoteHost,
+                                            QString remotePath,
+                                            int port,             // 新增端口参数
+                                            QWidget *parent);
 
 private slots:
     void allInsertPaus();

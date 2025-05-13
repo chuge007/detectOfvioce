@@ -65,7 +65,7 @@ void MainWindow::init()
     // 创建一个表名为 "2d" 的表，包含主键 id，其他字段可以根据需要添加
     QSqlQuery query(db);
     QString createTableSQL =  QString::fromLocal8Bit(R"(
-                                                     CREATE TABLE IF NOT EXISTS table2d (
+                                                     CREATE TABLE IF NOT EXISTS Initialization (
                                                      id INTEGER PRIMARY KEY AUTOINCREMENT,
                                                      类型 TEXT,
                                                      起点x TEXT,
@@ -89,7 +89,7 @@ void MainWindow::init()
     }
 
     model = new QSqlTableModel(this, db);
-    model->setTable("table2d");
+    model->setTable("Initialization");
     ui->tableView->setModel(model);
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
@@ -147,7 +147,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->writeInPLC_but, &QPushButton::clicked, this, &MainWindow::pbWriteInPLC);
     connect(scanDetectCtrl, &ScanControlAbstract::positionChange, this, &MainWindow::updatePosition);
     connect(ui->alarmReset_but, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_alarmResetBtn_clicked);
-    connect(ui->startScan_But, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_startScanBtn_clicked);
+    //connect(ui->startScan_But, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_startScanBtn_clicked);
     connect(ui->stopScan_but, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_stopScanBtn_clicked);
     connect(ui->stopScan_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_stopScanBtn_clicked);
     connect(ui->endScan_but, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_endScanBtn_clicked);
@@ -255,10 +255,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
 {
-    //        qDebug()<<"updatePosition"<<static_cast<double>(pos.x()-scanDetectCtrl->virtualOrigin().x())
-    //               <<"y"<<static_cast<double>(pos.y()-scanDetectCtrl->virtualOrigin().y())
-    //              <<"z"<<cur_z
-    //             <<"r"<<cur_r;
+    scanDetectCtrl->isAddRoute_dialogOpen=addRoute->isOpen;
+    //qDebug()<<"updatePosition isAddRoute_dialogOpen: "<<scanDetectCtrl->isAddRoute_dialogOpen;
 
     ui->xCurPos_lab->setText(QString::number(static_cast<double>(pos.x()), 'f', 3));
     ui->yCurPos_lab->setText(QString::number(static_cast<double>(pos.y()), 'f', 3));
@@ -283,6 +281,7 @@ void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
     QGraphicsEllipseItem* circle = new QGraphicsEllipseItem(ui->xCurPos_lab->text().toDouble() - 5, ui->yCurPos_lab->text().toDouble() - 5, 10, 10); // 半径为 5 的小圆圈
     circle->setBrush(QBrush(Qt::red));  // 红色
     scene->addItem(circle);
+
 
 }
 
@@ -469,13 +468,15 @@ void MainWindow::on_editPos_but_clicked()
     QString zEnd=QString::number(model->data(model->index(cur_row, 12), Qt::DisplayRole).toFloat(), 'f', 3);
     QString rEnd=QString::number(model->data(model->index(cur_row, 13), Qt::DisplayRole).toFloat(), 'f', 3);
 
-    if(curName=="line")
+     if(curName=="line")
     {
+        addRoute->isOpen=true;
         addRoute->update_Ui(0,xEnd,yEnd,zEnd,rEnd,xTrans,yTrans,zTrans,rTrans);
         updateAddRoute(0,1,cur_row);
     }
     else if(curName=="arc")
     {
+        addRoute->isOpen=true;
         addRoute->update_Ui(1,xEnd,yEnd,zEnd,rEnd,xTrans,yTrans,zTrans,rTrans);
         updateAddRoute(1,1,cur_row);
     }
@@ -613,8 +614,11 @@ void MainWindow::pbWriteInPLC()
 
 void MainWindow::pbStartScanBtn(){
 
-
+    qDebug()<<"pbStartScanBtn";
+    ui->messText_lin->setText(QString::fromLocal8Bit(" 开始启动   "));
+    scanDetectCtrl->workPiece=ui->cBworkpiece->currentText();
     scanDetectCtrl->selectProcessType(ui->processType_cb->currentIndex());
+    scanDetectCtrl->on_startScanBtn_clicked();
     ui->messText_lin->setText(QString::fromLocal8Bit(" 已启动   "));
 
 
@@ -966,11 +970,11 @@ void MainWindow::pbDXFimportBut()
     }
 
     db.transaction();
+    selectWorkpiece();
     scene->clear();
     model->removeRows(0, model->rowCount());
     model->submitAll();
     model->select();
-
 
     int  AantalDesimalePlekke=2;
     DxfHelper dxfHelper;
@@ -2053,8 +2057,17 @@ void MainWindow::selectWorkpiece(){
 
 
     curryWorkpieceName=ui->cBworkpiece->currentText();
+    if(curryWorkpieceName==""){
+        curryWorkpieceName="Initialization";
+        createOrSwitchTable(curryWorkpieceName,true);
+         ui->cBworkpiece->addItem(curryWorkpieceName);
+        ui->cBworkpiece->setCurrentText(curryWorkpieceName);
+    }else{
+        createOrSwitchTable(curryWorkpieceName,false);
 
-    createOrSwitchTable(curryWorkpieceName,false);
+    }
+
+
 
 
 }
@@ -2103,7 +2116,7 @@ void MainWindow::pbnewPiece(){
 void MainWindow::pbdeletePiece(){
 
     QString selectedText = ui->cBworkpiece->currentText();
-    if (selectedText.isEmpty()) {
+    if (selectedText.isEmpty()||selectedText=="Initialization") {
         return;
     }
 
@@ -2114,7 +2127,7 @@ void MainWindow::pbdeletePiece(){
     }
 
     // 更新 WorkpieceList
-    WorkpieceList.removeAll(selectedText);
+    WorkpieceList.removeOne(selectedText);
     QStringList list = QStringList::fromVector(WorkpieceList);
     settings->setValue("WorkpieceList", list);
 
@@ -2136,9 +2149,9 @@ void MainWindow::pbdeletePiece(){
         ui->cBworkpiece->setCurrentText(newCurrent);
         createOrSwitchTable(newCurrent, false);  // 切换到新表
     } else {
-        // 没有工件了，自动切换到备用表 table2d
-        ui->cBworkpiece->setCurrentText("table2d");
-        createOrSwitchTable("table2d", false);  // 如果没有就创建
+        // 没有工件了，自动切换到备用表 Initialization
+        ui->cBworkpiece->setCurrentText("Initialization");
+        createOrSwitchTable("Initialization", false);  // 如果没有就创建
     }
 
 
@@ -2218,7 +2231,7 @@ void MainWindow::pbmoveUpForSort()
     QSqlQuery query(db);
 
     // 先将当前行的 id 设置为临时值 -1
-    query.prepare("UPDATE table2d SET id=-1 WHERE id=:id");
+    query.prepare("UPDATE Initialization SET id=-1 WHERE id=:id");
     query.bindValue(":id", currentRecord.value("id"));
     if (!query.exec()) {
         qDebug() << "Error updating current row to temp id: " << query.lastError().text();
@@ -2226,7 +2239,7 @@ void MainWindow::pbmoveUpForSort()
     }
 
     // 将下一行的 id 设置为当前行的 id
-    query.prepare("UPDATE table2d SET id=:id WHERE id=:next_id");
+    query.prepare("UPDATE Initialization SET id=:id WHERE id=:next_id");
     query.bindValue(":id", currentRecord.value("id"));
     query.bindValue(":next_id", nextRecord.value("id"));
     if (!query.exec()) {
@@ -2235,7 +2248,7 @@ void MainWindow::pbmoveUpForSort()
     }
 
     // 将临时 id (-1) 设置为下一行的 id
-    query.prepare("UPDATE table2d SET id=:id WHERE id=-1");
+    query.prepare("UPDATE Initialization SET id=:id WHERE id=-1");
     query.bindValue(":id", nextRecord.value("id"));
     if (!query.exec()) {
         qDebug() << "Error updating temp id to next id: " << query.lastError().text();
@@ -2275,7 +2288,7 @@ void MainWindow::pbmoveDownForSort()
     QSqlQuery query(db);
 
     // 先将当前行的 id 设置为临时值 -1
-    query.prepare("UPDATE table2d SET id=-1 WHERE id=:id");
+    query.prepare("UPDATE Initialization SET id=-1 WHERE id=:id");
     query.bindValue(":id", currentRecord.value("id"));
     if (!query.exec()) {
         qDebug() << "Error updating current row to temp id: " << query.lastError().text();
@@ -2283,7 +2296,7 @@ void MainWindow::pbmoveDownForSort()
     }
 
     // 将下一行的 id 设置为当前行的 id
-    query.prepare("UPDATE table2d SET id=:id WHERE id=:next_id");
+    query.prepare("UPDATE Initialization SET id=:id WHERE id=:next_id");
     query.bindValue(":id", currentRecord.value("id"));
     query.bindValue(":next_id", nextRecord.value("id"));
     if (!query.exec()) {
@@ -2292,7 +2305,7 @@ void MainWindow::pbmoveDownForSort()
     }
 
     // 将临时 id (-1) 设置为下一行的 id
-    query.prepare("UPDATE table2d SET id=:id WHERE id=-1");
+    query.prepare("UPDATE Initialization SET id=:id WHERE id=-1");
     query.bindValue(":id", nextRecord.value("id"));
     if (!query.exec()) {
         qDebug() << "Error updating temp id to next id: " << query.lastError().text();
@@ -2422,6 +2435,8 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
 {
     qDebug() << "isCreate =" << isCreate;
 
+
+    db.transaction();
     if (isCreate) {
         QString currentTable = model->tableName();
         if (tableName == currentTable) {
@@ -2478,24 +2493,15 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
         return;
     }
 
-    saveSetting();
-    QString activePiece = ui->cBworkpiece->currentText();
-
-    // If the workpiece group doesn't exist, use defaults
-    QStringList groups = settings->childGroups();
-    if (!groups.contains(activePiece)) {
-        ui->AxleVelocity_lin->setText("");
-        ui->lineVelocity_lin->setText("");
-        ui->arcVelocity_lin->setText("");
-        ui->processType_cb->setCurrentIndex(0);
+    if (!db.commit()) {
+        qDebug() << "事务提交失败:" << db.lastError().text();
+        QMessageBox::critical(this, "错误", "事务提交失败:" + db.lastError().text());
+        db.rollback();
     } else {
-        settings->beginGroup(activePiece);
-        ui->AxleVelocity_lin->setText(settings->value("AxleV", "").toString());
-        ui->lineVelocity_lin->setText(settings->value("LineV", "").toString());
-        ui->arcVelocity_lin->setText(settings->value("ArcV", "").toString());
-        ui->processType_cb->setCurrentIndex(settings->value("ProcessType", 0).toInt());
-        settings->endGroup();
+        qDebug() << "排序及更新完成，事务提交成功！";
     }
+
+    saveSetting();
     updateSence();
 }
 
@@ -2511,13 +2517,19 @@ void MainWindow::saveSetting() {
     settings->setValue("traject_r0", ui->traject_r0->text());
 
     // Update workpiece list
-    QString currentPiece = ui->cBworkpiece->currentText();
     QStringList pieces = settings->value("WorkpieceList", QStringList()).toStringList();
-    if (!pieces.contains(currentPiece)) {
-        pieces.append(currentPiece);
-        settings->setValue("WorkpieceList", pieces);
+
+
+    for (int i = 0; i < ui->cBworkpiece->count(); ++i) {
+        if (!pieces.contains(ui->cBworkpiece->itemText(i))) {
+            pieces.append(ui->cBworkpiece->itemText(i));
+        }
     }
 
+    // 将所有工作件项保存到设置中
+    settings->setValue("WorkpieceList", pieces);
+
+    QString currentPiece = ui->cBworkpiece->currentText();
     // Save per-workpiece settings
     settings->beginGroup(currentPiece);
     settings->setValue("AxleV", ui->AxleVelocity_lin->text());
@@ -2541,9 +2553,10 @@ void MainWindow::initSetting() {
     QStringList pieces = settings->value("WorkpieceList", QStringList()).toStringList();
     if (pieces.isEmpty()) {
         // 如果没有保存的工件，则使用默认工件（支持中文）
-        pieces = QStringList() << tr("默认工件");
+        pieces = QStringList() << QString::fromLocal8Bit("Initialization");
         settings->setValue("WorkpieceList", pieces);
     }
+
 
     // Populate workpiece combo box
     ui->cBworkpiece->clear();

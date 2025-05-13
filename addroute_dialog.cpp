@@ -56,6 +56,8 @@ void addRoute_dialog::closeEvent(QCloseEvent *event)
     // …… 根据需要重置其它控件
 
     // 不真正关闭，而是隐藏对话框
+
+    isOpen=false;
     event->ignore();
     hide();
 }

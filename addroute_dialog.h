@@ -22,6 +22,8 @@ public:
     void update_Ui(int state,QString xEnd,QString yEnd,QString z0,QString r0,
                    QString xTrans,QString yTrans,QString zTrans,QString rTrans );
     void closeEvent(QCloseEvent *event) override;
+
+    bool isOpen=false;
 private slots:
     void on_pushButton_accept();
 
