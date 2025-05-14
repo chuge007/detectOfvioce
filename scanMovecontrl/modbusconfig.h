@@ -8,22 +8,26 @@
 #define HuiChuan_Port 502
 #define TaiDa_Port    502
 
+#define processTypeGcode            4824
+#define processTypeFrictionWelding  4825
+#define processTypeBrazing          4826
+#define workPieceModbusAdress       150
 
-//汇川寄存器地址
 
-
+//汇川寄存器地址h5u
 //D区 汇川摩擦焊定义
 #define h5uMovePointDate   3000
 #define h5uStart           4216
 #define h5uStop            4220
 #define h5uEnd             4222
-#define h5uAlarmReset      4218
+#define h5uAlarmReset      4817
 #define h5uSetOrigin        4224
 
 #define h5uZdetctHight       4208
 #define h5uLineV             4210
 #define h5uArcV              4212
 #define h5uEndNumber         4214
+
 #define h5uXOrigin           4200
 #define h5uYOrigin           4202
 #define h5uZOrigin           4204
@@ -87,7 +91,7 @@
 
 
 
-//------------------------------------------------------------
+//----------------------------------------------------/台大寄存器地址--------
 //台大寄存器地址
 #define WORKPIECEHIGH 650
 #define WORKPIECEWIDE 652
@@ -127,6 +131,81 @@
 
 
 
+//-------------------------------------------------------ac700----------------
+
+//D区 汇川摩擦焊定义
+#define ac700MovePointDate   3000
+#define ac700Start           4818
+#define ac700Stop            4820
+#define ac700End             4819
+#define ac700AlarmReset      4817
+#define ac700SetOrigin       4823
+#define ac700AganStart       4821
+
+#define ac700ZdetctHight       3216
+#define ac700LineV             6312
+#define ac700ArcV              6314
+#define ac700JOG_VELOCITY      95
+#define ac700pointV            97
+#define ac700EndNumber         6316
+
+#define ac700XOrigin           4808
+#define ac700YOrigin           4809
+#define ac700ZOrigin           4810
+#define ac700ROrigin           4811
+//汇川摩擦焊定义
+
+#define ac700X_CUR_POS 50   //手动绝对位置X
+#define ac700Y_CUR_POS 52   //手动绝对位置Y
+#define ac700Z_CUR_POS 54    //手动绝对位置Z
+#define ac700R_CUR_POS 56    //手动绝对位置R
+
+#define ac700X_Tar_POS 100   //手动绝对位置X
+#define ac700Y_Tar_POS 102   //手动绝对位置Y
+#define ac700Z_Tar_POS 104    //手动绝对位置Z
+#define ac700R_Tar_POS 106    //手动绝对位置R
+//R区
+#define ac700R_REGISTER_BASE 0x3000  //寄存器R的基地址
+#define ac700X_TARTPOS 2002  //设置X轴位置
+#define ac700Y_TARTPOS 2004  //设置Y轴位置
+
+
+#define ac700X_VELOCITY 2006 //设置X轴速度
+#define ac700Y_VELOCITY 2008 //设置Y轴速度
+#define ac700X_VIRTUAL_ORIGIN 304    //虚拟0点X
+#define ac700Y_VIRTUAL_ORIGIN 306    //虚拟0点Y
+
+//M区
+#define ac700MoveType         10000
+
+#define ac700X_ADD 4800    //X+
+#define ac700X_SUB 4801    //X-
+#define ac700Y_ADD 4802    //Y+
+#define ac700Y_SUB 4803    //Y-
+#define ac700Z_ADD 4804    //Z+
+#define ac700Z_SUB 4805    //Z-
+#define ac700R_ADD 4806    //R+
+#define ac700R_SUB 4807    //R-
+#define ac700AXIS_ERROR_ID 308   //轴错误ID
+
+#define ac700LIMIT_POINT 9       //设置机械极限
+#define ac700MACHINE_ORIGIN  7   //设置机械原点
+
+#define ac700X_AXIS_DONE 100     //X轴动作完成位
+#define ac700Y_AXIS_DONE 101     //Y轴动作完成位
+
+#define ac700X_START 2   //X轴开始
+#define ac700Y_START 3   //Y轴开始
+#define ac700X_STOP 4    //X轴暂停
+#define ac700Y_STOP 5    //Y轴暂停
+#define ac700Z_STOP 44    //Z轴暂停
+#define ac700R_STOP 45    //R轴暂停
+
+#define ac700END_SCAN 6  //结束扫查
+#define ac700AXIS_RESET 8        //轴复位
+
+#define ac700MACHINE_START 310   //机械按键开始
+#define ac700MACHINE_STOP 311    //机械按键开始
 
 
 

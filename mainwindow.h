@@ -14,6 +14,8 @@
 #include "addroute_dialog.h"
 #include "Graphics_view_zoom.h"
 #include "route_worksence.h"
+#include "imageprocessing.h"
+#include "gcodemodulation.h"
 
 #include "scancontrolabstract.h"
 #include <QProgressDialog>
@@ -43,9 +45,22 @@ public:
         double r;
     };
 
+    static ScanControlAbstract *scanDetectCtrl;
+
+    QString curryWorkpieceName;
+    QVector<QString>WorkpieceList;
+    QMap<QString, QVector<double>> workPieceSpeedMap;
+    double _translationX=0;
+    double _translationY=0;
+    double _translationR=0;
+    double  currentR=0;
+
+    int m_lastClickedRow;
+    bool m_isSelected ;
 
 private slots:
 
+    void pbStartScanBtn();
 
     void modbusStateChange(QModbusDevice::State state);
 
@@ -81,12 +96,17 @@ private slots:
 
     void PbMoveToPosition();
 
+    void PbtrajectoryOffset();
+
     void PbAxleVelocity_lin();
     void PblinVelocity_lin();
     void PbarcVelocity_lin();
+    void PbPointVelocity_lin();
 
     void pbAscan();
+
     void updateSence();
+
     void cleanTable();
 
     void PbModbusConnectBtn();
@@ -97,19 +117,36 @@ private slots:
 
     void pbmoveDownForSort();
 
+    void sortModelLine();
 
     void pbGetCurryPoint();
+
+    void pbMoveDirectionNot();
+
+    void pBbrazing();
+
+    void selectWorkpiece();
+
+    void pbdeletePiece();
+
+    void pbnewPiece();
 
     void saveSetting();
 
     void initSetting();
+
+
+
 private:
     Ui::MainWindow *ui;
 
     QModbusTcpClient *modbusDevice;
     QUdpSocket *udpSocket;
 
-    ScanControlAbstract *scanDetectCtrl;
+
+    imageprocessing *imageProcessingTool;
+
+    gCodeModulation* gcodeEidt;
 
     void init();
 
@@ -117,13 +154,15 @@ private:
     QString current_db_name;
     QString current_route_name;
     QString current_user;
+
     int current_weld_row;
     int current_weld_id;
     TargetPos currentTargetPos;  // 用于保存当前目标点
+    QList<QString> GlobeUniquePoints;
 
 
     QSqlTableModel*  model;
-
+    void createOrSwitchTable(const QString &tableName,bool isCreate);
 
     addRoute_dialog *addRoute;
     void  updateAddRoute(int arc,int edit,int curRow);
@@ -134,10 +173,10 @@ private:
     void tableSelectionChanged();
     void graphicsSelectionChanged();
 
+    void CalculatingAngles();
 
     double traject_x0,traject_y0;
     QString generateGCode();
-    void exportGCodeToFile(const QString& filePath, const QString& gCode);
 
      NdtCfgMachine &config;
 
