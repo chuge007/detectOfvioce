@@ -879,9 +879,9 @@
      <property name="geometry">
       <rect>
        <x>1000</x>
-       <y>50</y>
+       <y>40</y>
        <width>20</width>
-       <height>121</height>
+       <height>151</height>
       </rect>
      </property>
      <property name="orientation">
@@ -1032,9 +1032,9 @@
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>90</y>
+       <y>30</y>
        <width>20</width>
-       <height>81</height>
+       <height>151</height>
       </rect>
      </property>
      <property name="orientation">
@@ -1291,6 +1291,10 @@
        <width>291</width>
        <height>151</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: 2px solid rgb(200, 200, 200);
+</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>

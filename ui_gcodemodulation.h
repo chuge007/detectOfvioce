@@ -55,9 +55,11 @@ public:
         if (gCodeModulation->objectName().isEmpty())
             gCodeModulation->setObjectName(QString::fromUtf8("gCodeModulation"));
         gCodeModulation->resize(1399, 936);
+        gCodeModulation->setMaximumSize(QSize(1399, 936));
         frame = new QFrame(gCodeModulation);
         frame->setObjectName(QString::fromUtf8("frame"));
         frame->setGeometry(QRect(0, 0, 1401, 941));
+        frame->setMaximumSize(QSize(1401, 944));
         frame->setStyleSheet(QString::fromUtf8("background-color:rgb(255, 255, 255)"));
         frame->setFrameShape(QFrame::StyledPanel);
         frame->setFrameShadow(QFrame::Raised);

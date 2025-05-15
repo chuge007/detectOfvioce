@@ -460,7 +460,7 @@ public:
         endScan_but->setSizePolicy(sizePolicy);
         line_3 = new QFrame(frame);
         line_3->setObjectName(QString::fromUtf8("line_3"));
-        line_3->setGeometry(QRect(1000, 50, 20, 121));
+        line_3->setGeometry(QRect(1000, 40, 20, 151));
         line_3->setFrameShape(QFrame::VLine);
         line_3->setFrameShadow(QFrame::Sunken);
         DXFimport_but = new QPushButton(frame);
@@ -499,7 +499,7 @@ public:
         moveToPosition_but->setSizePolicy(sizePolicy);
         line_4 = new QFrame(frame);
         line_4->setObjectName(QString::fromUtf8("line_4"));
-        line_4->setGeometry(QRect(120, 90, 20, 81));
+        line_4->setGeometry(QRect(120, 30, 20, 151));
         line_4->setFrameShape(QFrame::VLine);
         line_4->setFrameShadow(QFrame::Sunken);
         V_label_9 = new QLabel(frame);
@@ -565,6 +565,8 @@ public:
         frame_2 = new QFrame(frame);
         frame_2->setObjectName(QString::fromUtf8("frame_2"));
         frame_2->setGeometry(QRect(710, 40, 291, 151));
+        frame_2->setStyleSheet(QString::fromUtf8("border: 2px solid rgb(200, 200, 200);\n"
+""));
         frame_2->setFrameShape(QFrame::StyledPanel);
         frame_2->setFrameShadow(QFrame::Raised);
         processType_cb = new QComboBox(frame_2);

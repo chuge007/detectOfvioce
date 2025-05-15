@@ -36,10 +36,12 @@
 
 
 ScanControlAbstract *MainWindow::scanDetectCtrl=0;
+
+
 void MainWindow::init()
 {
     // 使用用户数据目录存放数据库文件
-    QString appDataPath = QCoreApplication::applicationDirPath();
+    QString appDataPath = QCoreApplication::applicationDirPath()+"/date";
     QDir dir(appDataPath);
     if (!dir.exists())
         dir.mkpath(".");
@@ -52,13 +54,13 @@ void MainWindow::init()
     // 检查目标数据库是否存在
     if (QFileInfo::exists(targetPath)) {
         // 存在则直接初始化数据库
-        opendb(targetPath);
+        openDb(targetPath);
 
     }
     else {
         // 不存在则先创建再初始化
-        createnewdb(targetPath);
-        opendb(targetPath);
+        createNewDb(targetPath);
+        openDb(targetPath);
     }
 
 
@@ -243,6 +245,7 @@ MainWindow::~MainWindow()
 {
 
     saveSetting();
+    closeDb();
     delete model;
     delete addRoute;
     delete scene;

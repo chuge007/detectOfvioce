@@ -3399,6 +3399,8 @@ release\mainwindow.obj: mainwindow.cpp mainwindow.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtSql\qsqlrelationaltablemodel.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtSql\qsqlresult.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtSql\qtsqlversion.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtCore\QByteArray \
+		D:\qt\5.12.4\msvc2017_64\include\QtGui\QPixmap \
 		widgetDefin\graphicTool.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtWidgets\QGraphicsItem \
 		D:\qt\5.12.4\msvc2017_64\include\QtWidgets\qgraphicsitem.h \
@@ -3418,7 +3420,6 @@ release\mainwindow.obj: mainwindow.cpp mainwindow.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\QVector3D \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\qvector3d.h \
 		scanMovecontrl\scandetect_frictionwelding.h \
-		D:\qt\5.12.4\msvc2017_64\include\QtCore\QByteArray \
 		D:\qt\5.12.4\msvc2017_64\include\QtCore\QtEndian \
 		D:\qt\5.12.4\msvc2017_64\include\QtCore\QDir \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\QList \

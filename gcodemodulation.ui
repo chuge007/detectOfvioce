@@ -10,6 +10,12 @@
     <height>936</height>
    </rect>
   </property>
+  <property name="maximumSize">
+   <size>
+    <width>1399</width>
+    <height>936</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -21,6 +27,12 @@
      <width>1401</width>
      <height>941</height>
     </rect>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>1401</width>
+     <height>944</height>
+    </size>
    </property>
    <property name="styleSheet">
     <string notr="true">background-color:rgb(255, 255, 255)</string>
