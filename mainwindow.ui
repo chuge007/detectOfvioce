@@ -6,8 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
+<<<<<<< HEAD
     <width>2026</width>
     <height>1426</height>
+=======
+    <width>2008</width>
+    <height>1397</height>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
    </rect>
   </property>
   <property name="windowTitle">
@@ -72,17 +77,24 @@
     <property name="geometry">
      <rect>
       <x>0</x>
+<<<<<<< HEAD
       <y>1370</y>
+=======
+      <y>1350</y>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
       <width>1981</width>
       <height>51</height>
      </rect>
     </property>
+<<<<<<< HEAD
     <property name="sizePolicy">
      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
     <widget class="QLineEdit" name="scanVelocity_lin">
      <property name="geometry">
       <rect>
@@ -92,12 +104,15 @@
        <height>31</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string/>
      </property>
@@ -277,12 +292,15 @@
        <height>31</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string/>
      </property>
@@ -296,12 +314,15 @@
        <height>31</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string>轴速度：</string>
      </property>
@@ -315,12 +336,15 @@
        <height>31</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string>直线速度：</string>
      </property>
@@ -334,12 +358,15 @@
        <height>31</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string>圆弧速度：</string>
      </property>
@@ -353,12 +380,15 @@
        <height>31</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <item>
       <property name="text">
        <string>x</string>
@@ -433,12 +463,15 @@
        <height>31</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string>定位速度：</string>
      </property>
@@ -452,12 +485,15 @@
        <height>31</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string>点动速度：</string>
      </property>
@@ -467,8 +503,13 @@
     <property name="geometry">
      <rect>
       <x>0</x>
+<<<<<<< HEAD
       <y>1170</y>
       <width>2001</width>
+=======
+      <y>1130</y>
+      <width>1991</width>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
       <height>201</height>
      </rect>
     </property>
@@ -546,6 +587,28 @@
       <rect>
        <x>590</x>
        <y>140</y>
+<<<<<<< HEAD
+=======
+       <width>101</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>设轴原点</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="stopScan_but">
+     <property name="geometry">
+      <rect>
+       <x>1620</x>
+       <y>40</y>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
        <width>101</width>
        <height>41</height>
       </rect>
@@ -966,12 +1029,15 @@
        <height>41</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
     </widget>
     <widget class="QPushButton" name="pbNewPiece">
      <property name="geometry">
@@ -982,12 +1048,15 @@
        <height>41</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string>新建</string>
      </property>
@@ -1001,12 +1070,15 @@
        <height>41</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string>删除</string>
      </property>
@@ -1020,12 +1092,15 @@
        <height>81</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string>工件：</string>
      </property>
@@ -1039,12 +1114,15 @@
        <height>41</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string>钎焊</string>
      </property>
@@ -1059,7 +1137,11 @@
       </rect>
      </property>
      <property name="sizePolicy">
+<<<<<<< HEAD
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+=======
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -1077,12 +1159,15 @@
        <height>41</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
      </property>
@@ -1116,12 +1201,15 @@
        <height>151</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -1135,12 +1223,15 @@
        <height>151</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="styleSheet">
       <string notr="true">border: 2px solid rgb(200, 200, 200);
 </string>
@@ -1160,12 +1251,15 @@
         <height>41</height>
        </rect>
       </property>
+<<<<<<< HEAD
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -1194,12 +1288,15 @@
         <height>31</height>
        </rect>
       </property>
+<<<<<<< HEAD
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
       <property name="text">
        <string>工艺类型：</string>
       </property>
@@ -1214,12 +1311,15 @@
        <height>41</height>
       </rect>
      </property>
+<<<<<<< HEAD
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      <property name="text">
       <string>回原点</string>
      </property>
@@ -1265,8 +1365,13 @@
     <property name="geometry">
      <rect>
       <x>0</x>
+<<<<<<< HEAD
       <y>130</y>
       <width>1251</width>
+=======
+      <y>100</y>
+      <width>1161</width>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
       <height>1031</height>
      </rect>
     </property>
@@ -1301,10 +1406,17 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
+<<<<<<< HEAD
       <x>1200</x>
       <y>130</y>
       <width>821</width>
       <height>1031</height>
+=======
+      <x>1150</x>
+      <y>110</y>
+      <width>841</width>
+      <height>1021</height>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1329,7 +1441,11 @@
      <widget class="QPushButton" name="moveDirectionNot_but">
       <property name="geometry">
        <rect>
+<<<<<<< HEAD
         <x>140</x>
+=======
+        <x>170</x>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
         <y>940</y>
         <width>151</width>
         <height>41</height>
@@ -1348,7 +1464,11 @@
      <widget class="QPushButton" name="insertArcPos_but">
       <property name="geometry">
        <rect>
+<<<<<<< HEAD
         <x>340</x>
+=======
+        <x>380</x>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
         <y>880</y>
         <width>171</width>
         <height>41</height>
@@ -1386,7 +1506,11 @@
      <widget class="QPushButton" name="cleanTable_but">
       <property name="geometry">
        <rect>
+<<<<<<< HEAD
         <x>140</x>
+=======
+        <x>170</x>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
         <y>880</y>
         <width>151</width>
         <height>41</height>
@@ -1405,7 +1529,11 @@
      <widget class="QPushButton" name="insertLinePos_but">
       <property name="geometry">
        <rect>
+<<<<<<< HEAD
         <x>550</x>
+=======
+        <x>610</x>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
         <y>880</y>
         <width>181</width>
         <height>41</height>
@@ -1445,7 +1573,11 @@
        <rect>
         <x>0</x>
         <y>0</y>
+<<<<<<< HEAD
         <width>791</width>
+=======
+        <width>811</width>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
         <height>871</height>
        </rect>
       </property>
@@ -1459,7 +1591,11 @@
      <widget class="QPushButton" name="moveUpTabelRow_btu">
       <property name="geometry">
        <rect>
+<<<<<<< HEAD
         <x>340</x>
+=======
+        <x>380</x>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
         <y>940</y>
         <width>171</width>
         <height>41</height>
@@ -1478,7 +1614,11 @@
      <widget class="QPushButton" name="moveDownTabelRow_btu">
       <property name="geometry">
        <rect>
+<<<<<<< HEAD
         <x>550</x>
+=======
+        <x>610</x>
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
         <y>940</y>
         <width>181</width>
         <height>41</height>
@@ -1550,16 +1690,20 @@
       <height>31</height>
      </rect>
     </property>
+<<<<<<< HEAD
     <property name="sizePolicy">
      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
     <property name="text">
      <string>定位速度：</string>
     </property>
    </widget>
+<<<<<<< HEAD
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
@@ -2191,6 +2335,8 @@
      <string> 连接</string>
     </property>
    </widget>
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
   </widget>
  </widget>
  <customwidgets>

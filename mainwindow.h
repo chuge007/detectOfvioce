@@ -59,10 +59,13 @@ public:
 
     int m_lastClickedRow;
     bool m_isSelected ;
+<<<<<<< HEAD
     QSqlTableModel*  model;
 
     std::tuple<double, double, double, double> pbGetCurrentlyPoint();
 
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
 
 private slots:
 
@@ -137,15 +140,29 @@ private slots:
 
     void pbnewPiece();
 
+    void pbMoveDirectionNot();
+
+    void pBbrazing();
+
+    void selectWorkpiece();
+
+    void pbdeletePiece();
+
+    void pbnewPiece();
+
     void saveSetting();
 
     void initSetting();
 
+<<<<<<< HEAD
 private:
 
     void scaleWidgets(QWidget* parent, double scaleX, double scaleY);
 
     void resizeEvent(QResizeEvent *event);
+=======
+
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
 
 private:
     Ui::MainWindow *ui;
@@ -153,6 +170,13 @@ private:
     QModbusTcpClient *modbusDevice;
     QUdpSocket *udpSocket;
 
+<<<<<<< HEAD
+=======
+
+    imageprocessing *imageProcessingTool;
+
+    gCodeModulation* gcodeEidt;
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
 
     imageprocessing *imageProcessingTool;
 
@@ -169,12 +193,19 @@ private:
     int current_weld_id;
     TargetPos currentTargetPos;  // 用于保存当前目标点
     QList<QString> GlobeUniquePoints;
+<<<<<<< HEAD
 
     double traject_x0,traject_y0;
 
 
     void init();
 
+=======
+
+
+    QSqlTableModel*  model;
+    void createOrSwitchTable(const QString &tableName,bool isCreate);
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
 
     void createOrSwitchTable(const QString &tableName,bool isCreate);
 
@@ -188,7 +219,10 @@ private:
     void graphicsSelectionChanged();
 
     void CalculatingAngles();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
 
     QString generateGCode();
 

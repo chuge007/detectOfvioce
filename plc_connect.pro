@@ -74,7 +74,10 @@ HEADERS += \
 FORMS += \
     ImageProcessing.ui \
     addroute_dialog.ui \
+<<<<<<< HEAD
     ascan.ui \
+=======
+>>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
     gcodemodulation.ui \
     imageProcessing.ui \
     imageprocessing.ui \
