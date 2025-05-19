@@ -12,6 +12,7 @@
 #include <QSettings>
 #include <QTimer>
 #include <QTime>
+#include <QModbusDataUnit>
 
 #include "modbusconfig.h"
 
@@ -63,6 +64,7 @@ struct basePlc {
     int Start ;
     int Stop ;
     int End ;
+    int AganStart;
     int AlarmReset ;
     int SetOrigin ;
     int ZdetctHight ;
@@ -71,6 +73,7 @@ struct basePlc {
     int xV;
     int yV;
     int jv;
+    int pointV;
     int EndNumber ;
     int XOrigin ;
     int YOrigin ;
@@ -82,6 +85,10 @@ struct basePlc {
     int curY;
     int curZ;
     int curR;
+    int MoveTargetX;
+    int MoveTargetY;
+    int MoveTargetZ;
+    int MoveTargetR;
     int AxiSid;
     int  X_ADD;
     int  X_SUB;
@@ -108,6 +115,7 @@ struct h5u {
     int Start = h5uStart;
     int Stop = h5uStop;
     int End = h5uEnd;
+    int AganStart;
     int AlarmReset = h5uAlarmReset;
     int SetOrigin = h5uSetOrigin;
     int ZdetctHight = h5uZdetctHight;
@@ -116,6 +124,7 @@ struct h5u {
     int xV=h5uR_REGISTER_BASE+h5uX_VELOCITY;
     int yV=h5uR_REGISTER_BASE+h5uY_VELOCITY;
     int jV=h5uR_REGISTER_BASE+h5uJOG_VELOCITY;
+    int pointV;
     int EndNumber = h5uEndNumber;
     int XOrigin = h5uXOrigin;
     int YOrigin = h5uYOrigin;
@@ -127,6 +136,10 @@ struct h5u {
     int curY=h5uR_REGISTER_BASE+h5uY_TARTPOS;
     int curZ=h5uZ_CUR_POS;
     int curR=h5uR_CUR_POS;
+    int MoveTargetX;
+    int MoveTargetY;
+    int MoveTargetZ;
+    int MoveTargetR;
     int AxiSid=h5uAXIS_ERROR_ID;
     int  X_ADD=h5uX_ADD;
     int  X_SUB=h5uX_SUB;
@@ -148,45 +161,52 @@ struct h5u {
 
 
 struct ac700 {
-    int MovePointDate ;
-    int Start ;
-    int Stop ;
-    int End ;
-    int AlarmReset ;
-    int SetOrigin ;
-    int ZdetctHight ;
-    int LineV ;
-    int ArcV ;
-    int xV;
-    int yV;
-    int EndNumber ;
-    int XOrigin ;
-    int YOrigin ;
-    int ZOrigin ;
-    int ROrigin ;
-    int moveType;
-    int singeMove;
-    int curX;
-    int curY;
-    int curZ;
-    int curR;
-    int AxiSid;
-    int  X_ADD;
-    int  X_SUB;
-    int  Y_ADD;
-    int  Y_SUB;
-    int  Z_ADD;
-    int  Z_SUB;
-    int  R_ADD;
-    int  R_SUB;
-    int  X_VIRTUAL_ORIGIN;
-    int  Y_VIRTUAL_ORIGIN;
-    int  MACHINE_ORIGIN;
-    int  LIMIT_POINT;
-    int xDone;
-    int YDone;
-    int zDone;
-    int rDone;
+    int MovePointDate = ac700MovePointDate;
+    int Start = ac700Start;
+    int Stop = ac700Stop;
+    int End = ac700End;
+    int AganStart=ac700AganStart;
+    int AlarmReset = ac700AlarmReset;
+    int SetOrigin = ac700SetOrigin;
+    int ZdetctHight = ac700ZdetctHight;
+    int LineV = ac700LineV;
+    int ArcV = ac700ArcV;
+    int xV=ac700R_REGISTER_BASE+ac700X_VELOCITY;
+    int yV=ac700R_REGISTER_BASE+ac700Y_VELOCITY;
+    int jV=ac700JOG_VELOCITY;
+    int pointV=ac700pointV;
+    int EndNumber = ac700EndNumber;
+    int XOrigin = ac700XOrigin;
+    int YOrigin = ac700YOrigin;
+    int ZOrigin = ac700ZOrigin;
+    int ROrigin = ac700ROrigin;
+    int moveType=ac700MoveType;
+    int singeMove=ac700R_REGISTER_BASE+ac700X_TARTPOS;
+    int curX=ac700X_CUR_POS;
+    int curY=ac700Y_CUR_POS;
+    int curZ=ac700Z_CUR_POS;
+    int curR=ac700R_CUR_POS;
+    int MoveTargetX=ac700X_Tar_POS;
+    int MoveTargetY=ac700Y_Tar_POS;
+    int MoveTargetZ=ac700Y_Tar_POS;
+    int MoveTargetR=ac700Y_Tar_POS;
+    int AxiSid=ac700AXIS_ERROR_ID;
+    int  X_ADD=ac700X_ADD;
+    int  X_SUB=ac700X_SUB;
+    int  Y_ADD=ac700Y_ADD;
+    int  Y_SUB=ac700Y_SUB;
+    int  Z_ADD=ac700Z_ADD;
+    int  Z_SUB=ac700Z_SUB;
+    int  R_ADD=ac700R_ADD;
+    int  R_SUB=ac700R_SUB;
+    int  X_VIRTUAL_ORIGIN=ac700X_VIRTUAL_ORIGIN;
+    int  Y_VIRTUAL_ORIGIN=ac700Y_VIRTUAL_ORIGIN;
+    int  MACHINE_ORIGIN=ac700MACHINE_ORIGIN;
+    int  LIMIT_POINT=ac700LIMIT_POINT;
+    int  xDone=ac700X_AXIS_DONE;
+    int  YDone=ac700Y_AXIS_DONE;
+    int  zDone=ac700Z_STOP;
+    int  rDone=ac700R_STOP;
 };
 
 
@@ -216,20 +236,34 @@ public:
     virtual bool isYCrossed() = 0;                  //判断扫查区域的Y轴是否越界
     virtual bool isJogCrossed(int &address, float &data) = 0; //点动判断是都越界
 
-    virtual bool sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, int address)=0;
+    virtual bool sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, float address)=0;
+
+    virtual bool sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, float address,QString Value)=0;
 
     virtual void writeRegisterGroup( int startAddress,
                          const   QVector<modelDate> &modelDates, int serverAddress)=0;
 
+    virtual void writeAc700PointRegisterGroup( int startAddress,
+                                       const QVector<modelDate> &modelDates, int serverAddress)=0;
+
+
     virtual void ZdetectHight(float hight)=0;
 
-    QSettings *Rsettings;
-    bool isRunTarget;
+    virtual void updataCurrentPos()=0;
+
+
 
 public:
     h5u h5uData;
     ac700 ac700Data;
     basePlc basePlcData;
+
+    QString workPiece;
+
+
+    QSettings *Rsettings;
+    bool isRunTarget;
+    bool isAddRoute_dialogOpen;
 
 public slots:
     virtual void init() = 0;   //初始化设置
@@ -240,12 +274,16 @@ public slots:
     virtual void on_startScanBtn_clicked() = 0;     //开始扫查
     virtual void on_stopScanBtn_clicked() = 0;      //暂停扫查
     virtual void on_endScanBtn_clicked() = 0;       //结束扫描
+    virtual void on_aganStartScanBtn_clicked()=0;
 
-    virtual void on_setOriginBtn_clicked(float x,float y,bool isCurrPosi) = 0;     //设置零点
+    virtual void on_setOriginBtn_clicked(QString axitType) = 0;     //设置零点
+
+    virtual void onBackOriginBtn_clicked() = 0;     //设置零点
 
     virtual void on_line_velocity_editingFinished(float val) = 0;   // 设置X轴速度
     virtual void on_arc_velocity_editingFinished(float val) = 0;   // 设置Y轴速度
     virtual void on_jog_velocity_editingFinished(float val) = 0; // 设置点动速度
+    virtual void on_point_velocity_editingFinished(float val) = 0; // 设置点动速度
 
 
     //寸动
@@ -277,7 +315,7 @@ public slots:
 
     virtual void runTargetPosition(double x, double y,double z, double r) = 0; //运动到目标位置
     virtual  bool modbusState()=0;
-
+    virtual  void selectProcessType(int type)=0;
 
 
 

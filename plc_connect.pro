@@ -20,10 +20,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     addroute_dialog.cpp \
+    ascan.cpp \
     dxflib/dl_dxf.cpp \
     dxflib/dl_writer_ascii.cpp \
     dxflib/dxfhelper.cpp \
     dxflib/dxfreader.cpp \
+    gcodemodulation.cpp \
+    imageProcessing.cpp \
+    imageprocessing.cpp \
     main.cpp \
     mainwindow.cpp \
     scanMovecontrl/scandetect_frictionwelding.cpp \
@@ -36,6 +40,7 @@ SOURCES += \
 HEADERS += \
     DataBase.h \
     addroute_dialog.h \
+    ascan.h \
     dxflib/dl_attributes.h \
     dxflib/dl_codes.h \
     dxflib/dl_creationadapter.h \
@@ -49,6 +54,12 @@ HEADERS += \
     dxflib/dl_writer_ascii.h \
     dxflib/dxfhelper.h \
     dxflib/dxfreader.h \
+    gcodemodulation.h \
+    imageProcessing.h \
+    imageprocessing.h \
+    libssh2_1.11.0_x64/libssh2.h \
+    libssh2_1.11.0_x64/libssh2_publickey.h \
+    libssh2_1.11.0_x64/libssh2_sftp.h \
     mainwindow.h \
     scanMovecontrl/modbusconfig.h \
     scanMovecontrl/scancontrolabstract.h \
@@ -61,7 +72,13 @@ HEADERS += \
     widgetDefin/tgraphicsviewrefactor.h
 
 FORMS += \
+    ImageProcessing.ui \
     addroute_dialog.ui \
+    ascan.ui \
+    gcodemodulation.ui \
+    imageProcessing.ui \
+    imageprocessing.ui \
+    imageprocessing.ui \
     mainwindow.ui
 
 #INCLUDEPATH += $$PWD/include
@@ -196,6 +213,8 @@ UT_SDK_VTK_LIBS = -lvtkChartsCore-$${UT_SDK_VTK_VERSION} \
     -lvtkViewsQt-$${UT_SDK_VTK_VERSION} \
     -lvtkzlib-$${UT_SDK_VTK_VERSION} \
 
+
+
 CONFIG(debug, debug|release){
 UT_SDK_OTHER_LIBS += -lopencv_core453d \
     -lopencv_imgproc453d
@@ -327,3 +346,30 @@ QMAKE_LFLAGS += -Wl,-rpath,$${UT_SDK_LIBS_PATH}
 }
 
 
+
+DISTFILES += \
+    libssh2_1.11.0_x64/libssh2.dll \
+    libssh2_1.11.0_x64/libssh2.lib \
+    libssh2_1.11.0_x64/libssh2_static.lib
+
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2d
+else:unix: LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2
+
+INCLUDEPATH += $$PWD/libssh2_1.11.0_x64
+DEPENDPATH += $$PWD/libssh2_1.11.0_x64
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2_static
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2_staticd
+else:unix: LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2_static
+
+INCLUDEPATH += $$PWD/libssh2_1.11.0_x64
+DEPENDPATH += $$PWD/libssh2_1.11.0_x64
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/libssh2_1.11.0_x64/liblibssh2_static.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/libssh2_1.11.0_x64/liblibssh2_staticd.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/libssh2_1.11.0_x64/libssh2_static.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/libssh2_1.11.0_x64/libssh2_staticd.lib
+else:unix: PRE_TARGETDEPS += $$PWD/libssh2_1.11.0_x64/liblibssh2_static.a
