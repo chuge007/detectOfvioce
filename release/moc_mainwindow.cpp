@@ -83,10 +83,14 @@ QT_MOC_LITERAL(48, 773, 15), // "pbmoveUpForSort"
 QT_MOC_LITERAL(49, 789, 17), // "pbmoveDownForSort"
 QT_MOC_LITERAL(50, 807, 13), // "sortModelLine"
 <<<<<<< HEAD
+<<<<<<< HEAD
 QT_MOC_LITERAL(51, 821, 15), // "pbGetModelPoint"
 =======
 QT_MOC_LITERAL(51, 821, 15), // "pbGetCurryPoint"
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+QT_MOC_LITERAL(51, 821, 15), // "pbGetModelPoint"
+>>>>>>> c82df02 (界面)
 QT_MOC_LITERAL(52, 837, 18), // "pbMoveDirectionNot"
 QT_MOC_LITERAL(53, 856, 9), // "pBbrazing"
 QT_MOC_LITERAL(54, 866, 15), // "selectWorkpiece"
@@ -121,10 +125,14 @@ QT_MOC_LITERAL(58, 919, 11) // "initSetting"
     "cbSelectPlcType\0index\0pbmoveUpForSort\0"
     "pbmoveDownForSort\0sortModelLine\0"
 <<<<<<< HEAD
+<<<<<<< HEAD
     "pbGetModelPoint\0pbMoveDirectionNot\0"
 =======
     "pbGetCurryPoint\0pbMoveDirectionNot\0"
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+    "pbGetModelPoint\0pbMoveDirectionNot\0"
+>>>>>>> c82df02 (界面)
     "pBbrazing\0selectWorkpiece\0pbdeletePiece\0"
     "pbnewPiece\0saveSetting\0initSetting"
 };
@@ -297,10 +305,14 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 38: _t->pbmoveDownForSort(); break;
         case 39: _t->sortModelLine(); break;
 <<<<<<< HEAD
+<<<<<<< HEAD
         case 40: _t->pbGetModelPoint(); break;
 =======
         case 40: _t->pbGetCurryPoint(); break;
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        case 40: _t->pbGetModelPoint(); break;
+>>>>>>> c82df02 (界面)
         case 41: _t->pbMoveDirectionNot(); break;
         case 42: _t->pBbrazing(); break;
         case 43: _t->selectWorkpiece(); break;

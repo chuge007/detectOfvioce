@@ -7,13 +7,24 @@
     <x>0</x>
     <y>0</y>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <width>2026</width>
     <height>1426</height>
 =======
     <width>2008</width>
     <height>1397</height>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+    <width>2026</width>
+    <height>1426</height>
+>>>>>>> c82df02 (界面)
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>2026</width>
+    <height>1426</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -23,7 +34,7 @@
     <property name="geometry">
      <rect>
       <x>11</x>
-      <y>51</y>
+      <y>60</y>
       <width>519</width>
       <height>41</height>
      </rect>
@@ -78,23 +89,33 @@
      <rect>
       <x>0</x>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <y>1370</y>
 =======
       <y>1350</y>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+      <y>1370</y>
+>>>>>>> c82df02 (界面)
       <width>1981</width>
       <height>51</height>
      </rect>
     </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
     <property name="sizePolicy">
      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
     <widget class="QLineEdit" name="scanVelocity_lin">
      <property name="geometry">
       <rect>
@@ -105,14 +126,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string/>
      </property>
@@ -293,14 +320,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string/>
      </property>
@@ -315,14 +348,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string>轴速度：</string>
      </property>
@@ -337,14 +376,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string>直线速度：</string>
      </property>
@@ -359,14 +404,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string>圆弧速度：</string>
      </property>
@@ -381,14 +432,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <item>
       <property name="text">
        <string>x</string>
@@ -464,14 +521,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string>定位速度：</string>
      </property>
@@ -486,14 +549,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string>点动速度：</string>
      </property>
@@ -504,12 +573,17 @@
      <rect>
       <x>0</x>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <y>1170</y>
       <width>2001</width>
 =======
       <y>1130</y>
       <width>1991</width>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+      <y>1170</y>
+      <width>2001</width>
+>>>>>>> c82df02 (界面)
       <height>201</height>
      </rect>
     </property>
@@ -588,6 +662,7 @@
        <x>590</x>
        <y>140</y>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
        <width>101</width>
        <height>41</height>
@@ -609,6 +684,8 @@
        <x>1620</x>
        <y>40</y>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
        <width>101</width>
        <height>41</height>
       </rect>
@@ -1030,14 +1107,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
     </widget>
     <widget class="QPushButton" name="pbNewPiece">
      <property name="geometry">
@@ -1049,14 +1132,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string>新建</string>
      </property>
@@ -1071,14 +1160,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string>删除</string>
      </property>
@@ -1093,14 +1188,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string>工件：</string>
      </property>
@@ -1115,14 +1216,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string>钎焊</string>
      </property>
@@ -1138,10 +1245,14 @@
      </property>
      <property name="sizePolicy">
 <<<<<<< HEAD
+<<<<<<< HEAD
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
 =======
       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+>>>>>>> c82df02 (界面)
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -1160,14 +1271,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
      </property>
@@ -1202,14 +1319,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -1224,14 +1347,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="styleSheet">
       <string notr="true">border: 2px solid rgb(200, 200, 200);
 </string>
@@ -1252,14 +1381,20 @@
        </rect>
       </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -1289,14 +1424,20 @@
        </rect>
       </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
       <property name="text">
        <string>工艺类型：</string>
       </property>
@@ -1312,14 +1453,20 @@
       </rect>
      </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      <property name="text">
       <string>回原点</string>
      </property>
@@ -1366,12 +1513,17 @@
      <rect>
       <x>0</x>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <y>130</y>
       <width>1251</width>
 =======
       <y>100</y>
       <width>1161</width>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+      <y>130</y>
+      <width>1251</width>
+>>>>>>> c82df02 (界面)
       <height>1031</height>
      </rect>
     </property>
@@ -1407,16 +1559,22 @@
     <property name="geometry">
      <rect>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
       <x>1200</x>
       <y>130</y>
       <width>821</width>
       <height>1031</height>
+<<<<<<< HEAD
 =======
       <x>1150</x>
       <y>110</y>
       <width>841</width>
       <height>1021</height>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1442,10 +1600,14 @@
       <property name="geometry">
        <rect>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <x>140</x>
 =======
         <x>170</x>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        <x>140</x>
+>>>>>>> c82df02 (界面)
         <y>940</y>
         <width>151</width>
         <height>41</height>
@@ -1465,10 +1627,14 @@
       <property name="geometry">
        <rect>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <x>340</x>
 =======
         <x>380</x>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        <x>340</x>
+>>>>>>> c82df02 (界面)
         <y>880</y>
         <width>171</width>
         <height>41</height>
@@ -1507,10 +1673,14 @@
       <property name="geometry">
        <rect>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <x>140</x>
 =======
         <x>170</x>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        <x>140</x>
+>>>>>>> c82df02 (界面)
         <y>880</y>
         <width>151</width>
         <height>41</height>
@@ -1530,10 +1700,14 @@
       <property name="geometry">
        <rect>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <x>550</x>
 =======
         <x>610</x>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        <x>550</x>
+>>>>>>> c82df02 (界面)
         <y>880</y>
         <width>181</width>
         <height>41</height>
@@ -1574,10 +1748,14 @@
         <x>0</x>
         <y>0</y>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <width>791</width>
 =======
         <width>811</width>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        <width>801</width>
+>>>>>>> c82df02 (界面)
         <height>871</height>
        </rect>
       </property>
@@ -1592,10 +1770,14 @@
       <property name="geometry">
        <rect>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <x>340</x>
 =======
         <x>380</x>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        <x>340</x>
+>>>>>>> c82df02 (界面)
         <y>940</y>
         <width>171</width>
         <height>41</height>
@@ -1615,10 +1797,14 @@
       <property name="geometry">
        <rect>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <x>550</x>
 =======
         <x>610</x>
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        <x>550</x>
+>>>>>>> c82df02 (界面)
         <y>940</y>
         <width>181</width>
         <height>41</height>
@@ -1685,24 +1871,35 @@
     <property name="geometry">
      <rect>
       <x>390</x>
+<<<<<<< HEAD
       <y>1360</y>
+=======
+      <y>1380</y>
+>>>>>>> c82df02 (界面)
       <width>111</width>
       <height>31</height>
      </rect>
     </property>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
     <property name="sizePolicy">
      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
     <property name="text">
      <string>定位速度：</string>
     </property>
    </widget>
+<<<<<<< HEAD
 <<<<<<< HEAD
    <widget class="QLabel" name="label_6">
     <property name="geometry">
@@ -1711,6 +1908,15 @@
       <y>1</y>
       <width>44</width>
       <height>29</height>
+=======
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>554</x>
+      <y>1</y>
+      <width>51</width>
+      <height>41</height>
+>>>>>>> c82df02 (界面)
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1736,7 +1942,11 @@
     <property name="geometry">
      <rect>
       <x>769</x>
+<<<<<<< HEAD
       <y>1</y>
+=======
+      <y>10</y>
+>>>>>>> c82df02 (界面)
       <width>48</width>
       <height>33</height>
      </rect>
@@ -1760,10 +1970,17 @@
    <widget class="QLabel" name="xCurPos_lab">
     <property name="geometry">
      <rect>
+<<<<<<< HEAD
       <x>600</x>
       <y>1</y>
       <width>161</width>
       <height>33</height>
+=======
+      <x>610</x>
+      <y>0</y>
+      <width>161</width>
+      <height>51</height>
+>>>>>>> c82df02 (界面)
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1785,10 +2002,17 @@
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
+<<<<<<< HEAD
       <x>873</x>
       <y>1</y>
       <width>44</width>
       <height>29</height>
+=======
+      <x>856</x>
+      <y>1</y>
+      <width>61</width>
+      <height>41</height>
+>>>>>>> c82df02 (界面)
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1814,7 +2038,11 @@
     <property name="geometry">
      <rect>
       <x>1082</x>
+<<<<<<< HEAD
       <y>1</y>
+=======
+      <y>10</y>
+>>>>>>> c82df02 (界面)
       <width>48</width>
       <height>33</height>
      </rect>
@@ -1838,10 +2066,17 @@
    <widget class="QLabel" name="zCurPos_lab">
     <property name="geometry">
      <rect>
+<<<<<<< HEAD
       <x>913</x>
       <y>1</y>
       <width>151</width>
       <height>33</height>
+=======
+      <x>920</x>
+      <y>0</y>
+      <width>151</width>
+      <height>51</height>
+>>>>>>> c82df02 (界面)
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1863,10 +2098,17 @@
    <widget class="QLabel" name="yCurPos_lab">
     <property name="geometry">
      <rect>
+<<<<<<< HEAD
       <x>600</x>
       <y>49</y>
       <width>161</width>
       <height>33</height>
+=======
+      <x>610</x>
+      <y>50</y>
+      <width>161</width>
+      <height>51</height>
+>>>>>>> c82df02 (界面)
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1889,7 +2131,11 @@
     <property name="geometry">
      <rect>
       <x>769</x>
+<<<<<<< HEAD
       <y>49</y>
+=======
+      <y>60</y>
+>>>>>>> c82df02 (界面)
       <width>48</width>
       <height>33</height>
      </rect>
@@ -1913,10 +2159,17 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
+<<<<<<< HEAD
       <x>561</x>
       <y>49</y>
       <width>44</width>
       <height>29</height>
+=======
+      <x>554</x>
+      <y>51</y>
+      <width>51</width>
+      <height>51</height>
+>>>>>>> c82df02 (界面)
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1942,7 +2195,11 @@
     <property name="geometry">
      <rect>
       <x>1082</x>
+<<<<<<< HEAD
       <y>49</y>
+=======
+      <y>60</y>
+>>>>>>> c82df02 (界面)
       <width>48</width>
       <height>33</height>
      </rect>
@@ -1966,10 +2223,17 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
+<<<<<<< HEAD
       <x>873</x>
       <y>49</y>
       <width>44</width>
       <height>29</height>
+=======
+      <x>856</x>
+      <y>51</y>
+      <width>61</width>
+      <height>41</height>
+>>>>>>> c82df02 (界面)
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1994,10 +2258,17 @@
    <widget class="QLabel" name="rCurPos_lab">
     <property name="geometry">
      <rect>
+<<<<<<< HEAD
       <x>913</x>
       <y>49</y>
       <width>161</width>
       <height>33</height>
+=======
+      <x>920</x>
+      <y>50</y>
+      <width>161</width>
+      <height>51</height>
+>>>>>>> c82df02 (界面)
      </rect>
     </property>
     <property name="sizePolicy">
@@ -2239,7 +2510,11 @@
     <property name="geometry">
      <rect>
       <x>306</x>
+<<<<<<< HEAD
       <y>11</y>
+=======
+      <y>10</y>
+>>>>>>> c82df02 (界面)
       <width>68</width>
       <height>35</height>
      </rect>
@@ -2289,7 +2564,11 @@
     <property name="geometry">
      <rect>
       <x>53</x>
+<<<<<<< HEAD
       <y>11</y>
+=======
+      <y>10</y>
+>>>>>>> c82df02 (界面)
       <width>181</width>
       <height>35</height>
      </rect>
@@ -2314,7 +2593,11 @@
     <property name="geometry">
      <rect>
       <x>380</x>
+<<<<<<< HEAD
       <y>11</y>
+=======
+      <y>10</y>
+>>>>>>> c82df02 (界面)
       <width>150</width>
       <height>35</height>
      </rect>
@@ -2335,8 +2618,11 @@
      <string> 连接</string>
     </property>
    </widget>
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
   </widget>
  </widget>
  <customwidgets>

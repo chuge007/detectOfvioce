@@ -20,6 +20,9 @@
 #include "scancontrolabstract.h"
 
 #include <QProgressDialog>
+#include <QSet>
+#include <QScreen>
+#include <QWindow>
 
 //using modelDate = ScanControlAbstract::modelDate;
 
@@ -36,6 +39,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    void closeEvent(QCloseEvent *event) override;
+
 
     QSettings *settings;
 
@@ -60,12 +66,18 @@ public:
     int m_lastClickedRow;
     bool m_isSelected ;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
     QSqlTableModel*  model;
 
     std::tuple<double, double, double, double> pbGetCurrentlyPoint();
 
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
 
 private slots:
 
@@ -139,6 +151,7 @@ private slots:
     void pbdeletePiece();
 
     void pbnewPiece();
+<<<<<<< HEAD
 
     void pbMoveDirectionNot();
 
@@ -149,11 +162,14 @@ private slots:
     void pbdeletePiece();
 
     void pbnewPiece();
+=======
+>>>>>>> c82df02 (界面)
 
     void saveSetting();
 
     void initSetting();
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 private:
 
@@ -163,6 +179,29 @@ private:
 =======
 
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+private:
+
+    QSize oldSize;
+    QSize newSize;
+
+    QMap<QWidget*, QRect> originalGeometries;
+    QMap<QWidget*, double> originalFontSizes;
+
+
+    QMap<QWidget*, QFont> originalFonts;
+
+    void scaleWidgets(QWidget* parent, double scaleX, double scaleY);
+
+    void resizeEvent(QResizeEvent *event);
+
+    void resetAllWidgetSizes(QWidget* widget);
+
+    void restoreOriginalWidgetStates(QWidget* parent);
+
+    void saveOriginalWidgetStates(QWidget* parent);
+
+>>>>>>> c82df02 (界面)
 
 private:
     Ui::MainWindow *ui;
@@ -171,16 +210,22 @@ private:
     QUdpSocket *udpSocket;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> c82df02 (界面)
 
     imageprocessing *imageProcessingTool;
 
     gCodeModulation* gcodeEidt;
+<<<<<<< HEAD
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
 
     imageprocessing *imageProcessingTool;
 
     gCodeModulation* gcodeEidt;
+=======
+>>>>>>> c82df02 (界面)
 
     ascan* scan;
 
@@ -194,6 +239,7 @@ private:
     TargetPos currentTargetPos;  // 用于保存当前目标点
     QList<QString> GlobeUniquePoints;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     double traject_x0,traject_y0;
 
@@ -206,6 +252,15 @@ private:
     QSqlTableModel*  model;
     void createOrSwitchTable(const QString &tableName,bool isCreate);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+
+    double traject_x0,traject_y0;
+
+
+    void init();
+>>>>>>> c82df02 (界面)
+
+    void createOrSwitchTable(const QString &tableName,bool isCreate);
 
     void createOrSwitchTable(const QString &tableName,bool isCreate);
 
@@ -220,9 +275,13 @@ private:
 
     void CalculatingAngles();
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+
+>>>>>>> c82df02 (界面)
 
     QString generateGCode();
 

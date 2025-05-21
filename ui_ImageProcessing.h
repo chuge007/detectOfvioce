@@ -47,7 +47,16 @@ public:
     {
         if (imageprocessing->objectName().isEmpty())
             imageprocessing->setObjectName(QString::fromUtf8("imageprocessing"));
+<<<<<<< HEAD
         imageprocessing->resize(1463, 1149);
+=======
+        imageprocessing->resize(1462, 1149);
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(imageprocessing->sizePolicy().hasHeightForWidth());
+        imageprocessing->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         gridLayout_4 = new QGridLayout(imageprocessing);
         gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
         frame = new QFrame(imageprocessing);

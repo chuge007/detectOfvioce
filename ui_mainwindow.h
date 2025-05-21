@@ -103,6 +103,9 @@ public:
     QLabel *label_3;
     QLabel *label_15;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
     QLabel *label_6;
     QLabel *label_8;
     QLabel *xCurPos_lab;
@@ -128,23 +131,35 @@ public:
     QLabel *label_2;
     QLineEdit *ip_lin;
     QPushButton *connect_but;
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
 <<<<<<< HEAD
+<<<<<<< HEAD
         MainWindow->resize(2026, 1426);
 =======
         MainWindow->resize(2008, 1397);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        MainWindow->resize(2026, 1426);
+        MainWindow->setMinimumSize(QSize(2026, 1426));
+>>>>>>> c82df02 (界面)
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         messText_lin = new QTextEdit(centralwidget);
         messText_lin->setObjectName(QString::fromUtf8("messText_lin"));
+<<<<<<< HEAD
         messText_lin->setGeometry(QRect(11, 51, 519, 41));
+=======
+        messText_lin->setGeometry(QRect(11, 60, 519, 41));
+>>>>>>> c82df02 (界面)
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -167,6 +182,9 @@ public:
         widget = new QWidget(centralwidget);
         widget->setObjectName(QString::fromUtf8("widget"));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
         widget->setGeometry(QRect(0, 1370, 1981, 51));
         sizePolicy.setHeightForWidth(widget->sizePolicy().hasHeightForWidth());
         widget->setSizePolicy(sizePolicy);
@@ -184,6 +202,7 @@ public:
         font.setFamily(QString::fromUtf8("SansSerif"));
         font.setPointSize(11);
         label_14->setFont(font);
+<<<<<<< HEAD
         label_17 = new QLabel(widget);
         label_17->setObjectName(QString::fromUtf8("label_17"));
         label_17->setGeometry(QRect(620, 10, 71, 31));
@@ -222,10 +241,30 @@ public:
         lbv3->setGeometry(QRect(650, 10, 131, 26));
         lbv3->setFont(font1);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        label_17 = new QLabel(widget);
+        label_17->setObjectName(QString::fromUtf8("label_17"));
+        label_17->setGeometry(QRect(620, 10, 71, 31));
+        sizePolicy.setHeightForWidth(label_17->sizePolicy().hasHeightForWidth());
+        label_17->setSizePolicy(sizePolicy);
+        label_17->setFont(font);
+        AxleVelocity_lin = new QLineEdit(widget);
+        AxleVelocity_lin->setObjectName(QString::fromUtf8("AxleVelocity_lin"));
+        AxleVelocity_lin->setGeometry(QRect(500, 10, 111, 31));
+        sizePolicy.setHeightForWidth(AxleVelocity_lin->sizePolicy().hasHeightForWidth());
+        AxleVelocity_lin->setSizePolicy(sizePolicy);
+        lbv3 = new QLabel(widget);
+        lbv3->setObjectName(QString::fromUtf8("lbv3"));
+        lbv3->setGeometry(QRect(650, 10, 131, 26));
+        sizePolicy.setHeightForWidth(lbv3->sizePolicy().hasHeightForWidth());
+        lbv3->setSizePolicy(sizePolicy);
+        lbv3->setFont(font);
+>>>>>>> c82df02 (界面)
         lbv3->setStyleSheet(QString::fromUtf8(""));
         label_18 = new QLabel(widget);
         label_18->setObjectName(QString::fromUtf8("label_18"));
         label_18->setGeometry(QRect(1390, 10, 71, 31));
+<<<<<<< HEAD
 <<<<<<< HEAD
         sizePolicy.setHeightForWidth(label_18->sizePolicy().hasHeightForWidth());
         label_18->setSizePolicy(sizePolicy);
@@ -283,6 +322,42 @@ public:
         label_20->setObjectName(QString::fromUtf8("label_20"));
         label_20->setGeometry(QRect(1490, 10, 111, 31));
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(label_18->sizePolicy().hasHeightForWidth());
+        label_18->setSizePolicy(sizePolicy);
+        label_18->setFont(font);
+        lineVelocity_lin = new QLineEdit(widget);
+        lineVelocity_lin->setObjectName(QString::fromUtf8("lineVelocity_lin"));
+        lineVelocity_lin->setGeometry(QRect(1270, 10, 111, 31));
+        sizePolicy.setHeightForWidth(lineVelocity_lin->sizePolicy().hasHeightForWidth());
+        lineVelocity_lin->setSizePolicy(sizePolicy);
+        label_19 = new QLabel(widget);
+        label_19->setObjectName(QString::fromUtf8("label_19"));
+        label_19->setGeometry(QRect(1720, 10, 71, 31));
+        sizePolicy.setHeightForWidth(label_19->sizePolicy().hasHeightForWidth());
+        label_19->setSizePolicy(sizePolicy);
+        label_19->setFont(font);
+        arcVelocity_lin = new QLineEdit(widget);
+        arcVelocity_lin->setObjectName(QString::fromUtf8("arcVelocity_lin"));
+        arcVelocity_lin->setGeometry(QRect(1600, 10, 111, 31));
+        sizePolicy.setHeightForWidth(arcVelocity_lin->sizePolicy().hasHeightForWidth());
+        arcVelocity_lin->setSizePolicy(sizePolicy);
+        label_5 = new QLabel(widget);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+        label_5->setGeometry(QRect(90, 11, 101, 31));
+        sizePolicy.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
+        label_5->setSizePolicy(sizePolicy);
+        label_16 = new QLabel(widget);
+        label_16->setObjectName(QString::fromUtf8("label_16"));
+        label_16->setGeometry(QRect(1160, 10, 111, 31));
+        sizePolicy.setHeightForWidth(label_16->sizePolicy().hasHeightForWidth());
+        label_16->setSizePolicy(sizePolicy);
+        label_20 = new QLabel(widget);
+        label_20->setObjectName(QString::fromUtf8("label_20"));
+        label_20->setGeometry(QRect(1490, 10, 111, 31));
+        sizePolicy.setHeightForWidth(label_20->sizePolicy().hasHeightForWidth());
+        label_20->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         comboBox = new QComboBox(widget);
         comboBox->addItem(QString());
         comboBox->addItem(QString());
@@ -291,6 +366,9 @@ public:
         comboBox->setObjectName(QString::fromUtf8("comboBox"));
         comboBox->setGeometry(QRect(10, 10, 61, 31));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(comboBox->sizePolicy().hasHeightForWidth());
         comboBox->setSizePolicy(sizePolicy);
         label_21 = new QLabel(widget);
@@ -319,6 +397,7 @@ public:
         frame->setGeometry(QRect(0, 1170, 2001, 201));
         sizePolicy.setHeightForWidth(frame->sizePolicy().hasHeightForWidth());
         frame->setSizePolicy(sizePolicy);
+<<<<<<< HEAD
 =======
         label_21 = new QLabel(widget);
         label_21->setObjectName(QString::fromUtf8("label_21"));
@@ -337,16 +416,23 @@ public:
         frame->setObjectName(QString::fromUtf8("frame"));
         frame->setGeometry(QRect(0, 1130, 1991, 201));
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
         frame->setFrameShape(QFrame::StyledPanel);
         frame->setFrameShadow(QFrame::Raised);
         imageProcess_but = new QPushButton(frame);
         imageProcess_but->setObjectName(QString::fromUtf8("imageProcess_but"));
         imageProcess_but->setGeometry(QRect(1250, 40, 211, 41));
 <<<<<<< HEAD
+<<<<<<< HEAD
         sizePolicy.setHeightForWidth(imageProcess_but->sizePolicy().hasHeightForWidth());
         imageProcess_but->setSizePolicy(sizePolicy);
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(imageProcess_but->sizePolicy().hasHeightForWidth());
+        imageProcess_but->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         startScan_But = new QPushButton(frame);
         startScan_But->setObjectName(QString::fromUtf8("startScan_But"));
         startScan_But->setGeometry(QRect(1500, 40, 101, 41));
@@ -376,10 +462,15 @@ public:
         line_3->setObjectName(QString::fromUtf8("line_3"));
         line_3->setGeometry(QRect(1000, 40, 20, 151));
 <<<<<<< HEAD
+<<<<<<< HEAD
         sizePolicy.setHeightForWidth(line_3->sizePolicy().hasHeightForWidth());
         line_3->setSizePolicy(sizePolicy);
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(line_3->sizePolicy().hasHeightForWidth());
+        line_3->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         line_3->setFrameShape(QFrame::VLine);
         line_3->setFrameShadow(QFrame::Sunken);
         DXFimport_but = new QPushButton(frame);
@@ -391,10 +482,15 @@ public:
         traject_y0->setObjectName(QString::fromUtf8("traject_y0"));
         traject_y0->setGeometry(QRect(320, 40, 91, 41));
 <<<<<<< HEAD
+<<<<<<< HEAD
         sizePolicy.setHeightForWidth(traject_y0->sizePolicy().hasHeightForWidth());
         traject_y0->setSizePolicy(sizePolicy);
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(traject_y0->sizePolicy().hasHeightForWidth());
+        traject_y0->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         setTrajecStart_but = new QPushButton(frame);
         setTrajecStart_but->setObjectName(QString::fromUtf8("setTrajecStart_but"));
         setTrajecStart_but->setGeometry(QRect(180, 140, 171, 41));
@@ -404,6 +500,9 @@ public:
         traject_x0->setObjectName(QString::fromUtf8("traject_x0"));
         traject_x0->setGeometry(QRect(180, 40, 91, 41));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(traject_x0->sizePolicy().hasHeightForWidth());
         traject_x0->setSizePolicy(sizePolicy);
         V_label_3 = new QLabel(frame);
@@ -412,16 +511,20 @@ public:
         sizePolicy.setHeightForWidth(V_label_3->sizePolicy().hasHeightForWidth());
         V_label_3->setSizePolicy(sizePolicy);
         V_label_3->setFont(font);
+<<<<<<< HEAD
 =======
         V_label_3 = new QLabel(frame);
         V_label_3->setObjectName(QString::fromUtf8("V_label_3"));
         V_label_3->setGeometry(QRect(150, 50, 21, 26));
         V_label_3->setFont(font1);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
         V_label_3->setStyleSheet(QString::fromUtf8(""));
         V_label_4 = new QLabel(frame);
         V_label_4->setObjectName(QString::fromUtf8("V_label_4"));
         V_label_4->setGeometry(QRect(290, 50, 21, 26));
+<<<<<<< HEAD
 <<<<<<< HEAD
         sizePolicy.setHeightForWidth(V_label_4->sizePolicy().hasHeightForWidth());
         V_label_4->setSizePolicy(sizePolicy);
@@ -429,15 +532,25 @@ public:
 =======
         V_label_4->setFont(font1);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(V_label_4->sizePolicy().hasHeightForWidth());
+        V_label_4->setSizePolicy(sizePolicy);
+        V_label_4->setFont(font);
+>>>>>>> c82df02 (界面)
         V_label_4->setStyleSheet(QString::fromUtf8(""));
         ascan_but = new QPushButton(frame);
         ascan_but->setObjectName(QString::fromUtf8("ascan_but"));
         ascan_but->setGeometry(QRect(1030, 40, 201, 41));
 <<<<<<< HEAD
+<<<<<<< HEAD
         sizePolicy.setHeightForWidth(ascan_but->sizePolicy().hasHeightForWidth());
         ascan_but->setSizePolicy(sizePolicy);
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(ascan_but->sizePolicy().hasHeightForWidth());
+        ascan_but->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         moveToPosition_but = new QPushButton(frame);
         moveToPosition_but->setObjectName(QString::fromUtf8("moveToPosition_but"));
         moveToPosition_but->setGeometry(QRect(180, 90, 171, 41));
@@ -447,15 +560,21 @@ public:
         line_4->setObjectName(QString::fromUtf8("line_4"));
         line_4->setGeometry(QRect(120, 30, 20, 151));
 <<<<<<< HEAD
+<<<<<<< HEAD
         sizePolicy.setHeightForWidth(line_4->sizePolicy().hasHeightForWidth());
         line_4->setSizePolicy(sizePolicy);
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(line_4->sizePolicy().hasHeightForWidth());
+        line_4->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         line_4->setFrameShape(QFrame::VLine);
         line_4->setFrameShadow(QFrame::Sunken);
         V_label_9 = new QLabel(frame);
         V_label_9->setObjectName(QString::fromUtf8("V_label_9"));
         V_label_9->setGeometry(QRect(550, 50, 21, 26));
+<<<<<<< HEAD
 <<<<<<< HEAD
         sizePolicy.setHeightForWidth(V_label_9->sizePolicy().hasHeightForWidth());
         V_label_9->setSizePolicy(sizePolicy);
@@ -463,10 +582,16 @@ public:
 =======
         V_label_9->setFont(font1);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(V_label_9->sizePolicy().hasHeightForWidth());
+        V_label_9->setSizePolicy(sizePolicy);
+        V_label_9->setFont(font);
+>>>>>>> c82df02 (界面)
         V_label_9->setStyleSheet(QString::fromUtf8(""));
         V_label_10 = new QLabel(frame);
         V_label_10->setObjectName(QString::fromUtf8("V_label_10"));
         V_label_10->setGeometry(QRect(420, 50, 21, 26));
+<<<<<<< HEAD
 <<<<<<< HEAD
         sizePolicy.setHeightForWidth(V_label_10->sizePolicy().hasHeightForWidth());
         V_label_10->setSizePolicy(sizePolicy);
@@ -474,11 +599,19 @@ public:
 =======
         V_label_10->setFont(font1);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(V_label_10->sizePolicy().hasHeightForWidth());
+        V_label_10->setSizePolicy(sizePolicy);
+        V_label_10->setFont(font);
+>>>>>>> c82df02 (界面)
         V_label_10->setStyleSheet(QString::fromUtf8(""));
         traject_z0 = new QLineEdit(frame);
         traject_z0->setObjectName(QString::fromUtf8("traject_z0"));
         traject_z0->setGeometry(QRect(450, 40, 91, 41));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(traject_z0->sizePolicy().hasHeightForWidth());
         traject_z0->setSizePolicy(sizePolicy);
         traject_r0 = new QLineEdit(frame);
@@ -496,6 +629,7 @@ public:
         creatG_but->setGeometry(QRect(1030, 140, 201, 41));
         sizePolicy.setHeightForWidth(creatG_but->sizePolicy().hasHeightForWidth());
         creatG_but->setSizePolicy(sizePolicy);
+<<<<<<< HEAD
 =======
         traject_r0 = new QLineEdit(frame);
         traject_r0->setObjectName(QString::fromUtf8("traject_r0"));
@@ -507,6 +641,8 @@ public:
         creatG_but->setObjectName(QString::fromUtf8("creatG_but"));
         creatG_but->setGeometry(QRect(1030, 140, 201, 41));
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
         getCurryPoint_but = new QPushButton(frame);
         getCurryPoint_but->setObjectName(QString::fromUtf8("getCurryPoint_but"));
         getCurryPoint_but->setGeometry(QRect(370, 90, 181, 41));
@@ -516,6 +652,9 @@ public:
         cBworkpiece->setObjectName(QString::fromUtf8("cBworkpiece"));
         cBworkpiece->setGeometry(QRect(1620, 140, 101, 41));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(cBworkpiece->sizePolicy().hasHeightForWidth());
         cBworkpiece->setSizePolicy(sizePolicy);
         pbNewPiece = new QPushButton(frame);
@@ -538,6 +677,7 @@ public:
         pBbrazing->setGeometry(QRect(10, 140, 101, 41));
         sizePolicy.setHeightForWidth(pBbrazing->sizePolicy().hasHeightForWidth());
         pBbrazing->setSizePolicy(sizePolicy);
+<<<<<<< HEAD
 =======
         pbNewPiece = new QPushButton(frame);
         pbNewPiece->setObjectName(QString::fromUtf8("pbNewPiece"));
@@ -552,6 +692,8 @@ public:
         pBbrazing->setObjectName(QString::fromUtf8("pBbrazing"));
         pBbrazing->setGeometry(QRect(10, 140, 101, 41));
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
         trajectoryOffset_but = new QPushButton(frame);
         trajectoryOffset_but->setObjectName(QString::fromUtf8("trajectoryOffset_but"));
         trajectoryOffset_but->setGeometry(QRect(370, 140, 181, 41));
@@ -565,29 +707,44 @@ public:
         selectAxitO_cb->setObjectName(QString::fromUtf8("selectAxitO_cb"));
         selectAxitO_cb->setGeometry(QRect(590, 90, 101, 41));
 <<<<<<< HEAD
+<<<<<<< HEAD
         sizePolicy.setHeightForWidth(selectAxitO_cb->sizePolicy().hasHeightForWidth());
         selectAxitO_cb->setSizePolicy(sizePolicy);
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(selectAxitO_cb->sizePolicy().hasHeightForWidth());
+        selectAxitO_cb->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         selectAxitO_cb->setLayoutDirection(Qt::LeftToRight);
         line_7 = new QFrame(frame);
         line_7->setObjectName(QString::fromUtf8("line_7"));
         line_7->setGeometry(QRect(1470, 30, 20, 151));
 <<<<<<< HEAD
+<<<<<<< HEAD
         sizePolicy.setHeightForWidth(line_7->sizePolicy().hasHeightForWidth());
         line_7->setSizePolicy(sizePolicy);
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(line_7->sizePolicy().hasHeightForWidth());
+        line_7->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         line_7->setFrameShape(QFrame::VLine);
         line_7->setFrameShadow(QFrame::Sunken);
         frame_2 = new QFrame(frame);
         frame_2->setObjectName(QString::fromUtf8("frame_2"));
         frame_2->setGeometry(QRect(710, 40, 291, 151));
 <<<<<<< HEAD
+<<<<<<< HEAD
         sizePolicy.setHeightForWidth(frame_2->sizePolicy().hasHeightForWidth());
         frame_2->setSizePolicy(sizePolicy);
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(frame_2->sizePolicy().hasHeightForWidth());
+        frame_2->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         frame_2->setStyleSheet(QString::fromUtf8("border: 2px solid rgb(200, 200, 200);\n"
 ""));
         frame_2->setFrameShape(QFrame::StyledPanel);
@@ -599,15 +756,23 @@ public:
         processType_cb->setObjectName(QString::fromUtf8("processType_cb"));
         processType_cb->setGeometry(QRect(10, 100, 151, 41));
 <<<<<<< HEAD
+<<<<<<< HEAD
         sizePolicy.setHeightForWidth(processType_cb->sizePolicy().hasHeightForWidth());
         processType_cb->setSizePolicy(sizePolicy);
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        sizePolicy.setHeightForWidth(processType_cb->sizePolicy().hasHeightForWidth());
+        processType_cb->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         processType_cb->setLayoutDirection(Qt::LeftToRight);
         label_22 = new QLabel(frame_2);
         label_22->setObjectName(QString::fromUtf8("label_22"));
         label_22->setGeometry(QRect(20, 50, 141, 31));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(label_22->sizePolicy().hasHeightForWidth());
         label_22->setSizePolicy(sizePolicy);
         pbBackO = new QPushButton(frame);
@@ -615,11 +780,14 @@ public:
         pbBackO->setGeometry(QRect(1500, 100, 101, 41));
         sizePolicy.setHeightForWidth(pbBackO->sizePolicy().hasHeightForWidth());
         pbBackO->setSizePolicy(sizePolicy);
+<<<<<<< HEAD
 =======
         pbBackO = new QPushButton(frame);
         pbBackO->setObjectName(QString::fromUtf8("pbBackO"));
         pbBackO->setGeometry(QRect(1500, 100, 101, 41));
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
         frame_2->raise();
         imageProcess_but->raise();
         startScan_But->raise();
@@ -657,6 +825,7 @@ public:
         graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
         graphicsView->setEnabled(true);
 <<<<<<< HEAD
+<<<<<<< HEAD
         graphicsView->setGeometry(QRect(0, 130, 1251, 1031));
         sizePolicy.setHeightForWidth(graphicsView->sizePolicy().hasHeightForWidth());
         graphicsView->setSizePolicy(sizePolicy);
@@ -668,6 +837,11 @@ public:
         sizePolicy1.setHeightForWidth(graphicsView->sizePolicy().hasHeightForWidth());
         graphicsView->setSizePolicy(sizePolicy1);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        graphicsView->setGeometry(QRect(0, 130, 1251, 1031));
+        sizePolicy.setHeightForWidth(graphicsView->sizePolicy().hasHeightForWidth());
+        graphicsView->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         graphicsView->setMinimumSize(QSize(0, 0));
         graphicsView->setMaximumSize(QSize(16777215, 16777215));
         graphicsView->setBaseSize(QSize(0, 0));
@@ -675,12 +849,18 @@ public:
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
 <<<<<<< HEAD
+<<<<<<< HEAD
         tabWidget->setGeometry(QRect(1200, 130, 821, 1031));
         sizePolicy.setHeightForWidth(tabWidget->sizePolicy().hasHeightForWidth());
         tabWidget->setSizePolicy(sizePolicy);
 =======
         tabWidget->setGeometry(QRect(1150, 110, 841, 1021));
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        tabWidget->setGeometry(QRect(1200, 130, 821, 1031));
+        sizePolicy.setHeightForWidth(tabWidget->sizePolicy().hasHeightForWidth());
+        tabWidget->setSizePolicy(sizePolicy);
+>>>>>>> c82df02 (界面)
         tabWidget->setLayoutDirection(Qt::LeftToRight);
         tabWidget->setTabPosition(QTabWidget::West);
         tab_2 = new QWidget();
@@ -688,6 +868,9 @@ public:
         moveDirectionNot_but = new QPushButton(tab_2);
         moveDirectionNot_but->setObjectName(QString::fromUtf8("moveDirectionNot_but"));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
         moveDirectionNot_but->setGeometry(QRect(140, 940, 151, 41));
         sizePolicy.setHeightForWidth(moveDirectionNot_but->sizePolicy().hasHeightForWidth());
         moveDirectionNot_but->setSizePolicy(sizePolicy);
@@ -718,7 +901,11 @@ public:
         editPos_but->setSizePolicy(sizePolicy);
         tableView = new QTableView(tab_2);
         tableView->setObjectName(QString::fromUtf8("tableView"));
+<<<<<<< HEAD
         tableView->setGeometry(QRect(0, 0, 791, 871));
+=======
+        tableView->setGeometry(QRect(0, 0, 801, 871));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(tableView->sizePolicy().hasHeightForWidth());
         tableView->setSizePolicy(sizePolicy);
         moveUpTabelRow_btu = new QPushButton(tab_2);
@@ -731,6 +918,7 @@ public:
         moveDownTabelRow_btu->setGeometry(QRect(550, 940, 181, 41));
         sizePolicy.setHeightForWidth(moveDownTabelRow_btu->sizePolicy().hasHeightForWidth());
         moveDownTabelRow_btu->setSizePolicy(sizePolicy);
+<<<<<<< HEAD
 =======
         moveDirectionNot_but->setGeometry(QRect(170, 940, 151, 41));
         insertArcPos_but = new QPushButton(tab_2);
@@ -758,6 +946,8 @@ public:
         moveDownTabelRow_btu->setObjectName(QString::fromUtf8("moveDownTabelRow_btu"));
         moveDownTabelRow_btu->setGeometry(QRect(610, 940, 181, 41));
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
         tabWidget->addTab(tab_2, QString());
         plcType_cb = new QComboBox(centralwidget);
         plcType_cb->addItem(QString());
@@ -769,17 +959,28 @@ public:
         label_3 = new QLabel(centralwidget);
         label_3->setObjectName(QString::fromUtf8("label_3"));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
         label_3->setGeometry(QRect(1840, 10, 141, 31));
         sizePolicy.setHeightForWidth(label_3->sizePolicy().hasHeightForWidth());
         label_3->setSizePolicy(sizePolicy);
         label_15 = new QLabel(centralwidget);
         label_15->setObjectName(QString::fromUtf8("label_15"));
+<<<<<<< HEAD
         label_15->setGeometry(QRect(390, 1360, 111, 31));
+=======
+        label_15->setGeometry(QRect(390, 1380, 111, 31));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(label_15->sizePolicy().hasHeightForWidth());
         label_15->setSizePolicy(sizePolicy);
         label_6 = new QLabel(centralwidget);
         label_6->setObjectName(QString::fromUtf8("label_6"));
+<<<<<<< HEAD
         label_6->setGeometry(QRect(561, 1, 44, 29));
+=======
+        label_6->setGeometry(QRect(554, 1, 51, 41));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(label_6->sizePolicy().hasHeightForWidth());
         label_6->setSizePolicy(sizePolicy);
         QFont font1;
@@ -789,70 +990,114 @@ public:
         label_6->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         label_8 = new QLabel(centralwidget);
         label_8->setObjectName(QString::fromUtf8("label_8"));
+<<<<<<< HEAD
         label_8->setGeometry(QRect(769, 1, 48, 33));
+=======
+        label_8->setGeometry(QRect(769, 10, 48, 33));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
         label_8->setSizePolicy(sizePolicy);
         label_8->setFont(font);
         xCurPos_lab = new QLabel(centralwidget);
         xCurPos_lab->setObjectName(QString::fromUtf8("xCurPos_lab"));
+<<<<<<< HEAD
         xCurPos_lab->setGeometry(QRect(600, 1, 161, 33));
+=======
+        xCurPos_lab->setGeometry(QRect(610, 0, 161, 51));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(xCurPos_lab->sizePolicy().hasHeightForWidth());
         xCurPos_lab->setSizePolicy(sizePolicy);
         xCurPos_lab->setFont(font1);
         label_13 = new QLabel(centralwidget);
         label_13->setObjectName(QString::fromUtf8("label_13"));
+<<<<<<< HEAD
         label_13->setGeometry(QRect(873, 1, 44, 29));
+=======
+        label_13->setGeometry(QRect(856, 1, 61, 41));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(label_13->sizePolicy().hasHeightForWidth());
         label_13->setSizePolicy(sizePolicy);
         label_13->setFont(font1);
         label_13->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         label_12 = new QLabel(centralwidget);
         label_12->setObjectName(QString::fromUtf8("label_12"));
+<<<<<<< HEAD
         label_12->setGeometry(QRect(1082, 1, 48, 33));
+=======
+        label_12->setGeometry(QRect(1082, 10, 48, 33));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(label_12->sizePolicy().hasHeightForWidth());
         label_12->setSizePolicy(sizePolicy);
         label_12->setFont(font);
         zCurPos_lab = new QLabel(centralwidget);
         zCurPos_lab->setObjectName(QString::fromUtf8("zCurPos_lab"));
+<<<<<<< HEAD
         zCurPos_lab->setGeometry(QRect(913, 1, 151, 33));
+=======
+        zCurPos_lab->setGeometry(QRect(920, 0, 151, 51));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(zCurPos_lab->sizePolicy().hasHeightForWidth());
         zCurPos_lab->setSizePolicy(sizePolicy);
         zCurPos_lab->setFont(font1);
         yCurPos_lab = new QLabel(centralwidget);
         yCurPos_lab->setObjectName(QString::fromUtf8("yCurPos_lab"));
+<<<<<<< HEAD
         yCurPos_lab->setGeometry(QRect(600, 49, 161, 33));
+=======
+        yCurPos_lab->setGeometry(QRect(610, 50, 161, 51));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(yCurPos_lab->sizePolicy().hasHeightForWidth());
         yCurPos_lab->setSizePolicy(sizePolicy);
         yCurPos_lab->setFont(font1);
         label_9 = new QLabel(centralwidget);
         label_9->setObjectName(QString::fromUtf8("label_9"));
+<<<<<<< HEAD
         label_9->setGeometry(QRect(769, 49, 48, 33));
+=======
+        label_9->setGeometry(QRect(769, 60, 48, 33));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(label_9->sizePolicy().hasHeightForWidth());
         label_9->setSizePolicy(sizePolicy);
         label_9->setFont(font);
         label_7 = new QLabel(centralwidget);
         label_7->setObjectName(QString::fromUtf8("label_7"));
+<<<<<<< HEAD
         label_7->setGeometry(QRect(561, 49, 44, 29));
+=======
+        label_7->setGeometry(QRect(554, 51, 51, 51));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
         label_7->setSizePolicy(sizePolicy);
         label_7->setFont(font1);
         label_7->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         label_10 = new QLabel(centralwidget);
         label_10->setObjectName(QString::fromUtf8("label_10"));
+<<<<<<< HEAD
         label_10->setGeometry(QRect(1082, 49, 48, 33));
+=======
+        label_10->setGeometry(QRect(1082, 60, 48, 33));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(label_10->sizePolicy().hasHeightForWidth());
         label_10->setSizePolicy(sizePolicy);
         label_10->setFont(font);
         label_11 = new QLabel(centralwidget);
         label_11->setObjectName(QString::fromUtf8("label_11"));
+<<<<<<< HEAD
         label_11->setGeometry(QRect(873, 49, 44, 29));
+=======
+        label_11->setGeometry(QRect(856, 51, 61, 41));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
         label_11->setSizePolicy(sizePolicy);
         label_11->setFont(font1);
         label_11->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         rCurPos_lab = new QLabel(centralwidget);
         rCurPos_lab->setObjectName(QString::fromUtf8("rCurPos_lab"));
+<<<<<<< HEAD
         rCurPos_lab->setGeometry(QRect(913, 49, 161, 33));
+=======
+        rCurPos_lab->setGeometry(QRect(920, 50, 161, 51));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(rCurPos_lab->sizePolicy().hasHeightForWidth());
         rCurPos_lab->setSizePolicy(sizePolicy);
         rCurPos_lab->setFont(font1);
@@ -919,7 +1164,11 @@ public:
         label->setSizePolicy(sizePolicy);
         port_lin = new QLineEdit(centralwidget);
         port_lin->setObjectName(QString::fromUtf8("port_lin"));
+<<<<<<< HEAD
         port_lin->setGeometry(QRect(306, 11, 68, 35));
+=======
+        port_lin->setGeometry(QRect(306, 10, 68, 35));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(port_lin->sizePolicy().hasHeightForWidth());
         port_lin->setSizePolicy(sizePolicy);
         port_lin->setMinimumSize(QSize(0, 32));
@@ -931,12 +1180,17 @@ public:
         label_2->setSizePolicy(sizePolicy);
         ip_lin = new QLineEdit(centralwidget);
         ip_lin->setObjectName(QString::fromUtf8("ip_lin"));
+<<<<<<< HEAD
         ip_lin->setGeometry(QRect(53, 11, 181, 35));
+=======
+        ip_lin->setGeometry(QRect(53, 10, 181, 35));
+>>>>>>> c82df02 (界面)
         sizePolicy.setHeightForWidth(ip_lin->sizePolicy().hasHeightForWidth());
         ip_lin->setSizePolicy(sizePolicy);
         ip_lin->setMinimumSize(QSize(0, 32));
         connect_but = new QPushButton(centralwidget);
         connect_but->setObjectName(QString::fromUtf8("connect_but"));
+<<<<<<< HEAD
         connect_but->setGeometry(QRect(380, 11, 150, 35));
         sizePolicy.setHeightForWidth(connect_but->sizePolicy().hasHeightForWidth());
         connect_but->setSizePolicy(sizePolicy);
@@ -947,6 +1201,12 @@ public:
         label_15->setObjectName(QString::fromUtf8("label_15"));
         label_15->setGeometry(QRect(390, 1360, 111, 31));
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        connect_but->setGeometry(QRect(380, 10, 150, 35));
+        sizePolicy.setHeightForWidth(connect_but->sizePolicy().hasHeightForWidth());
+        connect_but->setSizePolicy(sizePolicy);
+        connect_but->setMinimumSize(QSize(0, 35));
+>>>>>>> c82df02 (界面)
         MainWindow->setCentralWidget(centralwidget);
 
         retranslateUi(MainWindow);
@@ -960,6 +1220,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", nullptr));
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
         label->setText(QApplication::translate("MainWindow", "IP:", nullptr));
@@ -988,6 +1249,8 @@ public:
         zSub_but->setText(QApplication::translate("MainWindow", "Z-", nullptr));
         rSub_but->setText(QApplication::translate("MainWindow", "R-", nullptr));
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
         scanVelocity_lin->setText(QString());
         label_14->setText(QApplication::translate("MainWindow", "mm/s", nullptr));
         label_17->setText(QApplication::translate("MainWindow", "mm/s", nullptr));
@@ -1061,6 +1324,9 @@ public:
         label_3->setText(QApplication::translate("MainWindow", "plc\347\261\273\345\236\213\357\274\232", nullptr));
         label_15->setText(QApplication::translate("MainWindow", "\345\256\232\344\275\215\351\200\237\345\272\246\357\274\232", nullptr));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
         label_6->setText(QApplication::translate("MainWindow", "x\357\274\232", nullptr));
         label_8->setText(QApplication::translate("MainWindow", "mm", nullptr));
         xCurPos_lab->setText(QString());
@@ -1086,8 +1352,11 @@ public:
         label_2->setText(QApplication::translate("MainWindow", "Port:", nullptr));
         ip_lin->setText(QApplication::translate("MainWindow", "192.168.1.88", nullptr));
         connect_but->setText(QApplication::translate("MainWindow", " \350\277\236\346\216\245", nullptr));
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
     } // retranslateUi
 
 };

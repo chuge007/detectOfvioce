@@ -112,6 +112,12 @@ static bool getData() {
 
 // 关闭数据库
 static void closeDb() {
+<<<<<<< HEAD
+=======
+
+    // 关闭数据库连接
+    QSqlDatabase db = QSqlDatabase::database("unique_connection_name");
+>>>>>>> c82df02 (界面)
     if (db.isOpen()) {
         db.close();
     }

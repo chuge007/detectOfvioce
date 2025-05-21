@@ -5,7 +5,7 @@ QT       += core gui widgets serialbus network sql  svg axcontainer charts openg
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets network
 
-CONFIG += c++11  utf8
+CONFIG += c++11  utf8   console
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -64,6 +64,7 @@ HEADERS += \
     scanMovecontrl/modbusconfig.h \
     scanMovecontrl/scancontrolabstract.h \
     scanMovecontrl/scandetect_frictionwelding.h \
+    tool.h \
     widgetDefin/CoustomGraphicsView.h \
     widgetDefin/Graphics_view_zoom.h \
     widgetDefin/QTableViewSpe.h \
@@ -75,9 +76,13 @@ FORMS += \
     ImageProcessing.ui \
     addroute_dialog.ui \
 <<<<<<< HEAD
+<<<<<<< HEAD
     ascan.ui \
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+    ascan.ui \
+>>>>>>> c82df02 (界面)
     gcodemodulation.ui \
     imageProcessing.ui \
     imageprocessing.ui \

@@ -8,9 +8,18 @@
 #include "imageprocessing.h"
 #include "gcodemodulation.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "ascan.h"
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+#include "ascan.h"
+
+#include <cmath>
+#include <iostream>
+#include <stdexcept>
+#include <tool.h>
+>>>>>>> c82df02 (界面)
 
 #include <QModbusDataUnit>
 #include <QDebug>
@@ -27,19 +36,28 @@
 #include <QList>
 #include <QStandardItem>
 #include <QFileDialog>
-#include <cmath>
-#include <iostream>
-#include <stdexcept>
-
 #include <QAxObject>
 #include <QProcess>
 #include <QDir>
 #include <QProcessEnvironment>
 #include <QWaitCondition>
 #include <QInputDialog>
+<<<<<<< HEAD
 
 
 ScanControlAbstract *MainWindow::scanDetectCtrl=0;
+=======
+#include <QScreen>
+#include <QGuiApplication>
+#include <QWidget>
+#include <QTableWidget>
+#include <QTableView>
+#include <QHeaderView>
+#include <QFont>
+
+ScanControlAbstract *MainWindow::scanDetectCtrl=0;
+
+>>>>>>> c82df02 (界面)
 
 
 void MainWindow::init()
@@ -177,18 +195,26 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->moveDownTabelRow_btu,&QPushButton::clicked, this, &MainWindow::pbmoveDownForSort);
     connect(ui->setTrajecStart_but,&QPushButton::clicked, this, &MainWindow::on_setTrajec_start_clicked);
 <<<<<<< HEAD
+<<<<<<< HEAD
     connect(ui->getCurryPoint_but,&QPushButton::clicked, this, &MainWindow::pbGetModelPoint);
 =======
     connect(ui->getCurryPoint_but,&QPushButton::clicked, this, &MainWindow::pbGetCurryPoint);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+    connect(ui->getCurryPoint_but,&QPushButton::clicked, this, &MainWindow::pbGetModelPoint);
+>>>>>>> c82df02 (界面)
     connect(ui->moveDirectionNot_but,&QPushButton::clicked, this, &MainWindow::pbMoveDirectionNot);
     connect(ui->pBdeletePiece,&QPushButton::clicked, this, &MainWindow::pbdeletePiece);
     connect(ui->pBbrazing,&QPushButton::clicked, this, &MainWindow::pBbrazing);
     connect(ui->imageProcess_but,&QPushButton::clicked, this, &MainWindow::PbImageProcess);
 <<<<<<< HEAD
+<<<<<<< HEAD
     connect(ui->ascan_but,&QPushButton::clicked, this, &MainWindow::pbAscan);
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+    connect(ui->ascan_but,&QPushButton::clicked, this, &MainWindow::pbAscan);
+>>>>>>> c82df02 (界面)
 
     connect(ui->cBworkpiece,
             QOverload<const QString &>::of(&QComboBox::currentIndexChanged),
@@ -226,12 +252,18 @@ MainWindow::MainWindow(QWidget *parent)
     imageProcessingTool->settings=settings;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
     scan=new ascan();
     scan->Rsettings=settings;
     scan->mw=this;
 
+<<<<<<< HEAD
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
     gcodeEidt=new gCodeModulation();
 
     zomm_gview = new Graphics_view_zoom(ui->graphicsView);
@@ -258,14 +290,29 @@ MainWindow::MainWindow(QWidget *parent)
 
     initSetting();
 
+    saveOriginalWidgetStates(this->centralWidget());
+
+
 }
 
 MainWindow::~MainWindow()
 {
 
+
     saveSetting();
+<<<<<<< HEAD
     closeDb();
     delete model;
+=======
+
+    if (model) {
+        model->clear();
+        delete model;
+        model = nullptr;
+    }
+    closeDb();
+
+>>>>>>> c82df02 (界面)
     delete addRoute;
     delete scene;
     delete zomm_gview;
@@ -273,12 +320,31 @@ MainWindow::~MainWindow()
     delete settings;
     delete imageProcessingTool;
 <<<<<<< HEAD
+<<<<<<< HEAD
     delete scan;
 =======
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+    delete scan;
+>>>>>>> c82df02 (界面)
     delete ui;
 
+
+
+
 }
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    // 这里做必要的保存、释放动作（如果不是都放在析构里）
+
+    qApp->quit();  // 请求退出事件循环，程序退出
+
+    event->accept();
+
+    forceExit();
+}
+
 
 void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
 {
@@ -306,6 +372,9 @@ void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
 
     // 计算视图的缩放因子
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
     qreal scaleFactor = ui->graphicsView->transform().m11(); // 获取水平缩放因子
 
     // 在新位置绘制红色小圆圈
@@ -1693,6 +1762,9 @@ void MainWindow::CalculatingAngles(){
             }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
             double Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
 
             model->setData(model->index(i, 4), 0);
@@ -1700,6 +1772,7 @@ void MainWindow::CalculatingAngles(){
             model->setData(model->index(i, 8), 0);
             model->setData(model->index(i, 12), 0);
             model->setData(model->index(i, 13), std::round(r2 * 100.0) / 100.0);
+<<<<<<< HEAD
 =======
             double Previous_r0=model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
 
@@ -1709,6 +1782,8 @@ void MainWindow::CalculatingAngles(){
             model->setData(model->index(i, 12), 0);
             model->setData(model->index(i, 13), r2);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
 
 
             qDebug()<<"line: "<<r2<<"   "<<i;
@@ -1775,6 +1850,9 @@ void MainWindow::CalculatingAngles(){
 
             qDebug()<<"arc: "<<r2<<"   "<<i;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
             double Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
 
             model->setData(model->index(i, 4), 0);
@@ -1782,6 +1860,7 @@ void MainWindow::CalculatingAngles(){
             model->setData(model->index(i, 8), 0);
             model->setData(model->index(i, 12), 0);
             model->setData(model->index(i, 13), std::round(r2 * 100.0) / 100.0);
+<<<<<<< HEAD
 =======
             double Previous_r0=model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
 
@@ -1791,6 +1870,8 @@ void MainWindow::CalculatingAngles(){
             model->setData(model->index(i, 12), 0);
             model->setData(model->index(i, 13), r2);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
 
 
         }
@@ -2071,10 +2152,14 @@ void MainWindow::selectWorkpiece(){
         curryWorkpieceName="Initialization";
         createOrSwitchTable(curryWorkpieceName,true);
 <<<<<<< HEAD
+<<<<<<< HEAD
         ui->cBworkpiece->addItem(curryWorkpieceName);
 =======
          ui->cBworkpiece->addItem(curryWorkpieceName);
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+        ui->cBworkpiece->addItem(curryWorkpieceName);
+>>>>>>> c82df02 (界面)
         ui->cBworkpiece->setCurrentText(curryWorkpieceName);
     }else{
         createOrSwitchTable(curryWorkpieceName,false);
@@ -2343,6 +2428,7 @@ void MainWindow::pbmoveDownForSort()
 
 void MainWindow::pbMoveDirectionNot(){
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 
@@ -2469,6 +2555,67 @@ void MainWindow::pbGetCurryPoint(){
 
 
 
+=======
+
+
+    // 获取当前选中的行
+    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedIndexes();
+    if (selectedIndexes.isEmpty()) {
+        qDebug() << "没有选中行";
+        return;
+    }
+    int row = selectedIndexes.first().row();
+    qDebug() << "选中行:" << row;
+
+    // 读取当前行中起点与终点的 xyzr 数据
+    double startX = model->data(model->index(row, 2)).toDouble();
+    double startY = model->data(model->index(row, 3)).toDouble();
+    double startZ = model->data(model->index(row, 4)).toDouble();
+    double startR = model->data(model->index(row, 5)).toDouble();
+
+    double endX   = model->data(model->index(row, 10)).toDouble();
+    double endY   = model->data(model->index(row, 11)).toDouble();
+    double endZ   = model->data(model->index(row, 12)).toDouble();
+    double endR   = model->data(model->index(row, 13)).toDouble();
+
+    qDebug() << "交换前:";
+    qDebug() << "起点: " << startX << startY << startZ << startR;
+    qDebug() << "终点: " << endX << endY << endZ << endR;
+
+    // 进行互换操作：将起点数据设置为旧终点的数据，终点数据设置为旧起点的数据
+    model->setData(model->index(row, 2), endX);
+    model->setData(model->index(row, 3), endY);
+    model->setData(model->index(row, 4), endZ);
+    model->setData(model->index(row, 5), endR);
+
+    model->setData(model->index(row, 10), startX);
+    model->setData(model->index(row, 11), startY);
+    model->setData(model->index(row, 12), startZ);
+    model->setData(model->index(row, 13), startR);
+
+    // 调试信息，检查更新后的数据
+    qDebug() << "交换后:";
+    qDebug() << "起点: " << model->data(model->index(row, 2)).toDouble()
+             << model->data(model->index(row, 3)).toDouble()
+             << model->data(model->index(row, 4)).toDouble()
+             << model->data(model->index(row, 5)).toDouble();
+    qDebug() << "终点: " << model->data(model->index(row, 10)).toDouble()
+             << model->data(model->index(row, 11)).toDouble()
+             << model->data(model->index(row, 12)).toDouble()
+             << model->data(model->index(row, 13)).toDouble();
+
+    // 提交更改并刷新模型视图
+    if (model->submitAll()) {
+        qDebug() << "数据更新成功";
+    } else {
+        qDebug() << "数据更新失败:" << model->lastError().text();
+    }
+    model->select();
+    updateSence();
+
+
+
+>>>>>>> c82df02 (界面)
 
 }
 
@@ -2482,6 +2629,7 @@ void MainWindow::pbGetModelPoint(){
                 << QStringLiteral("过渡点")
                 << QStringLiteral("终点");
 
+<<<<<<< HEAD
 =======
         // 弹出对话框让用户选点类型……
         QStringList options;
@@ -2490,6 +2638,8 @@ void MainWindow::pbGetModelPoint(){
                 << QStringLiteral("终点");
 
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
         bool ok;
         QString choice = QInputDialog::getItem(this,
                                                QStringLiteral("选择点类型"),
@@ -2520,6 +2670,9 @@ void MainWindow::pbGetModelPoint(){
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c82df02 (界面)
 }
 
 
@@ -2609,6 +2762,7 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
 }
 
 
+<<<<<<< HEAD
 =======
 }
 
@@ -2688,6 +2842,8 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
 
 
 >>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
+=======
+>>>>>>> c82df02 (界面)
 void MainWindow::saveSetting() {
     // Save general settings
     settings->setValue("ip", ui->ip_lin->text());
@@ -2788,6 +2944,97 @@ void MainWindow::initSetting() {
 
     // Update scene if needed
     updateSence();
+<<<<<<< HEAD
+=======
+}
+
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QSize newSize = event->size();
+    qDebug() << "oldSize:" << oldSize << " newSize:" << newSize;
+
+
+//    if (newSize.width() < oldSize.width() || newSize.height() < oldSize.height()) {
+//        // 缩小，恢复控件初始状态
+//        restoreOriginalWidgetStates(this->centralWidget());
+//        oldSize = newSize;  // 更新 oldSize，防止多次缩小触发
+//        //QMainWindow::resizeEvent(event);
+//        return;
+//    }
+
+    double scaleX = static_cast<double>(newSize.width()) / oldSize.width();
+    double scaleY = static_cast<double>(newSize.height()) / oldSize.height();
+
+    scaleWidgets(this->centralWidget(), scaleX, scaleY);
+
+    oldSize = newSize;
+    QMainWindow::resizeEvent(event);
+}
+
+void MainWindow::scaleWidgets(QWidget* parent, double scaleX, double scaleY)
+{
+    for (QObject* obj : parent->children()) {
+        QWidget* w = qobject_cast<QWidget*>(obj);
+        if (!w || w->inherits("QLayout"))
+            continue;
+
+        // 缓存控件原始位置和大小（只缓存一次）
+        if (!originalGeometries.contains(w)) {
+            originalGeometries[w] = w->geometry();
+        }
+
+        QRect orig = originalGeometries[w];
+        int newX = static_cast<int>(orig.x() * scaleX);
+        int newY = static_cast<int>(orig.y() * scaleY);
+        int newW = static_cast<int>(orig.width() * scaleX);
+        int newH = static_cast<int>(orig.height() * scaleY);
+        w->setGeometry(newX, newY, newW, newH);
+
+        // 缓存原始字体大小
+        if (!originalFontSizes.contains(w)) {
+            originalFontSizes[w] = w->font().pointSizeF();
+        }
+
+        QFont font = w->font();
+        double scale = (scaleX + scaleY) / 2.0;
+        font.setPointSizeF(originalFontSizes[w] * scale);
+        w->setFont(font);
+
+        // 处理 QTableWidget 的行列缩放
+        if (QTableWidget* table = qobject_cast<QTableWidget*>(w)) {
+            for (int col = 0; col < table->columnCount(); ++col) {
+                int oldWidth = table->columnWidth(col);
+                table->setColumnWidth(col, static_cast<int>(oldWidth * scaleX));
+            }
+            for (int row = 0; row < table->rowCount(); ++row) {
+                int oldHeight = table->rowHeight(row);
+                table->setRowHeight(row, static_cast<int>(oldHeight * scaleY));
+            }
+        }
+
+        // 处理 QTableView 的头部缩放
+        if (QTableView* view = qobject_cast<QTableView*>(w)) {
+            QHeaderView* hHeader = view->horizontalHeader();
+            QHeaderView* vHeader = view->verticalHeader();
+            if (hHeader) {
+                for (int col = 0; col < hHeader->count(); ++col) {
+                    int oldWidth = hHeader->sectionSize(col);
+                    hHeader->resizeSection(col, static_cast<int>(oldWidth * scaleX));
+                }
+            }
+            if (vHeader) {
+                for (int row = 0; row < vHeader->count(); ++row) {
+                    int oldHeight = vHeader->sectionSize(row);
+                    vHeader->resizeSection(row, static_cast<int>(oldHeight * scaleY));
+                }
+            }
+        }
+
+        // 递归子控件
+        scaleWidgets(w, scaleX, scaleY);
+    }
+>>>>>>> c82df02 (界面)
 }
 
 
@@ -2804,9 +3051,28 @@ void MainWindow::scaleWidgets(QWidget* parent, double scaleX, double scaleY)
             int newH = static_cast<int>(geom.height() * scaleY);
             w->setGeometry(newX, newY, newW, newH);
 
+<<<<<<< HEAD
             // 递归：处理 frame、groupbox 里的控件
             scaleWidgets(w, scaleX, scaleY);
         }
+=======
+void MainWindow::restoreOriginalWidgetStates(QWidget* parent)
+{
+    for (QObject* obj : parent->children()) {
+        QWidget* w = qobject_cast<QWidget*>(obj);
+        if (!w || w->inherits("QLayout"))
+            continue;
+
+        if (originalGeometries.contains(w)) {
+            w->setGeometry(originalGeometries[w]);
+        }
+        if (originalFonts.contains(w)) {
+            w->setFont(originalFonts[w]);
+        }
+
+        // 递归恢复子控件
+        restoreOriginalWidgetStates(w);
+>>>>>>> c82df02 (界面)
     }
 }
 
@@ -2818,6 +3084,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     double scaleX = static_cast<double>(newSize.width()) / oldSize.width();
     double scaleY = static_cast<double>(newSize.height()) / oldSize.height();
 
+<<<<<<< HEAD
     scaleWidgets(this->centralWidget(), scaleX, scaleY);
 
     oldSize = newSize;
@@ -2836,6 +3103,23 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 
 
+=======
+void MainWindow::saveOriginalWidgetStates(QWidget* parent)
+{
+    oldSize=this->size();
+    for (QObject* obj : parent->children()) {
+        QWidget* w = qobject_cast<QWidget*>(obj);
+        if (!w || w->inherits("QLayout"))
+            continue;
+
+        originalGeometries[w] = w->geometry();
+        originalFonts[w] = w->font();
+
+        // 递归保存子控件
+        saveOriginalWidgetStates(w);
+    }
+}
+>>>>>>> c82df02 (界面)
 
 
 //void MainWindow::pbWriteInPLC()

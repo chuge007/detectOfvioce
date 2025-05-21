@@ -6,10 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
+<<<<<<< HEAD
     <width>1463</width>
     <height>1149</height>
    </rect>
   </property>
+=======
+    <width>1462</width>
+    <height>1149</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+>>>>>>> c82df02 (界面)
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -141,7 +154,10 @@
      </layout>
      <zorder>gVimageprocess</zorder>
      <zorder>frame_3</zorder>
+<<<<<<< HEAD
      <zorder>horizontalLayoutWidget</zorder>
+=======
+>>>>>>> c82df02 (界面)
      <zorder>frame_2</zorder>
     </widget>
    </item>

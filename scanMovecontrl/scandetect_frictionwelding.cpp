@@ -1,5 +1,8 @@
 ﻿#include "scanDetect_frictionWelding.h"
 #include "scancontrolabstract.h"
+
+#include <iostream>
+
 #include <QDebug>
 #include <qwidget.h>
 #include <QMessageBox>
@@ -37,7 +40,11 @@ void scanDetect_frictionWelding::initWidget()
     modbusClient = new QModbusTcpClient(this);
 
     timer = new QTimer(this);
+<<<<<<< HEAD
     timer->setInterval(60);
+=======
+    timer->setInterval(80);
+>>>>>>> c82df02 (界面)
 
 }
 
@@ -174,6 +181,7 @@ void scanDetect_frictionWelding::on_connectBtn_clicked()
 }
 
 
+<<<<<<< HEAD
 bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType rGtype,
                                                   float address) {
 
@@ -202,6 +210,146 @@ bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, Q
     return sendValue(1) && sendValue(0);
 }
 
+=======
+
+
+bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType rGtype,
+                                                  float address){
+    if (modbusClient->state() != QModbusDevice::ConnectedState) {
+        qWarning() << "Modbus client not connected.";
+        return false;
+    }
+
+    modbusClient->setTimeout(5000); // 3秒
+
+
+    auto sendValue = [&](int value) -> bool {
+        QModbusDataUnit command(rGtype, address, 1);
+        command.setValue(0, value);
+
+        QModbusReply* reply = modbusClient->sendWriteRequest(command, 1);
+        if (!reply) {
+            qWarning() << "Failed to send Modbus write request (nullptr)";
+            sendPulseCommand(modbusClient,rGtype,address);
+            //return false;
+        }
+
+        QEventLoop loop;
+        QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();  // 等待 finished 信号
+
+        if (reply->error() != QModbusDevice::NoError) {
+            qWarning() << "[sendPulseCommand] Modbus write error:" << reply->errorString()
+                       << "(value:" << value << "address:" << address << ")";
+            reply->deleteLater();
+            return false;
+        }
+
+        qDebug() << "sendPulseCommand success, value:" << value << "to address:" << address;
+        reply->deleteLater();
+        return true;
+    };
+
+    // 按顺序发送 1 和 0
+    return sendValue(1) && sendValue(0);
+}
+
+bool  scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type,
+                                                    float address,QString Value){
+
+    if (modbusClient->state() != QModbusDevice::ConnectedState) {
+        qWarning() << "Modbus client not connected.";
+        return false;
+    }
+
+
+
+    modbusClient->setTimeout(5000); // 3秒
+
+    QVector<quint16> dataToSend;
+    for (int i = 0; i < Value.length(); i += 2) {
+        quint16 word = 0;
+        if (i < Value.length())
+            word |= static_cast<quint16>(Value[i].unicode()) << 8;
+        if (i + 1 < Value.length())
+            word |= static_cast<quint16>(Value[i + 1].unicode());
+        dataToSend.append(word);
+    }
+
+    if (dataToSend.size() > 20) {
+        return false;
+        qWarning() << "String length exceeds 20 registers. Truncating to 20.";
+    }
+
+    // 高低字节互换
+    for (int i = 0; i < dataToSend.size(); ++i) {
+        dataToSend[i] = (dataToSend[i] << 8) | (dataToSend[i] >> 8);
+    }
+
+    QModbusDataUnit command(type, address, dataToSend.size());
+    for (int i = 0; i < dataToSend.size(); ++i) {
+        command.setValue(i, dataToSend[i]);
+    }
+
+    QModbusReply* reply = modbusClient->sendWriteRequest(command, 1);
+    if (!reply) {
+        qWarning() << "Failed to send Modbus write request (nullptr)";
+        sendStringCommand(modbusClient,  type,  address, Value);
+        //return false;
+    }
+
+    QEventLoop loop;
+    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();  // 等待 finished 信号
+    if (reply->error() != QModbusDevice::NoError) {
+               qWarning() << "[sendStringCommand] Modbus write error:" << reply->errorString()
+                          << "(value:" << Value << "address:" << address << ")";
+               reply->deleteLater();
+               return false;
+           }
+
+    std::cout << "sendStringCommand success: " << Value.toStdString()
+              << " to address: " << address << std::endl;
+    reply->deleteLater();
+    return true;
+}
+
+//bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType rGtype,
+//                                                  float address) {
+
+//    if(modbusClient->state() != QModbusDevice::ConnectedState)
+//        return false;
+
+//    auto sendValue = [=](int value) -> bool {
+//        QModbusDataUnit command(rGtype, address, 1);
+//        command.setValue(0, value);
+//        QModbusReply* reply = modbusClient->sendWriteRequest(command, 1);  // 假定设备ID为1
+//        if (!reply) {
+//            return false;
+//        }
+//        QEventLoop loop;
+//        QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+//        loop.exec();  // 等待finished信号
+
+//        // 检查请求是否成功
+//        if(!(reply->error() == QModbusDevice::NoError)){
+
+//            reply->deleteLater();
+//            sendPulseCommand(modbusClient,rGtype,address);
+//        }
+
+//        reply->deleteLater();
+
+//        qDebug()<<"sendPulseCommand:"<<address;
+
+//        return true;
+//    };
+
+//    // 先发送1，再发送0
+//    return sendValue(1) && sendValue(0);
+//}
+
+>>>>>>> c82df02 (界面)
 bool scanDetect_frictionWelding::sendCommandValue(QModbusClient *modbusClient, QModbusDataUnit::RegisterType rGtype,
                                                   int address,float value){
     if(modbusClient->state() != QModbusDevice::ConnectedState)
@@ -225,6 +373,7 @@ bool scanDetect_frictionWelding::sendCommandValue(QModbusClient *modbusClient, Q
 }
 
 
+<<<<<<< HEAD
 bool  scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, float address,QString Value){
 
 
@@ -283,6 +432,78 @@ bool  scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient,
 
 
 }
+=======
+//bool  scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, float address,QString Value){
+
+
+//    if (modbusClient->state() != QModbusDevice::ConnectedState)
+//        return false;
+
+//    // 假设要发送的字符串
+//    QString strToSend = Value;
+
+//    // 将字符串转换为 16 位整数数组
+//    QVector<quint16> dataToSend;
+//    for (int i = 0; i < strToSend.length();  i += 2) {
+//        quint16 value = 0;
+//        if (i < strToSend.length())  {
+//            value |= static_cast<quint16>(strToSend[i].unicode()) << 8;
+//        }
+//        if (i + 1 < strToSend.length())  {
+//            value |= static_cast<quint16>(strToSend[i + 1].unicode());
+//        }
+//        dataToSend.append(value);
+//    }
+
+//    // 确保数据长度不超过 20 个寄存器
+//    if (dataToSend.size()  > 20) {
+//        dataToSend.resize(20);
+//    }
+
+
+//    QModbusDataUnit command(
+//                type,
+//                address,
+//                dataToSend.size()
+//                );
+
+//    for (int i = 0; i < dataToSend.size();  ++i) {
+//        dataToSend[i] = ((dataToSend[i] & 0xFF) << 8) | ((dataToSend[i] >> 8) & 0xFF);
+//    }
+
+//    for (int i = 0; i < dataToSend.size();  ++i) {
+//        command.setValue(i,  dataToSend[i]);
+//    }
+
+//    // 发送写请求
+//    auto *reply = modbusClient->sendWriteRequest(command, 1);
+
+//    // 等待请求完成
+//    QEventLoop loop;
+//    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+//    loop.exec();   // 等待 finished 信号
+
+//    // 检查请求是否成功
+//    if(!(reply->error() == QModbusDevice::NoError)){
+
+//        reply->deleteLater();
+//        sendStringCommand(modbusClient,type,address,Value);
+
+
+//    }
+
+//    reply->deleteLater();
+
+//    return true;
+
+
+//}
+
+
+
+
+
+>>>>>>> c82df02 (界面)
 void scanDetect_frictionWelding::on_startScanBtn_clicked()
 {
 
@@ -719,28 +940,50 @@ void scanDetect_frictionWelding::destroy()
 {
     if (modbusClient) {
         if (modbusClient->state() != QModbusDevice::UnconnectedState) {
+<<<<<<< HEAD
             connect(modbusClient, &QModbusClient::stateChanged, this, [=](int state) {
                 if (state == QModbusDevice::UnconnectedState) {
                     delete modbusClient;
                     modbusClient = nullptr;
+=======
+            // 断开后 deleteLater，保证安全析构
+            connect(modbusClient, &QModbusClient::stateChanged, this, [this](int state) {
+                if (state == QModbusDevice::UnconnectedState) {
+                    if (modbusClient) {
+                        modbusClient->deleteLater();
+                        modbusClient = nullptr;
+                    }
+>>>>>>> c82df02 (界面)
                 }
             });
             modbusClient->disconnectDevice();
         } else {
+<<<<<<< HEAD
             delete modbusClient;
+=======
+            modbusClient->deleteLater();
+>>>>>>> c82df02 (界面)
             modbusClient = nullptr;
         }
     }
 
     if (Rsettings) {
         writeSetting();
+<<<<<<< HEAD
         delete Rsettings;
+=======
+        Rsettings->deleteLater();
+>>>>>>> c82df02 (界面)
         Rsettings = nullptr;
     }
 
     if (timer) {
         timer->stop();
+<<<<<<< HEAD
         delete timer;
+=======
+        timer->deleteLater();
+>>>>>>> c82df02 (界面)
         timer = nullptr;
     }
 }
