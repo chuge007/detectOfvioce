@@ -260,7 +260,7 @@ public:
 
     QString workPiece;
 
-
+    QModbusTcpClient *modbusClient;
     QSettings *Rsettings;
     bool isRunTarget;
     bool isAddRoute_dialogOpen;

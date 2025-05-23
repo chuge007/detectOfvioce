@@ -33,12 +33,12 @@ SOURCES += \
     scanMovecontrl/scandetect_frictionwelding.cpp \
     widgetDefin/Graphics_view_zoom.cpp \
     widgetDefin/QTableViewSpe.cpp \
+    widgetDefin/databasemanager.cpp \
     widgetDefin/graphicTool.cpp \
     widgetDefin/route_worksence.cpp \
     widgetDefin/tgraphicsviewrefactor.cpp
 
 HEADERS += \
-    DataBase.h \
     addroute_dialog.h \
     ascan.h \
     dxflib/dl_attributes.h \
@@ -68,6 +68,7 @@ HEADERS += \
     widgetDefin/CoustomGraphicsView.h \
     widgetDefin/Graphics_view_zoom.h \
     widgetDefin/QTableViewSpe.h \
+    widgetDefin/databasemanager.h \
     widgetDefin/graphicTool.h \
     widgetDefin/route_worksence.h \
     widgetDefin/tgraphicsviewrefactor.h
@@ -75,14 +76,7 @@ HEADERS += \
 FORMS += \
     ImageProcessing.ui \
     addroute_dialog.ui \
-<<<<<<< HEAD
-<<<<<<< HEAD
     ascan.ui \
-=======
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
-    ascan.ui \
->>>>>>> c82df02 (界面)
     gcodemodulation.ui \
     imageProcessing.ui \
     imageprocessing.ui \

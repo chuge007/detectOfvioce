@@ -1,25 +1,18 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "DataBase.h"
+#include "databasemanager.h"
 #include "graphicTool.h"
 #include "CoustomGraphicsView.h"
 #include "dxfhelper.h"
 #include "scandetect_frictionwelding.h"
 #include "imageprocessing.h"
 #include "gcodemodulation.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
-#include "ascan.h"
-=======
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
 #include "ascan.h"
 
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
 #include <tool.h>
->>>>>>> c82df02 (界面)
 
 #include <QModbusDataUnit>
 #include <QDebug>
@@ -42,11 +35,6 @@
 #include <QProcessEnvironment>
 #include <QWaitCondition>
 #include <QInputDialog>
-<<<<<<< HEAD
-
-
-ScanControlAbstract *MainWindow::scanDetectCtrl=0;
-=======
 #include <QScreen>
 #include <QGuiApplication>
 #include <QWidget>
@@ -54,14 +42,16 @@ ScanControlAbstract *MainWindow::scanDetectCtrl=0;
 #include <QTableView>
 #include <QHeaderView>
 #include <QFont>
+#include <QSqlDriver>
+#include <QSqlRecord>
 
 ScanControlAbstract *MainWindow::scanDetectCtrl=0;
 
->>>>>>> c82df02 (界面)
 
 
 void MainWindow::init()
 {
+    dbManager=new DatabaseManager() ;
     // 使用用户数据目录存放数据库文件
     QString appDataPath = QCoreApplication::applicationDirPath()+"/date";
     QDir dir(appDataPath);
@@ -76,18 +66,18 @@ void MainWindow::init()
     // 检查目标数据库是否存在
     if (QFileInfo::exists(targetPath)) {
         // 存在则直接初始化数据库
-        openDb(targetPath);
+        dbManager->openDb(targetPath);
 
     }
     else {
         // 不存在则先创建再初始化
-        createNewDb(targetPath);
-        openDb(targetPath);
+        dbManager->createNewDb(targetPath);
+        dbManager->openDb(targetPath);
     }
 
 
     // 创建一个表名为 "2d" 的表，包含主键 id，其他字段可以根据需要添加
-    QSqlQuery query(db);
+    QSqlQuery query(dbManager->db);
     QString createTableSQL =  QString::fromLocal8Bit(R"(
                                                      CREATE TABLE IF NOT EXISTS Initialization (
                                                      id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -112,15 +102,15 @@ void MainWindow::init()
         qDebug() << "表创建成功或者已存在";
     }
 
-    model = new QSqlTableModel(this, db);
+    model = new QSqlTableModel(this, dbManager->db);
     model->setTable("Initialization");
     ui->tableView->setModel(model);
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
 
 
-    if (!db.transaction()) {
-        qDebug() << "Failed to start transaction:" << db.lastError().text();
+    if (!dbManager->db.transaction()) {
+        qDebug() << "Failed to start transaction:" << dbManager->db.lastError().text();
         QMessageBox::critical(this, "Error", "无法开启数据库事务");
         return;
     }
@@ -193,28 +183,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->plcType_cb, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::cbSelectPlcType);
     connect(ui->moveUpTabelRow_btu, &QPushButton::clicked, this, &MainWindow::pbmoveUpForSort);
     connect(ui->moveDownTabelRow_btu,&QPushButton::clicked, this, &MainWindow::pbmoveDownForSort);
-    connect(ui->setTrajecStart_but,&QPushButton::clicked, this, &MainWindow::on_setTrajec_start_clicked);
-<<<<<<< HEAD
-<<<<<<< HEAD
+    connect(ui->setTrajecStart_but,&QPushButton::clicked, this, &MainWindow::pbsetTrajec_start_clicked);
     connect(ui->getCurryPoint_but,&QPushButton::clicked, this, &MainWindow::pbGetModelPoint);
-=======
-    connect(ui->getCurryPoint_but,&QPushButton::clicked, this, &MainWindow::pbGetCurryPoint);
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
-    connect(ui->getCurryPoint_but,&QPushButton::clicked, this, &MainWindow::pbGetModelPoint);
->>>>>>> c82df02 (界面)
     connect(ui->moveDirectionNot_but,&QPushButton::clicked, this, &MainWindow::pbMoveDirectionNot);
     connect(ui->pBdeletePiece,&QPushButton::clicked, this, &MainWindow::pbdeletePiece);
     connect(ui->pBbrazing,&QPushButton::clicked, this, &MainWindow::pBbrazing);
     connect(ui->imageProcess_but,&QPushButton::clicked, this, &MainWindow::PbImageProcess);
-<<<<<<< HEAD
-<<<<<<< HEAD
     connect(ui->ascan_but,&QPushButton::clicked, this, &MainWindow::pbAscan);
-=======
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
-    connect(ui->ascan_but,&QPushButton::clicked, this, &MainWindow::pbAscan);
->>>>>>> c82df02 (界面)
+
+    connect(ui->processType_cb,QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::selectChange);
+    connect(ui->cBworkpiece,QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::selectChange);
 
     connect(ui->cBworkpiece,
             QOverload<const QString &>::of(&QComboBox::currentIndexChanged),
@@ -248,22 +226,22 @@ MainWindow::MainWindow(QWidget *parent)
     connect(addRoute, &addRoute_dialog::addBut_r_released, scanDetectCtrl, &ScanControlAbstract::on_rAddBtn_released);
 
 
+//    connect(scanDetectCtrl->modbusClient, &QModbusClient::stateChanged, this, [](QModbusDevice::State state){
+//        qDebug() << "[Modbus] State changed to:" << state;
+//    });
+
+//    connect(scanDetectCtrl->modbusClient, &QModbusClient::errorOccurred, this, [](QModbusDevice::Error error){
+//        qWarning() << "[Modbus] Error:" << error;
+//    });
+
+
     imageProcessingTool = new imageprocessing();
     imageProcessingTool->settings=settings;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c82df02 (界面)
     scan=new ascan();
     scan->Rsettings=settings;
     scan->mw=this;
 
-<<<<<<< HEAD
-=======
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
->>>>>>> c82df02 (界面)
     gcodeEidt=new gCodeModulation();
 
     zomm_gview = new Graphics_view_zoom(ui->graphicsView);
@@ -300,36 +278,25 @@ MainWindow::~MainWindow()
 
 
     saveSetting();
-<<<<<<< HEAD
-    closeDb();
-    delete model;
-=======
 
     if (model) {
         model->clear();
         delete model;
         model = nullptr;
     }
-    closeDb();
+    dbManager->closeDb();
 
->>>>>>> c82df02 (界面)
+    delete dbManager;
     delete addRoute;
     delete scene;
     delete zomm_gview;
     delete scanDetectCtrl;
     delete settings;
     delete imageProcessingTool;
-<<<<<<< HEAD
-<<<<<<< HEAD
     delete scan;
-=======
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
-    delete scan;
->>>>>>> c82df02 (界面)
     delete ui;
-
-
+    delete modbusDevice;
+    delete gcodeEidt;
 
 
 }
@@ -371,10 +338,6 @@ void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
     }
 
     // 计算视图的缩放因子
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c82df02 (界面)
     qreal scaleFactor = ui->graphicsView->transform().m11(); // 获取水平缩放因子
 
     // 在新位置绘制红色小圆圈
@@ -385,18 +348,6 @@ void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
     QGraphicsEllipseItem* circle = new QGraphicsEllipseItem(scaledX - 5, scaledY - 5, 10, 10); // 半径为 5 的小圆圈
     circle->setBrush(QBrush(Qt::red));  // 红色
     scene->addItem(circle);
-=======
-      qreal scaleFactor = ui->graphicsView->transform().m11(); // 获取水平缩放因子
-
-      // 在新位置绘制红色小圆圈
-      qreal scaledX = pos.x() * scaleFactor;
-      qreal scaledY = pos.y() * scaleFactor;
-
-      // 创建新的圆圈，调整大小以考虑缩放
-      QGraphicsEllipseItem* circle = new QGraphicsEllipseItem(scaledX - 5, scaledY - 5, 10, 10); // 半径为 5 的小圆圈
-      circle->setBrush(QBrush(Qt::red));  // 红色
-      scene->addItem(circle);
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
 
 }
 
@@ -405,7 +356,7 @@ void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
 void MainWindow::updateAddRoute(int arc,int edit,int curRow)
 {
     qDebug()<<"updateAddRoute";
-    db.transaction();
+    dbManager->db.transaction();
 
     if (addRoute->exec()) {
 
@@ -424,7 +375,7 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
             // 插入新行
             if (!model->insertRow(curRow)) {
                 qDebug() << "Failed to insert row at" << curRow;
-                db.rollback();
+                dbManager->db.rollback();
                 QMessageBox::critical(this, "Error", QString::fromLocal8Bit(" 插入新行失败 "));
                 return;
             }
@@ -487,20 +438,20 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
 
         if (!model->submitAll()) {
             qDebug() << "提交数据失败:" << model->lastError().text();
-            db.rollback();
+            dbManager->db.rollback();
             QMessageBox::critical(this, "Error", "提交数据失败: " + model->lastError().text());
             return;
         }
     } else {
-        db.rollback();
+        dbManager->db.rollback();
         return;
     }
 
 
-    if (!db.commit()) {
-        qDebug() << "Failed to commit transaction:" << db.lastError().text();
-        QMessageBox::critical(this, "Error", "事务提交失败:" + db.lastError().text());
-        db.rollback();
+    if (!dbManager->db.commit()) {
+        qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
+        QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
+        dbManager->db.rollback();
     }
 
 
@@ -583,7 +534,7 @@ void MainWindow::on_editPos_but_clicked()
     QString zEnd=QString::number(model->data(model->index(cur_row, 12), Qt::DisplayRole).toFloat(), 'f', 3);
     QString rEnd=QString::number(model->data(model->index(cur_row, 13), Qt::DisplayRole).toFloat(), 'f', 3);
 
-     if(curName=="line")
+    if(curName=="line")
     {
         addRoute->isOpen=true;
         addRoute->update_Ui(0,xEnd,yEnd,zEnd,rEnd,xTrans,yTrans,zTrans,rTrans);
@@ -602,7 +553,7 @@ void MainWindow::on_editPos_but_clicked()
 void MainWindow::on_delete_but_clicked()
 {
 
-    db.transaction(); // 开始一个事务
+    dbManager->db.transaction(); // 开始一个事务
     QItemSelection selection(ui->tableView->selectionModel()->selection());
     QList<int> rows;
     foreach(const QModelIndex & index, selection.indexes())
@@ -620,7 +571,7 @@ void MainWindow::on_delete_but_clicked()
             int current = rows[i];
             if( current != prev )
             {
-                QSqlQuery query(db);
+                QSqlQuery query(dbManager->db);
                 // 1. 更新插入位置之后的行的 sort_order 值
                 query.prepare("UPDATE default_testdb SET sort_order = sort_order - 1 WHERE sort_order >= :insertOrder");
                 query.bindValue(":insertOrder", current);
@@ -642,7 +593,7 @@ void MainWindow::on_delete_but_clicked()
     }
 
     updateSence();
-    db.commit(); // 提交
+    dbManager->db.commit(); // 提交
 }
 
 
@@ -731,7 +682,13 @@ void MainWindow::pbStartScanBtn(){
 
     qDebug()<<"pbStartScanBtn";
     ui->messText_lin->setText(QString::fromLocal8Bit(" 开始启动   "));
-    scanDetectCtrl->workPiece=ui->cBworkpiece->currentText();
+    if(isSelectChange){
+
+        scanDetectCtrl->workPiece=ui->cBworkpiece->currentText();
+        scanDetectCtrl->sendStringCommand(scanDetectCtrl->modbusClient,QModbusDataUnit::HoldingRegisters,workPieceModbusAdress,ui->cBworkpiece->currentText());
+        isSelectChange=false;
+
+    }
     scanDetectCtrl->selectProcessType(ui->processType_cb->currentIndex());
     scanDetectCtrl->on_startScanBtn_clicked();
     ui->messText_lin->setText(QString::fromLocal8Bit(" 已启动   "));
@@ -757,7 +714,7 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
 
         QStringList parts = it->split("_"); // 正确写法！
         if (parts.size() < 2) {
-            db.rollback();
+            dbManager->db.rollback();
             return;
         }
         double posx = parts[0].toDouble();
@@ -916,7 +873,7 @@ void MainWindow::graphicsSelectionChanged()
 
 void MainWindow::pBbrazing(){
 
-    db.transaction();
+    dbManager->db.transaction();
     scene->clear();
     model->removeRows(0, model->rowCount());
     model->submitAll();
@@ -1055,10 +1012,10 @@ void MainWindow::pBbrazing(){
 
 
 
-    if (!db.commit()) {
-        qDebug() << "事务提交失败:" << db.lastError().text();
-        QMessageBox::critical(this, "错误", "事务提交失败:" + db.lastError().text());
-        db.rollback();
+    if (!dbManager->db.commit()) {
+        qDebug() << "事务提交失败:" << dbManager->db.lastError().text();
+        QMessageBox::critical(this, "错误", "事务提交失败:" + dbManager->db.lastError().text());
+        dbManager->db.rollback();
     } else {
         qDebug() << "排序及更新完成，事务提交成功！";
     }
@@ -1085,7 +1042,7 @@ void MainWindow::pbDXFimportBut()
     }
     selectWorkpiece();
 
-    db.transaction();
+    dbManager->db.transaction();
     scene->clear();
     model->removeRows(0, model->rowCount());
     model->submitAll();
@@ -1186,10 +1143,10 @@ void MainWindow::pbDXFimportBut()
     model->submitAll();
     model->select();
 
-    if (!db.commit()) {
-        qDebug() << "Failed to commit transaction:" << db.lastError().text();
-        QMessageBox::critical(this, "Error", "事务提交失败:" + db.lastError().text());
-        db.rollback();
+    if (!dbManager->db.commit()) {
+        qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
+        QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
+        dbManager->db.rollback();
     }
 
 
@@ -1200,7 +1157,7 @@ void MainWindow::pbDXFimportBut()
 void MainWindow::sortModelLine()
 {
     qDebug() << "开始排序模型图形链...";
-    db.transaction();
+    dbManager->db.transaction();
 
     const double eps = 0.1;
     int  AantalDesimalePlekke=2;
@@ -1262,7 +1219,7 @@ void MainWindow::sortModelLine()
     for (auto it = pointFreq.constBegin(); it != pointFreq.constEnd(); ++it) {
         if (it.value() != 1 && it.value() != 2) {
             QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit("数据有误：非首尾相连！"));
-            db.rollback();
+            dbManager->db.rollback();
             return;
         }
     }
@@ -1312,7 +1269,7 @@ void MainWindow::sortModelLine()
     // 解析 chosenStartKey 得到起始坐标（这里仅用于调试，后续链条匹配直接使用字符串比较）
     QStringList parts = chosenStartKey.split("_");
     if (parts.size() < 2) {
-        db.rollback();
+        dbManager->db.rollback();
         return;
     }
     double chosenStartX = parts[0].toDouble();
@@ -1373,7 +1330,7 @@ void MainWindow::sortModelLine()
     }
     if (startRow == -1) {
         QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit("未找到包含用户选择起点的记录。"));
-        db.rollback();
+        dbManager->db.rollback();
         return;
     }
 
@@ -1432,7 +1389,7 @@ void MainWindow::sortModelLine()
     qDebug() << "最终链条记录数:" << newOrder.size();
     if (newOrder.size() != rowCount) {
         QMessageBox::warning(nullptr, "错误", QString::fromLocal8Bit("图形链条不完整，数据可能非首尾相连。"));
-        db.rollback();
+        dbManager->db.rollback();
         return;
     }
 
@@ -1463,10 +1420,10 @@ void MainWindow::sortModelLine()
 
 
 
-    if (!db.commit()) {
-        qDebug() << "事务提交失败:" << db.lastError().text();
-        QMessageBox::critical(this, "错误", "事务提交失败:" + db.lastError().text());
-        db.rollback();
+    if (!dbManager->db.commit()) {
+        qDebug() << "事务提交失败:" << dbManager->db.lastError().text();
+        QMessageBox::critical(this, "错误", "事务提交失败:" + dbManager->db.lastError().text());
+        dbManager->db.rollback();
     } else {
         qDebug() << "排序及更新完成，事务提交成功！";
     }
@@ -1479,10 +1436,10 @@ void MainWindow::sortModelLine()
 
 
 
-void MainWindow::on_setTrajec_start_clicked()
+void MainWindow::pbsetTrajec_start_clicked()
 {
     // 开始数据库事务
-    db.transaction();
+    dbManager->db.transaction();
 
     // 获取用户输入的数据
     bool ok;
@@ -1524,7 +1481,7 @@ void MainWindow::on_setTrajec_start_clicked()
     model->select();
 
     // 提交数据库事务
-    db.commit();
+    dbManager->db.commit();
 
     // 更新场景视图
     updateSence();
@@ -1662,7 +1619,7 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
 void MainWindow::CalculatingAngles(){
 
     bool ok;
-    db.transaction();
+    dbManager->db.transaction();
 
     QModelIndex index = model->index(0, 13);
     double inputR=model->data(model->index(0, 13), Qt::DisplayRole).toFloat();
@@ -1761,10 +1718,6 @@ void MainWindow::CalculatingAngles(){
                 r2=angleDeg;
             }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c82df02 (界面)
             double Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
 
             model->setData(model->index(i, 4), 0);
@@ -1772,18 +1725,6 @@ void MainWindow::CalculatingAngles(){
             model->setData(model->index(i, 8), 0);
             model->setData(model->index(i, 12), 0);
             model->setData(model->index(i, 13), std::round(r2 * 100.0) / 100.0);
-<<<<<<< HEAD
-=======
-            double Previous_r0=model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
-
-            model->setData(model->index(i, 4), 0);
-            model->setData(model->index(i, 5), Previous_r0);
-            model->setData(model->index(i, 8), 0);
-            model->setData(model->index(i, 12), 0);
-            model->setData(model->index(i, 13), r2);
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
->>>>>>> c82df02 (界面)
 
 
             qDebug()<<"line: "<<r2<<"   "<<i;
@@ -1849,10 +1790,6 @@ void MainWindow::CalculatingAngles(){
             r2 += angleDeg;
 
             qDebug()<<"arc: "<<r2<<"   "<<i;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c82df02 (界面)
             double Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
 
             model->setData(model->index(i, 4), 0);
@@ -1860,18 +1797,6 @@ void MainWindow::CalculatingAngles(){
             model->setData(model->index(i, 8), 0);
             model->setData(model->index(i, 12), 0);
             model->setData(model->index(i, 13), std::round(r2 * 100.0) / 100.0);
-<<<<<<< HEAD
-=======
-            double Previous_r0=model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
-
-            model->setData(model->index(i, 4), 0);
-            model->setData(model->index(i, 5), Previous_r0);
-            model->setData(model->index(i, 8), 0);
-            model->setData(model->index(i, 12), 0);
-            model->setData(model->index(i, 13), r2);
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
->>>>>>> c82df02 (界面)
 
 
         }
@@ -1882,10 +1807,10 @@ void MainWindow::CalculatingAngles(){
     model->select();
 
 
-    if (!db.commit()) {
-        qDebug() << "Failed to commit transaction:" << db.lastError().text();
-        QMessageBox::critical(this, "Error", "事务提交失败:" + db.lastError().text());
-        db.rollback();
+    if (!dbManager->db.commit()) {
+        qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
+        QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
+        dbManager->db.rollback();
     }
 
 }
@@ -1912,16 +1837,16 @@ void MainWindow::PbCreatGcode()
 
 void MainWindow::cleanTable(){
 
-    db.transaction();
+    dbManager->db.transaction();
     GlobeUniquePoints.clear();
     model->removeRows(0, model->rowCount());
     model->submitAll();
     model->select();
     scene->clear();
-    if (!db.commit()) {
-        qDebug() << "Failed to commit transaction:" << db.lastError().text();
-        QMessageBox::critical(this, "Error", "事务提交失败:" + db.lastError().text());
-        db.rollback();
+    if (!dbManager->db.commit()) {
+        qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
+        QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
+        dbManager->db.rollback();
     }
 
 }
@@ -1936,7 +1861,7 @@ void MainWindow::PbAxleVelocity_lin(){
     qDebug()<<"PbAxleVelocity_lin"<<ui->AxleVelocity_lin->text().toFloat();
     scanDetectCtrl->on_jog_velocity_editingFinished(ui->AxleVelocity_lin->text().toFloat());
     //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 速度已设置   "));
-    ui->messText_lin->setText(QString::fromLocal8Bit(" 定位速度已设置   "));
+    ui->messText_lin->setText(QString::fromLocal8Bit(" 定位速度%1已设置   ").arg(ui->AxleVelocity_lin->text()));
     saveSetting();
 }
 
@@ -1952,7 +1877,7 @@ void MainWindow::PbPointVelocity_lin(){
     qDebug()<<"PbPointVelocity_lin"<<ui->pointVelocity_lin->text().toFloat();
     scanDetectCtrl->on_point_velocity_editingFinished(ui->pointVelocity_lin->text().toFloat());
     //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 速度已设置   "));
-    ui->messText_lin->setText(QString::fromLocal8Bit(" 点动速度已设置   "));
+    ui->messText_lin->setText(QString::fromLocal8Bit(" 点动速度%1已设置   ").arg(ui->pointVelocity_lin->text()));
     saveSetting();
 }
 
@@ -1967,7 +1892,7 @@ void MainWindow::PblinVelocity_lin(){
     qDebug()<<"PblinVelocity_lin"<<ui->lineVelocity_lin->text().toFloat();
     scanDetectCtrl->on_line_velocity_editingFinished(ui->lineVelocity_lin->text().toFloat());
     //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 直线速度已设置   "));
-    ui->messText_lin->setText(QString::fromLocal8Bit(" 直线速度已设置   "));
+    ui->messText_lin->setText(QString::fromLocal8Bit(" 直线速度%1已设置   ").arg(ui->lineVelocity_lin->text()));
     saveSetting();
 
 }
@@ -1982,7 +1907,7 @@ void MainWindow::PbarcVelocity_lin(){
     qDebug()<<"PbarcVelocity_lin"<<ui->arcVelocity_lin->text().toFloat();
     scanDetectCtrl->on_arc_velocity_editingFinished(ui->arcVelocity_lin->text().toFloat());
     //QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 圆弧速度已设置   "));
-    ui->messText_lin->setText(QString::fromLocal8Bit(" 圆弧速度已设置   "));
+    ui->messText_lin->setText(QString::fromLocal8Bit(" 圆弧速度%1已设置   ").arg(ui->arcVelocity_lin->text()));
     saveSetting();
 
 }
@@ -2011,7 +1936,7 @@ void MainWindow::PbtrajectoryOffset() {
     double centerY = originalY - _translationY;
 
     int rowCount = model->rowCount();
-    db.transaction();
+    dbManager->db.transaction();
 
     for (int i = 0; i < rowCount; ++i) {
         QString type = model->data(model->index(i, 1), Qt::DisplayRole).toString();
@@ -2081,10 +2006,10 @@ void MainWindow::PbtrajectoryOffset() {
     model->submitAll();
     model->select();
     updateSence();
-    if (!db.commit()) {
-        qDebug() << "Failed to commit transaction:" << db.lastError().text();
-        QMessageBox::critical(this, "Error", "事务提交失败:" + db.lastError().text());
-        db.rollback();
+    if (!dbManager->db.commit()) {
+        qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
+        QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
+        dbManager->db.rollback();
     }
 
     ui->messText_lin->setText(QString::fromLocal8Bit(" 已偏移 x%1 y%2 r%3  ").arg(_translationX).arg(_translationY).arg(_translationR));
@@ -2151,23 +2076,20 @@ void MainWindow::selectWorkpiece(){
     if(curryWorkpieceName==""){
         curryWorkpieceName="Initialization";
         createOrSwitchTable(curryWorkpieceName,true);
-<<<<<<< HEAD
-<<<<<<< HEAD
         ui->cBworkpiece->addItem(curryWorkpieceName);
-=======
-         ui->cBworkpiece->addItem(curryWorkpieceName);
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
-        ui->cBworkpiece->addItem(curryWorkpieceName);
->>>>>>> c82df02 (界面)
         ui->cBworkpiece->setCurrentText(curryWorkpieceName);
     }else{
         createOrSwitchTable(curryWorkpieceName,false);
 
     }
 
+}
 
 
+void MainWindow::selectChange(){
+
+
+    isSelectChange=true;
 
 }
 
@@ -2231,7 +2153,7 @@ void MainWindow::pbdeletePiece(){
     settings->setValue("WorkpieceList", list);
 
     // 删除数据库中关联的表
-    QSqlQuery query(db);
+    QSqlQuery query(dbManager->db);
     QString dropTableQuery = QString("DROP TABLE IF EXISTS %1").arg(selectedText);
     if (!query.exec(dropTableQuery)) {
         qDebug() << "删除表失败：" << query.lastError().text();
@@ -2327,7 +2249,7 @@ void MainWindow::pbmoveUpForSort()
     QSqlRecord nextRecord = model->record(row -1);
 
     // 开始执行交换操作
-    QSqlQuery query(db);
+    QSqlQuery query(dbManager->db);
 
     // 先将当前行的 id 设置为临时值 -1
     query.prepare("UPDATE Initialization SET id=-1 WHERE id=:id");
@@ -2384,7 +2306,7 @@ void MainWindow::pbmoveDownForSort()
 
 
     // 开始执行交换操作
-    QSqlQuery query(db);
+    QSqlQuery query(dbManager->db);
 
     // 先将当前行的 id 设置为临时值 -1
     query.prepare("UPDATE Initialization SET id=-1 WHERE id=:id");
@@ -2427,9 +2349,6 @@ void MainWindow::pbmoveDownForSort()
 
 
 void MainWindow::pbMoveDirectionNot(){
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
 
     // 获取当前选中的行
@@ -2489,133 +2408,6 @@ void MainWindow::pbMoveDirectionNot(){
 
 
 
-
-}
-
-void MainWindow::pbGetCurryPoint(){
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-
-    if(m_isSelected){
-
-<<<<<<< HEAD
-    // 获取当前选中的行
-    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedIndexes();
-    if (selectedIndexes.isEmpty()) {
-        qDebug() << "没有选中行";
-        return;
-    }
-    int row = selectedIndexes.first().row();
-    qDebug() << "选中行:" << row;
-
-    // 读取当前行中起点与终点的 xyzr 数据
-    double startX = model->data(model->index(row, 2)).toDouble();
-    double startY = model->data(model->index(row, 3)).toDouble();
-    double startZ = model->data(model->index(row, 4)).toDouble();
-    double startR = model->data(model->index(row, 5)).toDouble();
-
-    double endX   = model->data(model->index(row, 10)).toDouble();
-    double endY   = model->data(model->index(row, 11)).toDouble();
-    double endZ   = model->data(model->index(row, 12)).toDouble();
-    double endR   = model->data(model->index(row, 13)).toDouble();
-
-    qDebug() << "交换前:";
-    qDebug() << "起点: " << startX << startY << startZ << startR;
-    qDebug() << "终点: " << endX << endY << endZ << endR;
-
-    // 进行互换操作：将起点数据设置为旧终点的数据，终点数据设置为旧起点的数据
-    model->setData(model->index(row, 2), endX);
-    model->setData(model->index(row, 3), endY);
-    model->setData(model->index(row, 4), endZ);
-    model->setData(model->index(row, 5), endR);
-
-    model->setData(model->index(row, 10), startX);
-    model->setData(model->index(row, 11), startY);
-    model->setData(model->index(row, 12), startZ);
-    model->setData(model->index(row, 13), startR);
-
-    // 调试信息，检查更新后的数据
-    qDebug() << "交换后:";
-    qDebug() << "起点: " << model->data(model->index(row, 2)).toDouble()
-             << model->data(model->index(row, 3)).toDouble()
-             << model->data(model->index(row, 4)).toDouble()
-             << model->data(model->index(row, 5)).toDouble();
-    qDebug() << "终点: " << model->data(model->index(row, 10)).toDouble()
-             << model->data(model->index(row, 11)).toDouble()
-             << model->data(model->index(row, 12)).toDouble()
-             << model->data(model->index(row, 13)).toDouble();
-
-    // 提交更改并刷新模型视图
-    if (model->submitAll()) {
-        qDebug() << "数据更新成功";
-    } else {
-        qDebug() << "数据更新失败:" << model->lastError().text();
-    }
-    model->select();
-    updateSence();
-
-
-
-=======
-
-
-    // 获取当前选中的行
-    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedIndexes();
-    if (selectedIndexes.isEmpty()) {
-        qDebug() << "没有选中行";
-        return;
-    }
-    int row = selectedIndexes.first().row();
-    qDebug() << "选中行:" << row;
-
-    // 读取当前行中起点与终点的 xyzr 数据
-    double startX = model->data(model->index(row, 2)).toDouble();
-    double startY = model->data(model->index(row, 3)).toDouble();
-    double startZ = model->data(model->index(row, 4)).toDouble();
-    double startR = model->data(model->index(row, 5)).toDouble();
-
-    double endX   = model->data(model->index(row, 10)).toDouble();
-    double endY   = model->data(model->index(row, 11)).toDouble();
-    double endZ   = model->data(model->index(row, 12)).toDouble();
-    double endR   = model->data(model->index(row, 13)).toDouble();
-
-    qDebug() << "交换前:";
-    qDebug() << "起点: " << startX << startY << startZ << startR;
-    qDebug() << "终点: " << endX << endY << endZ << endR;
-
-    // 进行互换操作：将起点数据设置为旧终点的数据，终点数据设置为旧起点的数据
-    model->setData(model->index(row, 2), endX);
-    model->setData(model->index(row, 3), endY);
-    model->setData(model->index(row, 4), endZ);
-    model->setData(model->index(row, 5), endR);
-
-    model->setData(model->index(row, 10), startX);
-    model->setData(model->index(row, 11), startY);
-    model->setData(model->index(row, 12), startZ);
-    model->setData(model->index(row, 13), startR);
-
-    // 调试信息，检查更新后的数据
-    qDebug() << "交换后:";
-    qDebug() << "起点: " << model->data(model->index(row, 2)).toDouble()
-             << model->data(model->index(row, 3)).toDouble()
-             << model->data(model->index(row, 4)).toDouble()
-             << model->data(model->index(row, 5)).toDouble();
-    qDebug() << "终点: " << model->data(model->index(row, 10)).toDouble()
-             << model->data(model->index(row, 11)).toDouble()
-             << model->data(model->index(row, 12)).toDouble()
-             << model->data(model->index(row, 13)).toDouble();
-
-    // 提交更改并刷新模型视图
-    if (model->submitAll()) {
-        qDebug() << "数据更新成功";
-    } else {
-        qDebug() << "数据更新失败:" << model->lastError().text();
-    }
-    model->select();
-    updateSence();
-
-
-
->>>>>>> c82df02 (界面)
 
 }
 
@@ -2629,17 +2421,6 @@ void MainWindow::pbGetModelPoint(){
                 << QStringLiteral("过渡点")
                 << QStringLiteral("终点");
 
-<<<<<<< HEAD
-=======
-        // 弹出对话框让用户选点类型……
-        QStringList options;
-        options << QStringLiteral("起始点")
-                << QStringLiteral("过渡点")
-                << QStringLiteral("终点");
-
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
->>>>>>> c82df02 (界面)
         bool ok;
         QString choice = QInputDialog::getItem(this,
                                                QStringLiteral("选择点类型"),
@@ -2669,10 +2450,6 @@ void MainWindow::pbGetModelPoint(){
     }
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c82df02 (界面)
 }
 
 
@@ -2692,7 +2469,7 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
     qDebug() << "isCreate =" << isCreate;
 
 
-    db.transaction();
+    dbManager->db.transaction();
     if (isCreate) {
         QString currentTable = model->tableName();
         if (tableName == currentTable) {
@@ -2700,11 +2477,11 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
             return;
         }
 
-        QSqlDriver *drv = db.driver();
+        QSqlDriver *drv = dbManager->db.driver();
         QString qtgt = drv->escapeIdentifier(tableName, QSqlDriver::TableName);
         QString qsrc = drv->escapeIdentifier(currentTable, QSqlDriver::TableName);
 
-        QSqlQuery q(db);
+        QSqlQuery q(dbManager->db);
         QString checkSQL = QString(
                     "SELECT 1 FROM sqlite_master "
                     "WHERE type='table' AND name='%1';"
@@ -2749,10 +2526,10 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
         return;
     }
 
-    if (!db.commit()) {
-        qDebug() << "事务提交失败:" << db.lastError().text();
-        QMessageBox::critical(this, "错误", "事务提交失败:" + db.lastError().text());
-        db.rollback();
+    if (!dbManager->db.commit()) {
+        qDebug() << "事务提交失败:" << dbManager->db.lastError().text();
+        QMessageBox::critical(this, "错误", "事务提交失败:" + dbManager->db.lastError().text());
+        dbManager->db.rollback();
     } else {
         qDebug() << "排序及更新完成，事务提交成功！";
     }
@@ -2762,88 +2539,6 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
 }
 
 
-<<<<<<< HEAD
-=======
-}
-
-void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
-{
-    qDebug() << "isCreate =" << isCreate;
-
-
-    db.transaction();
-    if (isCreate) {
-        QString currentTable = model->tableName();
-        if (tableName == currentTable) {
-            qDebug() << "目标表与当前表相同，跳过复制。";
-            return;
-        }
-
-        QSqlDriver *drv = db.driver();
-        QString qtgt = drv->escapeIdentifier(tableName, QSqlDriver::TableName);
-        QString qsrc = drv->escapeIdentifier(currentTable, QSqlDriver::TableName);
-
-        QSqlQuery q(db);
-        QString checkSQL = QString(
-                    "SELECT 1 FROM sqlite_master "
-                    "WHERE type='table' AND name='%1';"
-                    ).arg(tableName);
-        if (!q.exec(checkSQL)) {
-            qDebug() << "检查表存在性失败：" << q.lastError().text();
-            return;
-        }
-
-        if (q.next()) {
-            QString copySQL = QString(
-                        "INSERT INTO %1 SELECT * FROM %2;"
-                        ).arg(qtgt).arg(qsrc);
-            if (!q.exec(copySQL)) {
-                qDebug() << "复制数据失败：" << q.lastError().text();
-                return;
-            }
-        } else {
-            QString createSQL = QString(
-                        "CREATE TABLE %1 AS SELECT * FROM %2;"
-                        ).arg(qtgt).arg(qsrc);
-            if (!q.exec(createSQL)) {
-                qDebug() << "创建表并复制数据失败：" << q.lastError().text();
-                return;
-            }
-        }
-        model->setTable(tableName);
-        model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-        model->select();
-        ui->tableView->setModel(model);
-    }else {
-        model->setTable(tableName);
-        model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-        model->select();
-        ui->tableView->setModel(model);
-    }
-
-
-
-    if (!model->submitAll()) {
-        qDebug() << "submiall fail：" << model->lastError().text();
-        return;
-    }
-
-    if (!db.commit()) {
-        qDebug() << "事务提交失败:" << db.lastError().text();
-        QMessageBox::critical(this, "错误", "事务提交失败:" + db.lastError().text());
-        db.rollback();
-    } else {
-        qDebug() << "排序及更新完成，事务提交成功！";
-    }
-
-    //saveSetting();
-    updateSence();
-}
-
-
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
->>>>>>> c82df02 (界面)
 void MainWindow::saveSetting() {
     // Save general settings
     settings->setValue("ip", ui->ip_lin->text());
@@ -2944,8 +2639,6 @@ void MainWindow::initSetting() {
 
     // Update scene if needed
     updateSence();
-<<<<<<< HEAD
-=======
 }
 
 
@@ -2955,13 +2648,13 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     qDebug() << "oldSize:" << oldSize << " newSize:" << newSize;
 
 
-//    if (newSize.width() < oldSize.width() || newSize.height() < oldSize.height()) {
-//        // 缩小，恢复控件初始状态
-//        restoreOriginalWidgetStates(this->centralWidget());
-//        oldSize = newSize;  // 更新 oldSize，防止多次缩小触发
-//        //QMainWindow::resizeEvent(event);
-//        return;
-//    }
+    //    if (newSize.width() < oldSize.width() || newSize.height() < oldSize.height()) {
+    //        // 缩小，恢复控件初始状态
+    //        restoreOriginalWidgetStates(this->centralWidget());
+    //        oldSize = newSize;  // 更新 oldSize，防止多次缩小触发
+    //        //QMainWindow::resizeEvent(event);
+    //        return;
+    //    }
 
     double scaleX = static_cast<double>(newSize.width()) / oldSize.width();
     double scaleY = static_cast<double>(newSize.height()) / oldSize.height();
@@ -3034,28 +2727,11 @@ void MainWindow::scaleWidgets(QWidget* parent, double scaleX, double scaleY)
         // 递归子控件
         scaleWidgets(w, scaleX, scaleY);
     }
->>>>>>> c82df02 (界面)
 }
 
 
 
-void MainWindow::scaleWidgets(QWidget* parent, double scaleX, double scaleY)
-{
-    for (QObject* obj : parent->children()) {
-        QWidget* w = qobject_cast<QWidget*>(obj);
-        if (w && !w->inherits("QLayout")) {
-            QRect geom = w->geometry();
-            int newX = static_cast<int>(geom.x() * scaleX);
-            int newY = static_cast<int>(geom.y() * scaleY);
-            int newW = static_cast<int>(geom.width() * scaleX);
-            int newH = static_cast<int>(geom.height() * scaleY);
-            w->setGeometry(newX, newY, newW, newH);
 
-<<<<<<< HEAD
-            // 递归：处理 frame、groupbox 里的控件
-            scaleWidgets(w, scaleX, scaleY);
-        }
-=======
 void MainWindow::restoreOriginalWidgetStates(QWidget* parent)
 {
     for (QObject* obj : parent->children()) {
@@ -3072,38 +2748,11 @@ void MainWindow::restoreOriginalWidgetStates(QWidget* parent)
 
         // 递归恢复子控件
         restoreOriginalWidgetStates(w);
->>>>>>> c82df02 (界面)
     }
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
-    static QSize oldSize = size();
-    QSize newSize = event->size();
-
-    double scaleX = static_cast<double>(newSize.width()) / oldSize.width();
-    double scaleY = static_cast<double>(newSize.height()) / oldSize.height();
-
-<<<<<<< HEAD
-    scaleWidgets(this->centralWidget(), scaleX, scaleY);
-
-    oldSize = newSize;
-}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-=======
 void MainWindow::saveOriginalWidgetStates(QWidget* parent)
 {
     oldSize=this->size();
@@ -3119,7 +2768,6 @@ void MainWindow::saveOriginalWidgetStates(QWidget* parent)
         saveOriginalWidgetStates(w);
     }
 }
->>>>>>> c82df02 (界面)
 
 
 //void MainWindow::pbWriteInPLC()

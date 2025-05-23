@@ -111,7 +111,8 @@ private:
     bool sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, float address,QString Value);
 
 private:
-    QModbusTcpClient *modbusClient = nullptr;
+
+    //QModbusTcpClient *modbusClient = nullptr;
     QString PlcIP;
     int PlcPort = 502;
 

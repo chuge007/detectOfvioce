@@ -16,7 +16,7 @@
 #include "route_worksence.h"
 #include "imageprocessing.h"
 #include "gcodemodulation.h"
-
+#include "databasemanager.h"
 #include "scancontrolabstract.h"
 
 #include <QProgressDialog>
@@ -45,6 +45,7 @@ public:
 
     QSettings *settings;
 
+    DatabaseManager *dbManager;
 
     struct TargetPos {
         double x;
@@ -65,19 +66,11 @@ public:
 
     int m_lastClickedRow;
     bool m_isSelected ;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c82df02 (界面)
     QSqlTableModel*  model;
 
     std::tuple<double, double, double, double> pbGetCurrentlyPoint();
 
-<<<<<<< HEAD
-=======
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
->>>>>>> c82df02 (界面)
+    bool isSelectChange=true;
 
 private slots:
 
@@ -106,7 +99,7 @@ private slots:
 
     void pbDXFimportBut();
 
-    void on_setTrajec_start_clicked();
+    void pbsetTrajec_start_clicked();
 
 
     void PbCreatGcode();
@@ -148,38 +141,16 @@ private slots:
 
     void selectWorkpiece();
 
-    void pbdeletePiece();
-
-    void pbnewPiece();
-<<<<<<< HEAD
-
-    void pbMoveDirectionNot();
-
-    void pBbrazing();
-
-    void selectWorkpiece();
+    void selectChange();
 
     void pbdeletePiece();
 
     void pbnewPiece();
-=======
->>>>>>> c82df02 (界面)
 
     void saveSetting();
 
     void initSetting();
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-private:
-
-    void scaleWidgets(QWidget* parent, double scaleX, double scaleY);
-
-    void resizeEvent(QResizeEvent *event);
-=======
-
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
 private:
 
     QSize oldSize;
@@ -201,7 +172,6 @@ private:
 
     void saveOriginalWidgetStates(QWidget* parent);
 
->>>>>>> c82df02 (界面)
 
 private:
     Ui::MainWindow *ui;
@@ -209,23 +179,10 @@ private:
     QModbusTcpClient *modbusDevice;
     QUdpSocket *udpSocket;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> c82df02 (界面)
 
     imageprocessing *imageProcessingTool;
 
     gCodeModulation* gcodeEidt;
-<<<<<<< HEAD
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-
-    imageprocessing *imageProcessingTool;
-
-    gCodeModulation* gcodeEidt;
-=======
->>>>>>> c82df02 (界面)
 
     ascan* scan;
 
@@ -238,29 +195,12 @@ private:
     int current_weld_id;
     TargetPos currentTargetPos;  // 用于保存当前目标点
     QList<QString> GlobeUniquePoints;
-<<<<<<< HEAD
-<<<<<<< HEAD
 
     double traject_x0,traject_y0;
 
 
     void init();
 
-=======
-
-
-    QSqlTableModel*  model;
-    void createOrSwitchTable(const QString &tableName,bool isCreate);
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
-
-    double traject_x0,traject_y0;
-
-
-    void init();
->>>>>>> c82df02 (界面)
-
-    void createOrSwitchTable(const QString &tableName,bool isCreate);
 
     void createOrSwitchTable(const QString &tableName,bool isCreate);
 
@@ -274,14 +214,7 @@ private:
     void graphicsSelectionChanged();
 
     void CalculatingAngles();
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
-
->>>>>>> c82df02 (界面)
 
     QString generateGCode();
 

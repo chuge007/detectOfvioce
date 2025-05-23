@@ -25,9 +25,9 @@ public:
 
     bool isOpen=false;
 private slots:
-    void on_pushButton_accept();
+    void pB_accept();
 
-    void on_pushButton_reject();
+    void pB_reject();
 
     void pbSetCurposToEndPos();
 

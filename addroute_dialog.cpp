@@ -27,8 +27,9 @@ addRoute_dialog::addRoute_dialog(QWidget *parent) :
     connect(ui->RzSub_Btn, &QPushButton::released, this, &addRoute_dialog::subBut_z_released);
     connect(ui->setCurposToEnd_but, &QPushButton::pressed, this, &addRoute_dialog::pbSetCurposToEndPos);
     connect(ui->setCursPosToTrans_but, &QPushButton::pressed, this, &addRoute_dialog::pbSetCurposToTransPos);
-    connect(ui->pb_accept, &QPushButton::pressed, this, &addRoute_dialog::on_pushButton_accept);
-    connect(ui->pb_reject, &QPushButton::pressed, this, &addRoute_dialog::on_pushButton_reject);
+
+    connect(ui->pb_accept, &QPushButton::clicked, this, &addRoute_dialog::pB_accept);
+    connect(ui->pb_reject, &QPushButton::clicked, this, &addRoute_dialog::pB_reject);
 
 
 
@@ -39,7 +40,7 @@ addRoute_dialog::~addRoute_dialog()
     delete ui;
 }
 
-void addRoute_dialog::on_pushButton_accept()
+void addRoute_dialog::pB_accept()
 {
 
     qDebug()<<"accept";
@@ -62,7 +63,7 @@ void addRoute_dialog::closeEvent(QCloseEvent *event)
     hide();
 }
 
-void addRoute_dialog::on_pushButton_reject()
+void addRoute_dialog::pB_reject()
 {
     qDebug()<<"reject";
     reject();

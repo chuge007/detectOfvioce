@@ -15,21 +15,16 @@ ascan::ascan(QWidget *parent) :
     ui->setupUi(this);
 
 
-<<<<<<< HEAD
-    // 启动 TCP 监听，监听端口 56789
-=======
     // 启动 TCP 监听，监听端口
->>>>>>> c82df02 (界面)
     startServer();
 
     // 连接发送按钮的点击事件
     connect(ui->saveScanStan_but, &QPushButton::clicked, this, &ascan::onSendstanPoint);
-<<<<<<< HEAD
-=======
     connect(ui->autoCorrection_but, &QPushButton::clicked, this, &ascan::autoCorretionPath);
+    connect(ui->pbstepCorrect, &QPushButton::clicked, this, &ascan::stepCorretionPath);
+    connect(ui->pbstopCorrcet, &QPushButton::clicked, this, &ascan::stopCorretionPath);
 
 
->>>>>>> c82df02 (界面)
 }
 
 ascan::~ascan()
@@ -43,11 +38,7 @@ ascan::~ascan()
 void ascan::startServer()
 {
     // 启动监听端口 56789
-<<<<<<< HEAD
-    if (!tcpServer->listen(QHostAddress::Any, 56789)) {
-=======
     if (!tcpServer->listen(QHostAddress::Any, 34567)) {
->>>>>>> c82df02 (界面)
         QMessageBox::critical(this, tr("Error"), tr("Unable to start the server: %1").arg(tcpServer->errorString()));
         return;
     }
@@ -66,12 +57,8 @@ void ascan::onNewConnection()
     connect(tcpSocket, &QTcpSocket::readyRead, this, &ascan::onReadyRead);
 
     // 连接成功后，可以通过 tcpSocket 发送和接收数据
-<<<<<<< HEAD
-    QMessageBox::information(this, tr("Connection"), tr("New connection established."));
-=======
     ui->disPlayIformationLb->setText(QString::fromLocal8Bit("客户端连接成功"));  // 显示接收到的数据（假设你有一个 QTextEdit 来显示）
 
->>>>>>> c82df02 (界面)
 }
 
 void ascan::onReadyRead()
@@ -79,18 +66,17 @@ void ascan::onReadyRead()
     // 当接收到数据时调用
     QByteArray data = tcpSocket->readAll();  // 读取所有数据
     QString message = QString::fromUtf8(data);  // 转换为字符串
-    ui->disPlayIformationLb->setText(message);  // 显示接收到的数据（假设你有一个 QTextEdit 来显示）
+    ui->disPlayIformationLb->setText(QString::fromLocal8Bit("此点信号值为：%1").arg(message));  // 显示接收到的数据（假设你有一个 QTextEdit 来显示）
 
-<<<<<<< HEAD
-=======
     PointSing=message.toDouble();
     isSingUPdate=true;
 
->>>>>>> c82df02 (界面)
     if(isStanPointSing){
         stanPointSing=message.toDouble();
         Rsettings->setValue("AscanStanPoint",message);
         isStanPointSing=false;
+        ui->disPlayIformationLb->setText(QString::fromLocal8Bit("设定的标准点信号值为：%1").arg(message));  // 显示接收到的数据（假设你有一个 QTextEdit 来显示）
+
     }
 }
 
@@ -114,12 +100,34 @@ void ascan::sendData(const QString &data)
 
 
 void ascan::autoCorretionPath(){
+
+    mw->dbManager->db.transaction();
+
+
+    stopCorretion=false;
+    qDebug()<<"autoCorretionPath";
+
     int row_count = mw->model->rowCount();
     float x0, y0, z0, r0, x1, y1, z1, r1, x2, y2, z2, r2;
     QString name;
 
+
+
     for(int i = 0; i < row_count; ++i)
     {
+
+        if(stopCorretion){return;}
+
+
+
+        while (!stepCorretion) {
+            _sleep(1500);
+            QApplication::processEvents();  // 处理事件，避免UI阻塞
+        }
+
+        qDebug()<<"autoCorretionPath-stepCorretion";
+
+
         name = mw->model->data(mw->model->index(i, 1), Qt::DisplayRole).toString();
         x0 = mw->model->data(mw->model->index(i, 2), Qt::DisplayRole).toFloat();
         y0 = mw->model->data(mw->model->index(i, 3), Qt::DisplayRole).toFloat();
@@ -137,26 +145,13 @@ void ascan::autoCorretionPath(){
         r2 = mw->model->data(mw->model->index(i, 13), Qt::DisplayRole).toFloat();
 
         if(i == 0){
-<<<<<<< HEAD
-            autoCorretionPathAlgrith();
-=======
             autoCorretionPathAlgrith(i,x0,y0,z0,r0);
->>>>>>> c82df02 (界面)
             auto currentPoint = mw->pbGetCurrentlyPoint();
             float xg = std::get<0>(currentPoint);
             float yg = std::get<1>(currentPoint);
             float zg = std::get<2>(currentPoint);
             float rg = std::get<3>(currentPoint);
 
-<<<<<<< HEAD
-            mw->model->setData(mw->model->index(i, 6), xg);
-            mw->model->setData(mw->model->index(i, 7), yg);
-            mw->model->setData(mw->model->index(i, 8), zg);
-            mw->model->setData(mw->model->index(i, 9), rg);
-        }
-
-        if(name == "arc"){
-=======
             mw->model->setData(mw->model->index(i, 2), xg);
             mw->model->setData(mw->model->index(i, 3), yg);
             mw->model->setData(mw->model->index(i, 4), zg);
@@ -167,7 +162,6 @@ void ascan::autoCorretionPath(){
 
             autoCorretionPathAlgrith(i,x1,y1,z1,r1);
 
->>>>>>> c82df02 (界面)
             auto currentPoint = mw->pbGetCurrentlyPoint();
             float xg = std::get<0>(currentPoint);
             float yg = std::get<1>(currentPoint);
@@ -179,11 +173,8 @@ void ascan::autoCorretionPath(){
             mw->model->setData(mw->model->index(i, 8), zg);
             mw->model->setData(mw->model->index(i, 9), rg);
 
-<<<<<<< HEAD
-=======
             autoCorretionPathAlgrith(i,x2,y2,z2,r2);
 
->>>>>>> c82df02 (界面)
             auto currentPoint2 = mw->pbGetCurrentlyPoint();
             float x2g = std::get<0>(currentPoint2);
             float y2g = std::get<1>(currentPoint2);
@@ -195,13 +186,10 @@ void ascan::autoCorretionPath(){
             mw->model->setData(mw->model->index(i, 12), z2g);
             mw->model->setData(mw->model->index(i, 13), r2g);
         } else {
-<<<<<<< HEAD
-=======
 
 
             autoCorretionPathAlgrith(i,x2,y2,z2,r2);
 
->>>>>>> c82df02 (界面)
             auto currentPoint = mw->pbGetCurrentlyPoint();
             float xg = std::get<0>(currentPoint);
             float yg = std::get<1>(currentPoint);
@@ -214,22 +202,35 @@ void ascan::autoCorretionPath(){
             mw->model->setData(mw->model->index(i, 9), rg);
         }
     }
+
+    if (!mw->model->submitAll()) {
+        qDebug() << "提交数据失败:" << mw->model->lastError().text();
+        mw->dbManager->db.rollback();
+        QMessageBox::critical(this, "Error", "提交数据失败: " + mw->model->lastError().text());
+        return;
+    }
+
+
+    if (!mw->dbManager->db.commit()) {
+        qDebug() << "Failed to commit transaction:" << mw->dbManager->db.lastError().text();
+        QMessageBox::critical(this, "Error", "事务提交失败:" + mw->dbManager->db.lastError().text());
+        mw->dbManager->db.rollback();
+    }
+
+    stepCorretion=false;
 }
 
 
-<<<<<<< HEAD
-void ascan::autoCorretionPathAlgrith(){
-
-
-
-
-}
-=======
 
 
 void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, float& r) {
+
+    qDebug()<<"autoCorretionPathAlgrith";
+
     // 设置目标信号值
     float targetSignal = stanPointSing;  // 从接收到的信号中获取目标信号
+    isSingUPdate=false;
+
 
     // 设置爬山算法的初始点
     float currentX = x;
@@ -241,19 +242,23 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
     float searchRange = ui->searchRange_dSb->value();  // 搜索范围（单位）
     float stepSize = ui->searchStep_dsb->value();     // 步长（单位）
 
+
+    qDebug()<<"searchRange:"<<searchRange;
+
+    qDebug()<<"stepSize:"<<stepSize;
+
+
     sendData("1");  // 发送请求信号，等待信号更新
     // 等待信号更新（通过阻塞等待，直到接收到信号后继续）
-    while (isSingUPdate) {
-        _sleep(100);
+    while (!isSingUPdate) {
+        _sleep(1000);
         QApplication::processEvents();  // 处理事件，避免UI阻塞
     }
 
-    float bestSignalDiff = std::abs(PointSing - targetSignal);
-    bool improved = true;
+    qDebug()<<"is autoCorretionPathAlgrith-getSing:"<<isSingUPdate;
 
-    // 爬山算法：不断在邻域内移动
-    while (improved) {
-        improved = false;
+
+    float bestSignalDiff = std::abs(PointSing - targetSignal);
 
         // 获取当前点的邻域，基于步长和搜索范围
         std::vector<std::pair<float, float>> neighbors = getNeighbors(currentX, currentY, currentZ, currentR, searchRange, stepSize);
@@ -264,13 +269,15 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
 
             // 移动到邻居位置
             mw->scanDetectCtrl->runTargetPosition(nx, ny, currentZ, currentR);  // 执行目标位置移动
+            qDebug()<<"autoCorretionPathAlgrith-runTargetPosition";
+
 
             // 发送信号请求
             sendData("1");  // 发送请求信号，等待信号更新
 
             // 等待信号更新（通过阻塞等待，直到接收到信号后继续）
             while (isSingUPdate) {
-                _sleep(100);
+                _sleep(500);
                 QApplication::processEvents();  // 处理事件，避免UI阻塞
             }
 
@@ -282,12 +289,14 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
                 currentX = nx;
                 currentY = ny;
                 bestSignalDiff = diff;
-                improved = true;
             }
+
+            isSingUPdate=false;
+
         }
 
-        isSingUPdate=false;
-    }
+        mw->scanDetectCtrl->runTargetPosition(currentX, currentY, currentZ, currentR);  // 执行目标位置移动
+
 
 
 }
@@ -308,4 +317,23 @@ std::vector<std::pair<float, float>> ascan::getNeighbors(float x, float y, float
 
     return neighbors;
 }
->>>>>>> c82df02 (界面)
+
+
+
+void ascan::stepCorretionPath(){
+
+
+    stepCorretion=true;
+    qDebug()<<"stepCorretionPath";
+
+
+}
+
+
+void ascan::stopCorretionPath(){
+
+
+    stopCorretion=true;
+    qDebug()<<"stopCorretionPath";
+
+}

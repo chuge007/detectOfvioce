@@ -4,24 +4,18 @@
 #include <QModbusDataUnit>
 #include <QNetworkProxy>
 #include <QTextCodec>
-<<<<<<< HEAD
-=======
 #include <QApplication>
 #include <QGuiApplication>
->>>>>>> c82df02 (界面)
 #if 1
 
 int main(int argc, char *argv[])
 {
     //QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-<<<<<<< HEAD
-=======
 
     //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     //QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
->>>>>>> c82df02 (界面)
     QApplication a(argc, argv);
 
 

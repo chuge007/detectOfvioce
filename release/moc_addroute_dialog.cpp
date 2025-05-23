@@ -22,7 +22,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_addRoute_dialog_t {
     QByteArrayData data[30];
-    char stringdata0[449];
+    char stringdata0[427];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -49,18 +49,18 @@ QT_MOC_LITERAL(14, 225, 17), // "addBut_r_released"
 QT_MOC_LITERAL(15, 243, 17), // "subBut_r_released"
 QT_MOC_LITERAL(16, 261, 17), // "subBut_z_released"
 QT_MOC_LITERAL(17, 279, 17), // "addBut_z_released"
-QT_MOC_LITERAL(18, 297, 20), // "on_pushButton_accept"
-QT_MOC_LITERAL(19, 318, 20), // "on_pushButton_reject"
-QT_MOC_LITERAL(20, 339, 19), // "pbSetCurposToEndPos"
-QT_MOC_LITERAL(21, 359, 21), // "pbSetCurposToTransPos"
-QT_MOC_LITERAL(22, 381, 11), // "set_Xcurpos"
-QT_MOC_LITERAL(23, 393, 4), // "curX"
-QT_MOC_LITERAL(24, 398, 11), // "set_Ycurpos"
-QT_MOC_LITERAL(25, 410, 4), // "curY"
-QT_MOC_LITERAL(26, 415, 11), // "set_Zcurpos"
-QT_MOC_LITERAL(27, 427, 4), // "curZ"
-QT_MOC_LITERAL(28, 432, 11), // "set_Rcurpos"
-QT_MOC_LITERAL(29, 444, 4) // "curR"
+QT_MOC_LITERAL(18, 297, 9), // "pB_accept"
+QT_MOC_LITERAL(19, 307, 9), // "pB_reject"
+QT_MOC_LITERAL(20, 317, 19), // "pbSetCurposToEndPos"
+QT_MOC_LITERAL(21, 337, 21), // "pbSetCurposToTransPos"
+QT_MOC_LITERAL(22, 359, 11), // "set_Xcurpos"
+QT_MOC_LITERAL(23, 371, 4), // "curX"
+QT_MOC_LITERAL(24, 376, 11), // "set_Ycurpos"
+QT_MOC_LITERAL(25, 388, 4), // "curY"
+QT_MOC_LITERAL(26, 393, 11), // "set_Zcurpos"
+QT_MOC_LITERAL(27, 405, 4), // "curZ"
+QT_MOC_LITERAL(28, 410, 11), // "set_Rcurpos"
+QT_MOC_LITERAL(29, 422, 4) // "curR"
 
     },
     "addRoute_dialog\0addBut_x_pressed\0\0"
@@ -71,11 +71,10 @@ QT_MOC_LITERAL(29, 444, 4) // "curR"
     "subBut_x_released\0addBut_y_released\0"
     "subBut_y_released\0addBut_r_released\0"
     "subBut_r_released\0subBut_z_released\0"
-    "addBut_z_released\0on_pushButton_accept\0"
-    "on_pushButton_reject\0pbSetCurposToEndPos\0"
-    "pbSetCurposToTransPos\0set_Xcurpos\0"
-    "curX\0set_Ycurpos\0curY\0set_Zcurpos\0"
-    "curZ\0set_Rcurpos\0curR"
+    "addBut_z_released\0pB_accept\0pB_reject\0"
+    "pbSetCurposToEndPos\0pbSetCurposToTransPos\0"
+    "set_Xcurpos\0curX\0set_Ycurpos\0curY\0"
+    "set_Zcurpos\0curZ\0set_Rcurpos\0curR"
 };
 #undef QT_MOC_LITERAL
 
@@ -173,8 +172,8 @@ void addRoute_dialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 13: _t->subBut_r_released(); break;
         case 14: _t->subBut_z_released(); break;
         case 15: _t->addBut_z_released(); break;
-        case 16: _t->on_pushButton_accept(); break;
-        case 17: _t->on_pushButton_reject(); break;
+        case 16: _t->pB_accept(); break;
+        case 17: _t->pB_reject(); break;
         case 18: _t->pbSetCurposToEndPos(); break;
         case 19: _t->pbSetCurposToTransPos(); break;
         case 20: _t->set_Xcurpos((*reinterpret_cast< QString(*)>(_a[1]))); break;

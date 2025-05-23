@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[59];
-    char stringdata0[931];
+    QByteArrayData data[60];
+    char stringdata0[943];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -63,41 +63,34 @@ QT_MOC_LITERAL(28, 470, 12), // "pbWriteInPLC"
 QT_MOC_LITERAL(29, 483, 11), // "pbAddArcPos"
 QT_MOC_LITERAL(30, 495, 12), // "pbAddLinePos"
 QT_MOC_LITERAL(31, 508, 14), // "pbDXFimportBut"
-QT_MOC_LITERAL(32, 523, 26), // "on_setTrajec_start_clicked"
-QT_MOC_LITERAL(33, 550, 12), // "PbCreatGcode"
-QT_MOC_LITERAL(34, 563, 14), // "PbImageProcess"
-QT_MOC_LITERAL(35, 578, 11), // "PbSetOrigin"
-QT_MOC_LITERAL(36, 590, 16), // "PbMoveToPosition"
-QT_MOC_LITERAL(37, 607, 18), // "PbtrajectoryOffset"
-QT_MOC_LITERAL(38, 626, 18), // "PbAxleVelocity_lin"
-QT_MOC_LITERAL(39, 645, 17), // "PblinVelocity_lin"
-QT_MOC_LITERAL(40, 663, 17), // "PbarcVelocity_lin"
-QT_MOC_LITERAL(41, 681, 19), // "PbPointVelocity_lin"
-QT_MOC_LITERAL(42, 701, 7), // "pbAscan"
-QT_MOC_LITERAL(43, 709, 11), // "updateSence"
-QT_MOC_LITERAL(44, 721, 10), // "cleanTable"
-QT_MOC_LITERAL(45, 732, 18), // "PbModbusConnectBtn"
-QT_MOC_LITERAL(46, 751, 15), // "cbSelectPlcType"
-QT_MOC_LITERAL(47, 767, 5), // "index"
-QT_MOC_LITERAL(48, 773, 15), // "pbmoveUpForSort"
-QT_MOC_LITERAL(49, 789, 17), // "pbmoveDownForSort"
-QT_MOC_LITERAL(50, 807, 13), // "sortModelLine"
-<<<<<<< HEAD
-<<<<<<< HEAD
-QT_MOC_LITERAL(51, 821, 15), // "pbGetModelPoint"
-=======
-QT_MOC_LITERAL(51, 821, 15), // "pbGetCurryPoint"
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
-QT_MOC_LITERAL(51, 821, 15), // "pbGetModelPoint"
->>>>>>> c82df02 (界面)
-QT_MOC_LITERAL(52, 837, 18), // "pbMoveDirectionNot"
-QT_MOC_LITERAL(53, 856, 9), // "pBbrazing"
-QT_MOC_LITERAL(54, 866, 15), // "selectWorkpiece"
-QT_MOC_LITERAL(55, 882, 13), // "pbdeletePiece"
-QT_MOC_LITERAL(56, 896, 10), // "pbnewPiece"
-QT_MOC_LITERAL(57, 907, 11), // "saveSetting"
-QT_MOC_LITERAL(58, 919, 11) // "initSetting"
+QT_MOC_LITERAL(32, 523, 25), // "pbsetTrajec_start_clicked"
+QT_MOC_LITERAL(33, 549, 12), // "PbCreatGcode"
+QT_MOC_LITERAL(34, 562, 14), // "PbImageProcess"
+QT_MOC_LITERAL(35, 577, 11), // "PbSetOrigin"
+QT_MOC_LITERAL(36, 589, 16), // "PbMoveToPosition"
+QT_MOC_LITERAL(37, 606, 18), // "PbtrajectoryOffset"
+QT_MOC_LITERAL(38, 625, 18), // "PbAxleVelocity_lin"
+QT_MOC_LITERAL(39, 644, 17), // "PblinVelocity_lin"
+QT_MOC_LITERAL(40, 662, 17), // "PbarcVelocity_lin"
+QT_MOC_LITERAL(41, 680, 19), // "PbPointVelocity_lin"
+QT_MOC_LITERAL(42, 700, 7), // "pbAscan"
+QT_MOC_LITERAL(43, 708, 11), // "updateSence"
+QT_MOC_LITERAL(44, 720, 10), // "cleanTable"
+QT_MOC_LITERAL(45, 731, 18), // "PbModbusConnectBtn"
+QT_MOC_LITERAL(46, 750, 15), // "cbSelectPlcType"
+QT_MOC_LITERAL(47, 766, 5), // "index"
+QT_MOC_LITERAL(48, 772, 15), // "pbmoveUpForSort"
+QT_MOC_LITERAL(49, 788, 17), // "pbmoveDownForSort"
+QT_MOC_LITERAL(50, 806, 13), // "sortModelLine"
+QT_MOC_LITERAL(51, 820, 15), // "pbGetModelPoint"
+QT_MOC_LITERAL(52, 836, 18), // "pbMoveDirectionNot"
+QT_MOC_LITERAL(53, 855, 9), // "pBbrazing"
+QT_MOC_LITERAL(54, 865, 15), // "selectWorkpiece"
+QT_MOC_LITERAL(55, 881, 12), // "selectChange"
+QT_MOC_LITERAL(56, 894, 13), // "pbdeletePiece"
+QT_MOC_LITERAL(57, 908, 10), // "pbnewPiece"
+QT_MOC_LITERAL(58, 919, 11), // "saveSetting"
+QT_MOC_LITERAL(59, 931, 11) // "initSetting"
 
     },
     "MainWindow\0x_velocity_editingFinished\0"
@@ -116,7 +109,7 @@ QT_MOC_LITERAL(58, 919, 11) // "initSetting"
     "pbAddSpline\0on_delete_but_clicked\0"
     "on_editPos_but_clicked\0pbWriteInPLC\0"
     "pbAddArcPos\0pbAddLinePos\0pbDXFimportBut\0"
-    "on_setTrajec_start_clicked\0PbCreatGcode\0"
+    "pbsetTrajec_start_clicked\0PbCreatGcode\0"
     "PbImageProcess\0PbSetOrigin\0PbMoveToPosition\0"
     "PbtrajectoryOffset\0PbAxleVelocity_lin\0"
     "PblinVelocity_lin\0PbarcVelocity_lin\0"
@@ -124,17 +117,10 @@ QT_MOC_LITERAL(58, 919, 11) // "initSetting"
     "cleanTable\0PbModbusConnectBtn\0"
     "cbSelectPlcType\0index\0pbmoveUpForSort\0"
     "pbmoveDownForSort\0sortModelLine\0"
-<<<<<<< HEAD
-<<<<<<< HEAD
     "pbGetModelPoint\0pbMoveDirectionNot\0"
-=======
-    "pbGetCurryPoint\0pbMoveDirectionNot\0"
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
-    "pbGetModelPoint\0pbMoveDirectionNot\0"
->>>>>>> c82df02 (界面)
-    "pBbrazing\0selectWorkpiece\0pbdeletePiece\0"
-    "pbnewPiece\0saveSetting\0initSetting"
+    "pBbrazing\0selectWorkpiece\0selectChange\0"
+    "pbdeletePiece\0pbnewPiece\0saveSetting\0"
+    "initSetting"
 };
 #undef QT_MOC_LITERAL
 
@@ -144,7 +130,7 @@ static const uint qt_meta_data_MainWindow[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      48,   14, // methods
+      49,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -152,56 +138,57 @@ static const uint qt_meta_data_MainWindow[] = {
       11,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,  254,    2, 0x06 /* Public */,
-       4,    1,  257,    2, 0x06 /* Public */,
-       5,    1,  260,    2, 0x06 /* Public */,
-       6,    1,  263,    2, 0x06 /* Public */,
-       7,    1,  266,    2, 0x06 /* Public */,
-       8,    1,  269,    2, 0x06 /* Public */,
-       9,    1,  272,    2, 0x06 /* Public */,
-      10,    1,  275,    2, 0x06 /* Public */,
-      11,    1,  278,    2, 0x06 /* Public */,
-      12,    2,  281,    2, 0x06 /* Public */,
-      15,    0,  286,    2, 0x06 /* Public */,
+       1,    1,  259,    2, 0x06 /* Public */,
+       4,    1,  262,    2, 0x06 /* Public */,
+       5,    1,  265,    2, 0x06 /* Public */,
+       6,    1,  268,    2, 0x06 /* Public */,
+       7,    1,  271,    2, 0x06 /* Public */,
+       8,    1,  274,    2, 0x06 /* Public */,
+       9,    1,  277,    2, 0x06 /* Public */,
+      10,    1,  280,    2, 0x06 /* Public */,
+      11,    1,  283,    2, 0x06 /* Public */,
+      12,    2,  286,    2, 0x06 /* Public */,
+      15,    0,  291,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      16,    0,  287,    2, 0x08 /* Private */,
-      17,    1,  288,    2, 0x08 /* Private */,
-      20,    0,  291,    2, 0x08 /* Private */,
-      21,    3,  292,    2, 0x08 /* Private */,
-      25,    0,  299,    2, 0x08 /* Private */,
-      26,    0,  300,    2, 0x08 /* Private */,
-      27,    0,  301,    2, 0x08 /* Private */,
-      28,    0,  302,    2, 0x08 /* Private */,
-      29,    0,  303,    2, 0x08 /* Private */,
-      30,    0,  304,    2, 0x08 /* Private */,
-      31,    0,  305,    2, 0x08 /* Private */,
-      32,    0,  306,    2, 0x08 /* Private */,
-      33,    0,  307,    2, 0x08 /* Private */,
-      34,    0,  308,    2, 0x08 /* Private */,
-      35,    0,  309,    2, 0x08 /* Private */,
-      36,    0,  310,    2, 0x08 /* Private */,
-      37,    0,  311,    2, 0x08 /* Private */,
-      38,    0,  312,    2, 0x08 /* Private */,
-      39,    0,  313,    2, 0x08 /* Private */,
-      40,    0,  314,    2, 0x08 /* Private */,
-      41,    0,  315,    2, 0x08 /* Private */,
-      42,    0,  316,    2, 0x08 /* Private */,
-      43,    0,  317,    2, 0x08 /* Private */,
-      44,    0,  318,    2, 0x08 /* Private */,
-      45,    0,  319,    2, 0x08 /* Private */,
-      46,    1,  320,    2, 0x08 /* Private */,
-      48,    0,  323,    2, 0x08 /* Private */,
-      49,    0,  324,    2, 0x08 /* Private */,
-      50,    0,  325,    2, 0x08 /* Private */,
-      51,    0,  326,    2, 0x08 /* Private */,
-      52,    0,  327,    2, 0x08 /* Private */,
-      53,    0,  328,    2, 0x08 /* Private */,
-      54,    0,  329,    2, 0x08 /* Private */,
-      55,    0,  330,    2, 0x08 /* Private */,
-      56,    0,  331,    2, 0x08 /* Private */,
-      57,    0,  332,    2, 0x08 /* Private */,
-      58,    0,  333,    2, 0x08 /* Private */,
+      16,    0,  292,    2, 0x08 /* Private */,
+      17,    1,  293,    2, 0x08 /* Private */,
+      20,    0,  296,    2, 0x08 /* Private */,
+      21,    3,  297,    2, 0x08 /* Private */,
+      25,    0,  304,    2, 0x08 /* Private */,
+      26,    0,  305,    2, 0x08 /* Private */,
+      27,    0,  306,    2, 0x08 /* Private */,
+      28,    0,  307,    2, 0x08 /* Private */,
+      29,    0,  308,    2, 0x08 /* Private */,
+      30,    0,  309,    2, 0x08 /* Private */,
+      31,    0,  310,    2, 0x08 /* Private */,
+      32,    0,  311,    2, 0x08 /* Private */,
+      33,    0,  312,    2, 0x08 /* Private */,
+      34,    0,  313,    2, 0x08 /* Private */,
+      35,    0,  314,    2, 0x08 /* Private */,
+      36,    0,  315,    2, 0x08 /* Private */,
+      37,    0,  316,    2, 0x08 /* Private */,
+      38,    0,  317,    2, 0x08 /* Private */,
+      39,    0,  318,    2, 0x08 /* Private */,
+      40,    0,  319,    2, 0x08 /* Private */,
+      41,    0,  320,    2, 0x08 /* Private */,
+      42,    0,  321,    2, 0x08 /* Private */,
+      43,    0,  322,    2, 0x08 /* Private */,
+      44,    0,  323,    2, 0x08 /* Private */,
+      45,    0,  324,    2, 0x08 /* Private */,
+      46,    1,  325,    2, 0x08 /* Private */,
+      48,    0,  328,    2, 0x08 /* Private */,
+      49,    0,  329,    2, 0x08 /* Private */,
+      50,    0,  330,    2, 0x08 /* Private */,
+      51,    0,  331,    2, 0x08 /* Private */,
+      52,    0,  332,    2, 0x08 /* Private */,
+      53,    0,  333,    2, 0x08 /* Private */,
+      54,    0,  334,    2, 0x08 /* Private */,
+      55,    0,  335,    2, 0x08 /* Private */,
+      56,    0,  336,    2, 0x08 /* Private */,
+      57,    0,  337,    2, 0x08 /* Private */,
+      58,    0,  338,    2, 0x08 /* Private */,
+      59,    0,  339,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Float,    3,
@@ -254,6 +241,7 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -286,7 +274,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 19: _t->pbAddArcPos(); break;
         case 20: _t->pbAddLinePos(); break;
         case 21: _t->pbDXFimportBut(); break;
-        case 22: _t->on_setTrajec_start_clicked(); break;
+        case 22: _t->pbsetTrajec_start_clicked(); break;
         case 23: _t->PbCreatGcode(); break;
         case 24: _t->PbImageProcess(); break;
         case 25: _t->PbSetOrigin(); break;
@@ -304,22 +292,15 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 37: _t->pbmoveUpForSort(); break;
         case 38: _t->pbmoveDownForSort(); break;
         case 39: _t->sortModelLine(); break;
-<<<<<<< HEAD
-<<<<<<< HEAD
         case 40: _t->pbGetModelPoint(); break;
-=======
-        case 40: _t->pbGetCurryPoint(); break;
->>>>>>> 7058bd5fc092b9b1a7f69132c6264c009aef17da
-=======
-        case 40: _t->pbGetModelPoint(); break;
->>>>>>> c82df02 (界面)
         case 41: _t->pbMoveDirectionNot(); break;
         case 42: _t->pBbrazing(); break;
         case 43: _t->selectWorkpiece(); break;
-        case 44: _t->pbdeletePiece(); break;
-        case 45: _t->pbnewPiece(); break;
-        case 46: _t->saveSetting(); break;
-        case 47: _t->initSetting(); break;
+        case 44: _t->selectChange(); break;
+        case 45: _t->pbdeletePiece(); break;
+        case 46: _t->pbnewPiece(); break;
+        case 47: _t->saveSetting(); break;
+        case 48: _t->initSetting(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -433,13 +414,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 48)
+        if (_id < 49)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 48;
+        _id -= 49;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 48)
+        if (_id < 49)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 48;
+        _id -= 49;
     }
     return _id;
 }

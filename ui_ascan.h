@@ -11,15 +11,11 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
-<<<<<<< HEAD
-#include <QtWidgets/QGraphicsView>
-=======
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGraphicsView>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
->>>>>>> c82df02 (界面)
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
@@ -29,13 +25,6 @@ QT_BEGIN_NAMESPACE
 class Ui_ascan
 {
 public:
-<<<<<<< HEAD
-    QPushButton *saveScanStan_but;
-    QPushButton *autoCorrection_but;
-    QGraphicsView *graphicsView;
-    QLabel *label;
-    QLabel *disPlayIformationLb;
-=======
     QGridLayout *gridLayout_3;
     QGraphicsView *graphicsView;
     QLabel *label;
@@ -50,33 +39,16 @@ public:
     QDoubleSpinBox *searchStep_dsb;
     QFrame *frame_2;
     QGridLayout *gridLayout;
-    QPushButton *saveScanStan_but;
+    QPushButton *pbstepCorrect;
     QPushButton *autoCorrection_but;
->>>>>>> c82df02 (界面)
+    QPushButton *saveScanStan_but;
+    QPushButton *pbstopCorrcet;
 
     void setupUi(QWidget *ascan)
     {
         if (ascan->objectName().isEmpty())
             ascan->setObjectName(QString::fromUtf8("ascan"));
         ascan->resize(1344, 1067);
-<<<<<<< HEAD
-        ascan->setMaximumSize(QSize(1344, 1067));
-        saveScanStan_but = new QPushButton(ascan);
-        saveScanStan_but->setObjectName(QString::fromUtf8("saveScanStan_but"));
-        saveScanStan_but->setGeometry(QRect(910, 990, 150, 46));
-        autoCorrection_but = new QPushButton(ascan);
-        autoCorrection_but->setObjectName(QString::fromUtf8("autoCorrection_but"));
-        autoCorrection_but->setGeometry(QRect(1170, 990, 150, 46));
-        graphicsView = new QGraphicsView(ascan);
-        graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
-        graphicsView->setGeometry(QRect(-20, 0, 911, 1081));
-        label = new QLabel(ascan);
-        label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(910, 110, 108, 51));
-        disPlayIformationLb = new QLabel(ascan);
-        disPlayIformationLb->setObjectName(QString::fromUtf8("disPlayIformationLb"));
-        disPlayIformationLb->setGeometry(QRect(970, 160, 341, 201));
-=======
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -149,20 +121,29 @@ public:
         frame_2->setFrameShadow(QFrame::Raised);
         gridLayout = new QGridLayout(frame_2);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        saveScanStan_but = new QPushButton(frame_2);
-        saveScanStan_but->setObjectName(QString::fromUtf8("saveScanStan_but"));
+        pbstepCorrect = new QPushButton(frame_2);
+        pbstepCorrect->setObjectName(QString::fromUtf8("pbstepCorrect"));
 
-        gridLayout->addWidget(saveScanStan_but, 0, 0, 1, 1);
+        gridLayout->addWidget(pbstepCorrect, 0, 0, 1, 1);
 
         autoCorrection_but = new QPushButton(frame_2);
         autoCorrection_but->setObjectName(QString::fromUtf8("autoCorrection_but"));
 
-        gridLayout->addWidget(autoCorrection_but, 0, 1, 1, 1);
+        gridLayout->addWidget(autoCorrection_but, 0, 3, 1, 1);
+
+        saveScanStan_but = new QPushButton(frame_2);
+        saveScanStan_but->setObjectName(QString::fromUtf8("saveScanStan_but"));
+
+        gridLayout->addWidget(saveScanStan_but, 1, 0, 1, 1);
+
+        pbstopCorrcet = new QPushButton(frame_2);
+        pbstopCorrcet->setObjectName(QString::fromUtf8("pbstopCorrcet"));
+
+        gridLayout->addWidget(pbstopCorrcet, 1, 3, 1, 1);
 
 
         gridLayout_3->addWidget(frame_2, 3, 1, 1, 1);
 
->>>>>>> c82df02 (界面)
 
         retranslateUi(ascan);
 
@@ -172,19 +153,14 @@ public:
     void retranslateUi(QWidget *ascan)
     {
         ascan->setWindowTitle(QApplication::translate("ascan", "Form", nullptr));
-<<<<<<< HEAD
-        saveScanStan_but->setText(QApplication::translate("ascan", "\344\277\235\345\255\230\346\240\207\345\207\206\347\202\271", nullptr));
-        autoCorrection_but->setText(QApplication::translate("ascan", "\350\207\252\345\212\250\347\272\240\345\201\217", nullptr));
-        label->setText(QApplication::translate("ascan", "\344\277\241\346\201\257\357\274\232", nullptr));
-        disPlayIformationLb->setText(QString());
-=======
         label->setText(QApplication::translate("ascan", "\344\277\241\346\201\257\357\274\232", nullptr));
         disPlayIformationLb->setText(QString());
         label_2->setText(QApplication::translate("ascan", "\346\220\234\347\264\242\350\214\203\345\233\264\357\274\232", nullptr));
         label_3->setText(QApplication::translate("ascan", "\346\220\234\347\264\242\346\255\245\351\225\277\357\274\232", nullptr));
-        saveScanStan_but->setText(QApplication::translate("ascan", "\344\277\235\345\255\230\346\240\207\345\207\206\347\202\271", nullptr));
+        pbstepCorrect->setText(QApplication::translate("ascan", "\345\215\225\346\255\245\347\272\240\345\201\217", nullptr));
         autoCorrection_but->setText(QApplication::translate("ascan", "\350\207\252\345\212\250\347\272\240\345\201\217", nullptr));
->>>>>>> c82df02 (界面)
+        saveScanStan_but->setText(QApplication::translate("ascan", "\344\277\235\345\255\230\346\240\207\345\207\206\347\202\271", nullptr));
+        pbstopCorrcet->setText(QApplication::translate("ascan", "\345\201\234\346\255\242\347\272\240\345\201\217", nullptr));
     } // retranslateUi
 
 };
