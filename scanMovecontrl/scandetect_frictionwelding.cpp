@@ -178,7 +178,7 @@ void scanDetect_frictionWelding::on_connectBtn_clicked()
 
 
 bool scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type,
-                                                   float address, QString Value) {
+                                                   quint16 address, QString Value) {
     if (modbusClient->state() != QModbusDevice::ConnectedState) {
         qWarning() << "Modbus client not connected.";
         return false;
@@ -218,9 +218,7 @@ bool scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient, 
         return false;
     }
 
-    QEventLoop loop;
-    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
+
 
     if (reply->error() != QModbusDevice::NoError) {
         qWarning() << "[sendStringCommand] Modbus write error:" << reply->errorString()
@@ -229,6 +227,10 @@ bool scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient, 
         return false;
     }
 
+    QEventLoop loop;
+    QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
     std::cout << "sendStringCommand success: " << Value.toStdString()
               << " to address: " << address << std::endl;
     reply->deleteLater();
@@ -236,62 +238,57 @@ bool scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient, 
 }
 
 
+
 bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType rGtype,
-                                                  float address) {
+                                                  quint16 address)
+{
     if (modbusClient->state() != QModbusDevice::ConnectedState) {
         qWarning() << "Modbus client not connected.";
         return false;
     }
 
-    modbusClient->setTimeout(3000);
-    modbusClient->setNumberOfRetries(2);
+    modbusClient->setTimeout(5000);
+    modbusClient->setNumberOfRetries(3);
 
-    // Step 1: 写入 1
-    QModbusDataUnit commandOn(rGtype, address, 1);
-    commandOn.setValue(0, 1);
-    QModbusReply* replyOn = modbusClient->sendWriteRequest(commandOn, 1);
+    auto sendValue = [&](int value) -> bool {
+        QModbusDataUnit command(rGtype, static_cast<quint16>(address), 1);
+        command.setValue(0, value);
 
-    if (!replyOn) {
-        qWarning() << "sendPulseCommand: send '1' failed";
-        return false;
-    }
-
-    QEventLoop loop;
-    bool success = false;
-
-    QObject::connect(replyOn, &QModbusReply::finished, [&]() {
-        if (replyOn->error() != QModbusDevice::NoError) {
-            qWarning() << "[sendPulseCommand] '1' write error:" << replyOn->errorString();
-        } else {
-            // Step 2: 延时后写入 0
-            QTimer::singleShot(100, [=]() {
-                QModbusDataUnit commandOff(rGtype, address, 1);
-                commandOff.setValue(0, 0);
-                QModbusReply* replyOff = modbusClient->sendWriteRequest(commandOff, 1);
-                if (!replyOff) {
-                    qWarning() << "sendPulseCommand: send '0' failed";
-                    return;
-                }
-
-                QObject::connect(replyOff, &QModbusReply::finished, [=]() {
-                    if (replyOff->error() != QModbusDevice::NoError) {
-                        qWarning() << "[sendPulseCommand] '0' write error:" << replyOff->errorString();
-                    } else {
-                        qDebug() << "sendPulseCommand success to address:" << address;
-                    }
-                    replyOff->deleteLater();
-                });
-            });
-
-            success = true;
+        QModbusReply* reply = modbusClient->sendWriteRequest(command, 1);
+        if (!reply) {
+            qWarning() << "Failed to send Modbus write request (nullptr)";
+            return false;  // ❌ 不要递归调用
         }
-        replyOn->deleteLater();
-        loop.quit();
-    });
 
-    loop.exec();
-    return success;
+        QEventLoop loop;
+        QObject::connect(reply, &QModbusReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();  // 等待 finished 信号
+
+        if (reply->error() != QModbusDevice::NoError) {
+            qWarning() << "[sendPulseCommand] Modbus write error:" << reply->errorString()
+                       << "(value:" << value << " address:" << address << ")";
+            reply->deleteLater();
+            return false;
+        }
+
+        qDebug() << "sendPulseCommand success, value:" << value << " to address:" << address;
+        reply->deleteLater();
+        return true;
+    };
+
+    // Step 1: 先写入 1
+    if (!sendValue(1))
+        return false;
+
+    // Step 2: 延时 100ms 后写入 0（使用 QTimer 延迟，不阻塞主线程事件循环）
+    QEventLoop delayLoop;
+    QTimer::singleShot(200, &delayLoop, &QEventLoop::quit);
+    delayLoop.exec();
+
+    return sendValue(0);
 }
+
+
 
 
 
@@ -433,7 +430,7 @@ bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, Q
 //}
 
 bool scanDetect_frictionWelding::sendCommandValue(QModbusClient *modbusClient, QModbusDataUnit::RegisterType rGtype,
-                                                  int address,float value){
+                                                  quint16 address,float value){
     if(modbusClient->state() != QModbusDevice::ConnectedState)
         return false;
     qDebug()<<"sendCommandValue:"<<address;

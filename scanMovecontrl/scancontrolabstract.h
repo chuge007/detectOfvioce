@@ -236,9 +236,9 @@ public:
     virtual bool isYCrossed() = 0;                  //判断扫查区域的Y轴是否越界
     virtual bool isJogCrossed(int &address, float &data) = 0; //点动判断是都越界
 
-    virtual bool sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, float address)=0;
+    virtual bool sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, quint16 address)=0;
 
-    virtual bool sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, float address,QString Value)=0;
+    virtual bool sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, quint16 address,QString Value)=0;
 
     virtual void writeRegisterGroup( int startAddress,
                          const   QVector<modelDate> &modelDates, int serverAddress)=0;

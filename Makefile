@@ -274,6 +274,7 @@ Makefile: plc_connect.pro D:\qt\5.12.4\msvc2017_64\mkspecs\win32-msvc\qmake.conf
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5AxBase.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5Charts.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5OpenGL.prl \
+		D:\qt\5.12.4\msvc2017_64\lib\Qt5PrintSupport.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5Widgets.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5Gui.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5SerialBus.prl \
@@ -481,6 +482,7 @@ D:\qt\5.12.4\msvc2017_64\lib\Qt5AxContainer.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5AxBase.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5Charts.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5OpenGL.prl:
+D:\qt\5.12.4\msvc2017_64\lib\Qt5PrintSupport.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5Widgets.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5Gui.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5SerialBus.prl:

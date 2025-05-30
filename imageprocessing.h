@@ -7,6 +7,16 @@
 #include <QGraphicsScene>
 #include <QSettings>
 
+#include "C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HalconCpp.h"
+
+using namespace HalconCpp;
+
+struct Defect {
+    int idx;
+    double area;
+    double ratio;
+};
+
 namespace Ui {
 class imageprocessing;
 }
@@ -19,6 +29,7 @@ public:
     explicit imageprocessing(QWidget *parent = nullptr);
     ~imageprocessing();
 
+    QString workPice;
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -26,9 +37,18 @@ private slots:
     void init();
     void pbSetImagePath();
     void pbSetRoi();
+    void pbCleanRoi();
+
     void pbImageProcess();
     void pbTestReport();
-    void pbCleanRoi();
+
+private:
+
+    QVector<QRect> roiRects;
+    QString outputImagePath;
+    QString pdfOutputPath;
+    QVector<Defect> defects;
+
 public:
     Ui::imageprocessing *ui;
     QGraphicsScene     *scene         = nullptr;
@@ -42,10 +62,10 @@ public:
     QPointF originScene;   // 在 scene 坐标系下的起点
 
     QString ascanImagePath;
-    QVector<QRect> roiRects;
 
     // scene→image 1:1 映射时直接用 sceneRoi.toRect()
     QRect convertToImageCoordinates(const QRectF &sceneRoi) { return sceneRoi.toRect(); }
+    void ShowImg(const HObject& region) ;
 };
 
 #endif // IMAGEPROCESSING_H

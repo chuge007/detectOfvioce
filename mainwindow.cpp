@@ -2022,6 +2022,7 @@ void MainWindow::PbtrajectoryOffset() {
 void MainWindow::PbImageProcess()
 {
 
+    imageProcessingTool->workPice=ui->cBworkpiece->currentText();
     imageProcessingTool->show();
 
 }

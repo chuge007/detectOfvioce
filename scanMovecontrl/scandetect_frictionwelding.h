@@ -102,13 +102,13 @@ private:
     void perfromJogTasks();         //点动
 
     bool sendPulseCommand(QModbusClient *modbusClient,
-                          QModbusDataUnit::RegisterType rGtype, float address);
+                          QModbusDataUnit::RegisterType rGtype, quint16 address);
 
     bool sendCommandValue(QModbusClient *modbusClient,
-                          QModbusDataUnit::RegisterType rGtype, int address,float value);
+                          QModbusDataUnit::RegisterType rGtype, quint16 address,float value);
 
 
-    bool sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, float address,QString Value);
+    bool sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type, quint16 address,QString Value);
 
 private:
 

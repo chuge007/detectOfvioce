@@ -36,14 +36,14 @@ QT_MOC_LITERAL(1, 16, 4), // "init"
 QT_MOC_LITERAL(2, 21, 0), // ""
 QT_MOC_LITERAL(3, 22, 14), // "pbSetImagePath"
 QT_MOC_LITERAL(4, 37, 8), // "pbSetRoi"
-QT_MOC_LITERAL(5, 46, 14), // "pbImageProcess"
-QT_MOC_LITERAL(6, 61, 12), // "pbTestReport"
-QT_MOC_LITERAL(7, 74, 10) // "pbCleanRoi"
+QT_MOC_LITERAL(5, 46, 10), // "pbCleanRoi"
+QT_MOC_LITERAL(6, 57, 14), // "pbImageProcess"
+QT_MOC_LITERAL(7, 72, 12) // "pbTestReport"
 
     },
     "imageprocessing\0init\0\0pbSetImagePath\0"
-    "pbSetRoi\0pbImageProcess\0pbTestReport\0"
-    "pbCleanRoi"
+    "pbSetRoi\0pbCleanRoi\0pbImageProcess\0"
+    "pbTestReport"
 };
 #undef QT_MOC_LITERAL
 
@@ -88,9 +88,9 @@ void imageprocessing::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 0: _t->init(); break;
         case 1: _t->pbSetImagePath(); break;
         case 2: _t->pbSetRoi(); break;
-        case 3: _t->pbImageProcess(); break;
-        case 4: _t->pbTestReport(); break;
-        case 5: _t->pbCleanRoi(); break;
+        case 3: _t->pbCleanRoi(); break;
+        case 4: _t->pbImageProcess(); break;
+        case 5: _t->pbTestReport(); break;
         default: ;
         }
     }
