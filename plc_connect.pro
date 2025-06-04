@@ -1,4 +1,4 @@
-QT       += core gui widgets serialbus network sql  svg axcontainer charts opengl xml gui-private concurrent serialport  printsupport widgets
+QT       += core gui widgets serialbus network sql  svg axcontainer charts opengl xml gui-private concurrent serialport  printsupport widgets axbase
 
 #webenginewidgets
 #RC_ICONS = Phaseye.ico
@@ -6,6 +6,7 @@ QT       += core gui widgets serialbus network sql  svg axcontainer charts openg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets network
 
 CONFIG += c++11  utf8   console
+
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings

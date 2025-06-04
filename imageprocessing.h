@@ -12,10 +12,15 @@
 using namespace HalconCpp;
 
 struct Defect {
-    int idx;
-    double area;
-    double ratio;
+    int idx;          // 缺陷编号
+    double area;      // 面积
+    double ratio;     // 面积占比
+    double x;       // 缺陷中心 X 坐标
+    double y;       // 缺陷中心 Y 坐标
+    double length;    // 外接矩形高度（行差）
+    double  width;     // 外接矩形宽度（列差）
 };
+
 
 namespace Ui {
 class imageprocessing;
@@ -30,6 +35,7 @@ public:
     ~imageprocessing();
 
     QString workPice;
+    QString saveImagePath;
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -45,7 +51,6 @@ private slots:
 private:
 
     QVector<QRect> roiRects;
-    QString outputImagePath;
     QString pdfOutputPath;
     QVector<Defect> defects;
 
@@ -66,6 +71,7 @@ public:
     // scene→image 1:1 映射时直接用 sceneRoi.toRect()
     QRect convertToImageCoordinates(const QRectF &sceneRoi) { return sceneRoi.toRect(); }
     void ShowImg(const HObject& region) ;
+    void SaveRegionAsImage(const HObject &region, const std::string &filename);
 };
 
 #endif // IMAGEPROCESSING_H

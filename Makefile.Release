@@ -4507,13 +4507,19 @@ release\imageProcessing.obj: imageProcessing.cpp imageprocessing.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\qpagelayout.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\qpagesize.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\QPagedPaintDevice \
-		D:\qt\5.12.4\msvc2017_64\include\QtGui\QTextDocument \
-		D:\qt\5.12.4\msvc2017_64\include\QtGui\qtextdocument.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtPrintSupport\QPrinter \
+		D:\qt\5.12.4\msvc2017_64\include\QtPrintSupport\qprinter.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtPrintSupport\qtprintsupportglobal.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtPrintSupport\qtprintsupport-config.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\QPainter \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\qpainter.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\qtextoption.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtGui\QTextDocument \
+		D:\qt\5.12.4\msvc2017_64\include\QtGui\qtextdocument.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtCore\QString \
 		D:\qt\5.12.4\msvc2017_64\include\QtCore\QDate \
-		D:\qt\5.12.4\msvc2017_64\include\QtCore\qdatetime.h
+		D:\qt\5.12.4\msvc2017_64\include\QtCore\qdatetime.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtGui\QFont
 
 release\imageprocessing.obj: imageprocessing.cpp imageprocessing.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtWidgets\QWidget \
@@ -4785,13 +4791,19 @@ release\imageprocessing.obj: imageprocessing.cpp imageprocessing.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\qpagelayout.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\qpagesize.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\QPagedPaintDevice \
-		D:\qt\5.12.4\msvc2017_64\include\QtGui\QTextDocument \
-		D:\qt\5.12.4\msvc2017_64\include\QtGui\qtextdocument.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtPrintSupport\QPrinter \
+		D:\qt\5.12.4\msvc2017_64\include\QtPrintSupport\qprinter.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtPrintSupport\qtprintsupportglobal.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtPrintSupport\qtprintsupport-config.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\QPainter \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\qpainter.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtGui\qtextoption.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtGui\QTextDocument \
+		D:\qt\5.12.4\msvc2017_64\include\QtGui\qtextdocument.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtCore\QString \
 		D:\qt\5.12.4\msvc2017_64\include\QtCore\QDate \
-		D:\qt\5.12.4\msvc2017_64\include\QtCore\qdatetime.h
+		D:\qt\5.12.4\msvc2017_64\include\QtCore\qdatetime.h \
+		D:\qt\5.12.4\msvc2017_64\include\QtGui\QFont
 
 release\main.obj: main.cpp mainwindow.h \
 		D:\qt\5.12.4\msvc2017_64\include\QtWidgets\QMainWindow \
