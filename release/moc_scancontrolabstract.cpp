@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_ScanControlAbstract_t {
-    QByteArrayData data[61];
-    char stringdata0[952];
+    QByteArrayData data[66];
+    char stringdata0[1059];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -59,39 +59,44 @@ QT_MOC_LITERAL(24, 230, 21), // "on_connectBtn_clicked"
 QT_MOC_LITERAL(25, 252, 23), // "on_startScanBtn_clicked"
 QT_MOC_LITERAL(26, 276, 22), // "on_stopScanBtn_clicked"
 QT_MOC_LITERAL(27, 299, 21), // "on_endScanBtn_clicked"
-QT_MOC_LITERAL(28, 321, 23), // "on_setOriginBtn_clicked"
-QT_MOC_LITERAL(29, 345, 10), // "isCurrPosi"
-QT_MOC_LITERAL(30, 356, 32), // "on_line_velocity_editingFinished"
-QT_MOC_LITERAL(31, 389, 3), // "val"
-QT_MOC_LITERAL(32, 393, 31), // "on_arc_velocity_editingFinished"
-QT_MOC_LITERAL(33, 425, 31), // "on_jog_velocity_editingFinished"
-QT_MOC_LITERAL(34, 457, 18), // "on_xAddBtn_clicked"
-QT_MOC_LITERAL(35, 476, 18), // "on_xSubBtn_clicked"
-QT_MOC_LITERAL(36, 495, 18), // "on_yAddBtn_clicked"
-QT_MOC_LITERAL(37, 514, 18), // "on_ySubBtn_clicked"
-QT_MOC_LITERAL(38, 533, 18), // "on_xAddBtn_pressed"
-QT_MOC_LITERAL(39, 552, 19), // "on_xAddBtn_released"
-QT_MOC_LITERAL(40, 572, 18), // "on_xSubBtn_pressed"
-QT_MOC_LITERAL(41, 591, 19), // "on_xSubBtn_released"
-QT_MOC_LITERAL(42, 611, 18), // "on_yAddBtn_pressed"
-QT_MOC_LITERAL(43, 630, 19), // "on_yAddBtn_released"
-QT_MOC_LITERAL(44, 650, 18), // "on_ySubBtn_pressed"
-QT_MOC_LITERAL(45, 669, 19), // "on_ySubBtn_released"
-QT_MOC_LITERAL(46, 689, 18), // "on_zAddBtn_pressed"
-QT_MOC_LITERAL(47, 708, 19), // "on_zAddBtn_released"
-QT_MOC_LITERAL(48, 728, 18), // "on_zSubBtn_pressed"
-QT_MOC_LITERAL(49, 747, 19), // "on_zSubBtn_released"
-QT_MOC_LITERAL(50, 767, 18), // "on_rAddBtn_pressed"
-QT_MOC_LITERAL(51, 786, 19), // "on_rAddBtn_released"
-QT_MOC_LITERAL(52, 806, 18), // "on_rSubBtn_pressed"
-QT_MOC_LITERAL(53, 825, 19), // "on_rSubBtn_released"
-QT_MOC_LITERAL(54, 845, 24), // "on_alarmResetBtn_clicked"
-QT_MOC_LITERAL(55, 870, 22), // "on_setLimitBtn_clicked"
-QT_MOC_LITERAL(56, 893, 24), // "on_setMachineBtn_clicked"
-QT_MOC_LITERAL(57, 918, 17), // "runTargetPosition"
-QT_MOC_LITERAL(58, 936, 1), // "z"
-QT_MOC_LITERAL(59, 938, 1), // "r"
-QT_MOC_LITERAL(60, 940, 11) // "modbusState"
+QT_MOC_LITERAL(28, 321, 27), // "on_aganStartScanBtn_clicked"
+QT_MOC_LITERAL(29, 349, 23), // "on_setOriginBtn_clicked"
+QT_MOC_LITERAL(30, 373, 8), // "axitType"
+QT_MOC_LITERAL(31, 382, 23), // "onBackOriginBtn_clicked"
+QT_MOC_LITERAL(32, 406, 32), // "on_line_velocity_editingFinished"
+QT_MOC_LITERAL(33, 439, 3), // "val"
+QT_MOC_LITERAL(34, 443, 31), // "on_arc_velocity_editingFinished"
+QT_MOC_LITERAL(35, 475, 31), // "on_jog_velocity_editingFinished"
+QT_MOC_LITERAL(36, 507, 33), // "on_point_velocity_editingFini..."
+QT_MOC_LITERAL(37, 541, 18), // "on_xAddBtn_clicked"
+QT_MOC_LITERAL(38, 560, 18), // "on_xSubBtn_clicked"
+QT_MOC_LITERAL(39, 579, 18), // "on_yAddBtn_clicked"
+QT_MOC_LITERAL(40, 598, 18), // "on_ySubBtn_clicked"
+QT_MOC_LITERAL(41, 617, 18), // "on_xAddBtn_pressed"
+QT_MOC_LITERAL(42, 636, 19), // "on_xAddBtn_released"
+QT_MOC_LITERAL(43, 656, 18), // "on_xSubBtn_pressed"
+QT_MOC_LITERAL(44, 675, 19), // "on_xSubBtn_released"
+QT_MOC_LITERAL(45, 695, 18), // "on_yAddBtn_pressed"
+QT_MOC_LITERAL(46, 714, 19), // "on_yAddBtn_released"
+QT_MOC_LITERAL(47, 734, 18), // "on_ySubBtn_pressed"
+QT_MOC_LITERAL(48, 753, 19), // "on_ySubBtn_released"
+QT_MOC_LITERAL(49, 773, 18), // "on_zAddBtn_pressed"
+QT_MOC_LITERAL(50, 792, 19), // "on_zAddBtn_released"
+QT_MOC_LITERAL(51, 812, 18), // "on_zSubBtn_pressed"
+QT_MOC_LITERAL(52, 831, 19), // "on_zSubBtn_released"
+QT_MOC_LITERAL(53, 851, 18), // "on_rAddBtn_pressed"
+QT_MOC_LITERAL(54, 870, 19), // "on_rAddBtn_released"
+QT_MOC_LITERAL(55, 890, 18), // "on_rSubBtn_pressed"
+QT_MOC_LITERAL(56, 909, 19), // "on_rSubBtn_released"
+QT_MOC_LITERAL(57, 929, 24), // "on_alarmResetBtn_clicked"
+QT_MOC_LITERAL(58, 954, 22), // "on_setLimitBtn_clicked"
+QT_MOC_LITERAL(59, 977, 24), // "on_setMachineBtn_clicked"
+QT_MOC_LITERAL(60, 1002, 17), // "runTargetPosition"
+QT_MOC_LITERAL(61, 1020, 1), // "z"
+QT_MOC_LITERAL(62, 1022, 1), // "r"
+QT_MOC_LITERAL(63, 1024, 11), // "modbusState"
+QT_MOC_LITERAL(64, 1036, 17), // "selectProcessType"
+QT_MOC_LITERAL(65, 1054, 4) // "type"
 
     },
     "ScanControlAbstract\0modbusStateChange\0"
@@ -102,10 +107,13 @@ QT_MOC_LITERAL(60, 940, 11) // "modbusState"
     "scanRowEnd\0AxisState\0scanTime\0ms\0init\0"
     "destroy\0on_connectBtn_clicked\0"
     "on_startScanBtn_clicked\0on_stopScanBtn_clicked\0"
-    "on_endScanBtn_clicked\0on_setOriginBtn_clicked\0"
-    "isCurrPosi\0on_line_velocity_editingFinished\0"
-    "val\0on_arc_velocity_editingFinished\0"
+    "on_endScanBtn_clicked\0on_aganStartScanBtn_clicked\0"
+    "on_setOriginBtn_clicked\0axitType\0"
+    "onBackOriginBtn_clicked\0"
+    "on_line_velocity_editingFinished\0val\0"
+    "on_arc_velocity_editingFinished\0"
     "on_jog_velocity_editingFinished\0"
+    "on_point_velocity_editingFinished\0"
     "on_xAddBtn_clicked\0on_xSubBtn_clicked\0"
     "on_yAddBtn_clicked\0on_ySubBtn_clicked\0"
     "on_xAddBtn_pressed\0on_xAddBtn_released\0"
@@ -118,7 +126,8 @@ QT_MOC_LITERAL(60, 940, 11) // "modbusState"
     "on_rSubBtn_pressed\0on_rSubBtn_released\0"
     "on_alarmResetBtn_clicked\0"
     "on_setLimitBtn_clicked\0on_setMachineBtn_clicked\0"
-    "runTargetPosition\0z\0r\0modbusState"
+    "runTargetPosition\0z\0r\0modbusState\0"
+    "selectProcessType\0type"
 };
 #undef QT_MOC_LITERAL
 
@@ -128,7 +137,7 @@ static const uint qt_meta_data_ScanControlAbstract[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      44,   14, // methods
+      48,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -136,52 +145,56 @@ static const uint qt_meta_data_ScanControlAbstract[] = {
        9,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,  234,    2, 0x06 /* Public */,
-       4,    3,  237,    2, 0x06 /* Public */,
-       7,    3,  244,    2, 0x06 /* Public */,
-      11,    2,  251,    2, 0x06 /* Public */,
-      14,    0,  256,    2, 0x06 /* Public */,
-      15,    0,  257,    2, 0x06 /* Public */,
-      16,    1,  258,    2, 0x06 /* Public */,
-      18,    1,  261,    2, 0x06 /* Public */,
-      20,    1,  264,    2, 0x06 /* Public */,
+       1,    1,  254,    2, 0x06 /* Public */,
+       4,    3,  257,    2, 0x06 /* Public */,
+       7,    3,  264,    2, 0x06 /* Public */,
+      11,    2,  271,    2, 0x06 /* Public */,
+      14,    0,  276,    2, 0x06 /* Public */,
+      15,    0,  277,    2, 0x06 /* Public */,
+      16,    1,  278,    2, 0x06 /* Public */,
+      18,    1,  281,    2, 0x06 /* Public */,
+      20,    1,  284,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      22,    0,  267,    2, 0x0a /* Public */,
-      23,    0,  268,    2, 0x0a /* Public */,
-      24,    0,  269,    2, 0x0a /* Public */,
-      25,    0,  270,    2, 0x0a /* Public */,
-      26,    0,  271,    2, 0x0a /* Public */,
-      27,    0,  272,    2, 0x0a /* Public */,
-      28,    3,  273,    2, 0x0a /* Public */,
-      30,    1,  280,    2, 0x0a /* Public */,
-      32,    1,  283,    2, 0x0a /* Public */,
-      33,    1,  286,    2, 0x0a /* Public */,
-      34,    0,  289,    2, 0x0a /* Public */,
-      35,    0,  290,    2, 0x0a /* Public */,
-      36,    0,  291,    2, 0x0a /* Public */,
-      37,    0,  292,    2, 0x0a /* Public */,
-      38,    0,  293,    2, 0x0a /* Public */,
-      39,    0,  294,    2, 0x0a /* Public */,
-      40,    0,  295,    2, 0x0a /* Public */,
-      41,    0,  296,    2, 0x0a /* Public */,
-      42,    0,  297,    2, 0x0a /* Public */,
-      43,    0,  298,    2, 0x0a /* Public */,
-      44,    0,  299,    2, 0x0a /* Public */,
-      45,    0,  300,    2, 0x0a /* Public */,
-      46,    0,  301,    2, 0x0a /* Public */,
-      47,    0,  302,    2, 0x0a /* Public */,
-      48,    0,  303,    2, 0x0a /* Public */,
-      49,    0,  304,    2, 0x0a /* Public */,
-      50,    0,  305,    2, 0x0a /* Public */,
-      51,    0,  306,    2, 0x0a /* Public */,
-      52,    0,  307,    2, 0x0a /* Public */,
-      53,    0,  308,    2, 0x0a /* Public */,
-      54,    0,  309,    2, 0x0a /* Public */,
-      55,    0,  310,    2, 0x0a /* Public */,
-      56,    0,  311,    2, 0x0a /* Public */,
-      57,    4,  312,    2, 0x0a /* Public */,
-      60,    0,  321,    2, 0x0a /* Public */,
+      22,    0,  287,    2, 0x0a /* Public */,
+      23,    0,  288,    2, 0x0a /* Public */,
+      24,    0,  289,    2, 0x0a /* Public */,
+      25,    0,  290,    2, 0x0a /* Public */,
+      26,    0,  291,    2, 0x0a /* Public */,
+      27,    0,  292,    2, 0x0a /* Public */,
+      28,    0,  293,    2, 0x0a /* Public */,
+      29,    1,  294,    2, 0x0a /* Public */,
+      31,    0,  297,    2, 0x0a /* Public */,
+      32,    1,  298,    2, 0x0a /* Public */,
+      34,    1,  301,    2, 0x0a /* Public */,
+      35,    1,  304,    2, 0x0a /* Public */,
+      36,    1,  307,    2, 0x0a /* Public */,
+      37,    0,  310,    2, 0x0a /* Public */,
+      38,    0,  311,    2, 0x0a /* Public */,
+      39,    0,  312,    2, 0x0a /* Public */,
+      40,    0,  313,    2, 0x0a /* Public */,
+      41,    0,  314,    2, 0x0a /* Public */,
+      42,    0,  315,    2, 0x0a /* Public */,
+      43,    0,  316,    2, 0x0a /* Public */,
+      44,    0,  317,    2, 0x0a /* Public */,
+      45,    0,  318,    2, 0x0a /* Public */,
+      46,    0,  319,    2, 0x0a /* Public */,
+      47,    0,  320,    2, 0x0a /* Public */,
+      48,    0,  321,    2, 0x0a /* Public */,
+      49,    0,  322,    2, 0x0a /* Public */,
+      50,    0,  323,    2, 0x0a /* Public */,
+      51,    0,  324,    2, 0x0a /* Public */,
+      52,    0,  325,    2, 0x0a /* Public */,
+      53,    0,  326,    2, 0x0a /* Public */,
+      54,    0,  327,    2, 0x0a /* Public */,
+      55,    0,  328,    2, 0x0a /* Public */,
+      56,    0,  329,    2, 0x0a /* Public */,
+      57,    0,  330,    2, 0x0a /* Public */,
+      58,    0,  331,    2, 0x0a /* Public */,
+      59,    0,  332,    2, 0x0a /* Public */,
+      60,    4,  333,    2, 0x0a /* Public */,
+      63,    0,  342,    2, 0x0a /* Public */,
+      64,    1,  343,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, 0x80000000 | 3,    2,
@@ -201,10 +214,13 @@ static const uint qt_meta_data_ScanControlAbstract[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Bool,    8,    9,   29,
-    QMetaType::Void, QMetaType::Float,   31,
-    QMetaType::Void, QMetaType::Float,   31,
-    QMetaType::Void, QMetaType::Float,   31,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   30,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Float,   33,
+    QMetaType::Void, QMetaType::Float,   33,
+    QMetaType::Void, QMetaType::Float,   33,
+    QMetaType::Void, QMetaType::Float,   33,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -228,8 +244,9 @@ static const uint qt_meta_data_ScanControlAbstract[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Double, QMetaType::Double, QMetaType::Double, QMetaType::Double,    8,    9,   58,   59,
+    QMetaType::Void, QMetaType::Double, QMetaType::Double, QMetaType::Double, QMetaType::Double,    8,    9,   61,   62,
     QMetaType::Bool,
+    QMetaType::Void, QMetaType::Int,   65,
 
        0        // eod
 };
@@ -255,36 +272,40 @@ void ScanControlAbstract::qt_static_metacall(QObject *_o, QMetaObject::Call _c, 
         case 12: _t->on_startScanBtn_clicked(); break;
         case 13: _t->on_stopScanBtn_clicked(); break;
         case 14: _t->on_endScanBtn_clicked(); break;
-        case 15: _t->on_setOriginBtn_clicked((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< bool(*)>(_a[3]))); break;
-        case 16: _t->on_line_velocity_editingFinished((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 17: _t->on_arc_velocity_editingFinished((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 18: _t->on_jog_velocity_editingFinished((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 19: _t->on_xAddBtn_clicked(); break;
-        case 20: _t->on_xSubBtn_clicked(); break;
-        case 21: _t->on_yAddBtn_clicked(); break;
-        case 22: _t->on_ySubBtn_clicked(); break;
-        case 23: _t->on_xAddBtn_pressed(); break;
-        case 24: _t->on_xAddBtn_released(); break;
-        case 25: _t->on_xSubBtn_pressed(); break;
-        case 26: _t->on_xSubBtn_released(); break;
-        case 27: _t->on_yAddBtn_pressed(); break;
-        case 28: _t->on_yAddBtn_released(); break;
-        case 29: _t->on_ySubBtn_pressed(); break;
-        case 30: _t->on_ySubBtn_released(); break;
-        case 31: _t->on_zAddBtn_pressed(); break;
-        case 32: _t->on_zAddBtn_released(); break;
-        case 33: _t->on_zSubBtn_pressed(); break;
-        case 34: _t->on_zSubBtn_released(); break;
-        case 35: _t->on_rAddBtn_pressed(); break;
-        case 36: _t->on_rAddBtn_released(); break;
-        case 37: _t->on_rSubBtn_pressed(); break;
-        case 38: _t->on_rSubBtn_released(); break;
-        case 39: _t->on_alarmResetBtn_clicked(); break;
-        case 40: _t->on_setLimitBtn_clicked(); break;
-        case 41: _t->on_setMachineBtn_clicked(); break;
-        case 42: _t->runTargetPosition((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< double(*)>(_a[3])),(*reinterpret_cast< double(*)>(_a[4]))); break;
-        case 43: { bool _r = _t->modbusState();
+        case 15: _t->on_aganStartScanBtn_clicked(); break;
+        case 16: _t->on_setOriginBtn_clicked((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 17: _t->onBackOriginBtn_clicked(); break;
+        case 18: _t->on_line_velocity_editingFinished((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 19: _t->on_arc_velocity_editingFinished((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 20: _t->on_jog_velocity_editingFinished((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 21: _t->on_point_velocity_editingFinished((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 22: _t->on_xAddBtn_clicked(); break;
+        case 23: _t->on_xSubBtn_clicked(); break;
+        case 24: _t->on_yAddBtn_clicked(); break;
+        case 25: _t->on_ySubBtn_clicked(); break;
+        case 26: _t->on_xAddBtn_pressed(); break;
+        case 27: _t->on_xAddBtn_released(); break;
+        case 28: _t->on_xSubBtn_pressed(); break;
+        case 29: _t->on_xSubBtn_released(); break;
+        case 30: _t->on_yAddBtn_pressed(); break;
+        case 31: _t->on_yAddBtn_released(); break;
+        case 32: _t->on_ySubBtn_pressed(); break;
+        case 33: _t->on_ySubBtn_released(); break;
+        case 34: _t->on_zAddBtn_pressed(); break;
+        case 35: _t->on_zAddBtn_released(); break;
+        case 36: _t->on_zSubBtn_pressed(); break;
+        case 37: _t->on_zSubBtn_released(); break;
+        case 38: _t->on_rAddBtn_pressed(); break;
+        case 39: _t->on_rAddBtn_released(); break;
+        case 40: _t->on_rSubBtn_pressed(); break;
+        case 41: _t->on_rSubBtn_released(); break;
+        case 42: _t->on_alarmResetBtn_clicked(); break;
+        case 43: _t->on_setLimitBtn_clicked(); break;
+        case 44: _t->on_setMachineBtn_clicked(); break;
+        case 45: _t->runTargetPosition((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< double(*)>(_a[3])),(*reinterpret_cast< double(*)>(_a[4]))); break;
+        case 46: { bool _r = _t->modbusState();
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
+        case 47: _t->selectProcessType((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -384,13 +405,13 @@ int ScanControlAbstract::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 44)
+        if (_id < 48)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 44;
+        _id -= 48;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 44)
+        if (_id < 48)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 44;
+        _id -= 48;
     }
     return _id;
 }

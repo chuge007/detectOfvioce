@@ -14,12 +14,19 @@
 #include "addroute_dialog.h"
 #include "Graphics_view_zoom.h"
 #include "route_worksence.h"
-
+#include "imageprocessing.h"
+#include "gcodemodulation.h"
+#include "databasemanager.h"
 #include "scancontrolabstract.h"
+
 #include <QProgressDialog>
+#include <QSet>
+#include <QScreen>
+#include <QWindow>
 
 //using modelDate = ScanControlAbstract::modelDate;
 
+class ascan;  // 前向声明
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -33,8 +40,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void closeEvent(QCloseEvent *event) override;
+
+
     QSettings *settings;
 
+    DatabaseManager *dbManager;
 
     struct TargetPos {
         double x;
@@ -43,9 +54,27 @@ public:
         double r;
     };
 
+    static ScanControlAbstract *scanDetectCtrl;
+
+    QString curryWorkpieceName;
+    QVector<QString>WorkpieceList;
+    QMap<QString, QVector<double>> workPieceSpeedMap;
+    double _translationX=0;
+    double _translationY=0;
+    double _translationR=0;
+    double  currentR=0;
+
+    int m_lastClickedRow;
+    bool m_isSelected ;
+    QSqlTableModel*  model;
+
+    std::tuple<double, double, double, double> pbGetCurrentlyPoint();
+
+    bool isSelectChange=true;
 
 private slots:
 
+    void pbStartScanBtn();
 
     void modbusStateChange(QModbusDevice::State state);
 
@@ -70,7 +99,7 @@ private slots:
 
     void pbDXFimportBut();
 
-    void on_setTrajec_start_clicked();
+    void pbsetTrajec_start_clicked();
 
 
     void PbCreatGcode();
@@ -81,12 +110,17 @@ private slots:
 
     void PbMoveToPosition();
 
+    void PbtrajectoryOffset();
+
     void PbAxleVelocity_lin();
     void PblinVelocity_lin();
     void PbarcVelocity_lin();
+    void PbPointVelocity_lin();
 
     void pbAscan();
+
     void updateSence();
+
     void cleanTable();
 
     void PbModbusConnectBtn();
@@ -97,33 +131,78 @@ private slots:
 
     void pbmoveDownForSort();
 
+    void sortModelLine();
 
-    void pbGetCurryPoint();
+    void pbGetModelPoint();
+
+    void pbMoveDirectionNot();
+
+    void pBbrazing();
+
+    void selectWorkpiece();
+
+    void selectChange();
+
+    void pbdeletePiece();
+
+    void pbnewPiece();
 
     void saveSetting();
 
     void initSetting();
+
+private:
+
+    QSize oldSize;
+    QSize newSize;
+
+    QMap<QWidget*, QRect> originalGeometries;
+    QMap<QWidget*, double> originalFontSizes;
+
+
+    QMap<QWidget*, QFont> originalFonts;
+
+    void scaleWidgets(QWidget* parent, double scaleX, double scaleY);
+
+    void resizeEvent(QResizeEvent *event);
+
+    void resetAllWidgetSizes(QWidget* widget);
+
+    void restoreOriginalWidgetStates(QWidget* parent);
+
+    void saveOriginalWidgetStates(QWidget* parent);
+
+
 private:
     Ui::MainWindow *ui;
 
     QModbusTcpClient *modbusDevice;
     QUdpSocket *udpSocket;
 
-    ScanControlAbstract *scanDetectCtrl;
 
-    void init();
+    imageprocessing *imageProcessingTool;
+
+    gCodeModulation* gcodeEidt;
+
+    ascan* scan;
 
     QList<QString>  startPoint;
     QString current_db_name;
     QString current_route_name;
     QString current_user;
+
     int current_weld_row;
     int current_weld_id;
     TargetPos currentTargetPos;  // 用于保存当前目标点
+    QList<QString> GlobeUniquePoints;
+
+    double traject_x0,traject_y0;
 
 
-    QSqlTableModel*  model;
+    void init();
 
+
+    void createOrSwitchTable(const QString &tableName,bool isCreate);
 
     addRoute_dialog *addRoute;
     void  updateAddRoute(int arc,int edit,int curRow);
@@ -134,10 +213,10 @@ private:
     void tableSelectionChanged();
     void graphicsSelectionChanged();
 
+    void CalculatingAngles();
 
-    double traject_x0,traject_y0;
+
     QString generateGCode();
-    void exportGCodeToFile(const QString& filePath, const QString& gCode);
 
      NdtCfgMachine &config;
 

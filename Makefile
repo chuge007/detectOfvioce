@@ -252,6 +252,7 @@ Makefile: plc_connect.pro D:\qt\5.12.4\msvc2017_64\mkspecs\win32-msvc\qmake.conf
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\resolve_config.prf \
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\exclusive_builds_post.prf \
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\default_post.prf \
+		D:\qt\5.12.4\msvc2017_64\mkspecs\features\win32\console.prf \
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\resources.prf \
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\qtquickcompiler.prf \
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\precompile_header.prf \
@@ -263,7 +264,6 @@ Makefile: plc_connect.pro D:\qt\5.12.4\msvc2017_64\mkspecs\win32-msvc\qmake.conf
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\win32\dumpcpp.prf \
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\qmake_use.prf \
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\file_copies.prf \
-		D:\qt\5.12.4\msvc2017_64\mkspecs\features\win32\windows.prf \
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\testcase_targets.prf \
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\exceptions.prf \
 		D:\qt\5.12.4\msvc2017_64\mkspecs\features\yacc.prf \
@@ -274,6 +274,7 @@ Makefile: plc_connect.pro D:\qt\5.12.4\msvc2017_64\mkspecs\win32-msvc\qmake.conf
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5AxBase.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5Charts.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5OpenGL.prl \
+		D:\qt\5.12.4\msvc2017_64\lib\Qt5PrintSupport.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5Widgets.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5Gui.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5SerialBus.prl \
@@ -282,8 +283,7 @@ Makefile: plc_connect.pro D:\qt\5.12.4\msvc2017_64\mkspecs\win32-msvc\qmake.conf
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5Xml.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5Concurrent.prl \
 		D:\qt\5.12.4\msvc2017_64\lib\Qt5SerialPort.prl \
-		D:\qt\5.12.4\msvc2017_64\lib\Qt5Core.prl \
-		D:\qt\5.12.4\msvc2017_64\lib\qtmain.prl
+		D:\qt\5.12.4\msvc2017_64\lib\Qt5Core.prl
 	$(QMAKE) -o Makefile plc_connect.pro -spec win32-msvc "CONFIG+=qtquickcompiler"
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\spec_pre.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\common\angle.conf:
@@ -460,6 +460,7 @@ D:\qt\5.12.4\msvc2017_64\mkspecs\features\win32\default_pre.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\resolve_config.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\exclusive_builds_post.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\default_post.prf:
+D:\qt\5.12.4\msvc2017_64\mkspecs\features\win32\console.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\resources.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\qtquickcompiler.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\precompile_header.prf:
@@ -471,7 +472,6 @@ D:\qt\5.12.4\msvc2017_64\mkspecs\features\uic.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\win32\dumpcpp.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\qmake_use.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\file_copies.prf:
-D:\qt\5.12.4\msvc2017_64\mkspecs\features\win32\windows.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\testcase_targets.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\exceptions.prf:
 D:\qt\5.12.4\msvc2017_64\mkspecs\features\yacc.prf:
@@ -482,6 +482,7 @@ D:\qt\5.12.4\msvc2017_64\lib\Qt5AxContainer.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5AxBase.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5Charts.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5OpenGL.prl:
+D:\qt\5.12.4\msvc2017_64\lib\Qt5PrintSupport.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5Widgets.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5Gui.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5SerialBus.prl:
@@ -491,7 +492,6 @@ D:\qt\5.12.4\msvc2017_64\lib\Qt5Xml.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5Concurrent.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5SerialPort.prl:
 D:\qt\5.12.4\msvc2017_64\lib\Qt5Core.prl:
-D:\qt\5.12.4\msvc2017_64\lib\qtmain.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile plc_connect.pro -spec win32-msvc "CONFIG+=qtquickcompiler"
 

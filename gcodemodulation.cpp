@@ -1,14 +1,976 @@
-#include "gcodemodulation.h"
+﻿#include "gcodemodulation.h"
 #include "ui_gcodemodulation.h"
+#include "mainwindow.h"
+#include "./libssh2_1.11.0_x64/libssh2.h"
+#include "./libssh2_1.11.0_x64/libssh2_publickey.h"
+#include "./libssh2_1.11.0_x64/libssh2_sftp.h"
+
+#include <stdio.h>
+#include <winsock2.h>
+#include <libssh2.h>
+#include <iostream>
+
+#include <QMessageBox>
+#include <QTextBlock>  // Include the full definition of QTextBlock
+#include <QDir>
+#include <QRegularExpression>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QScrollBar>
+#include <QLayout>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QUrl>
+#include <QFile>
+#include <QObject>
+#include <QProcess>
+#include <QProgressDialog>
+#include <QFileInfo>
+
+#pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "libssh2.lib")
 
 gCodeModulation::gCodeModulation(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::gCodeModulation)
 {
     ui->setupUi(this);
+
+
+    // 1) 新建一个 QWidget 作为 scrollArea 的内容区
+      QWidget *dynamicContainer = new QWidget;
+      // 2) 给它一个垂直布局
+      QVBoxLayout *vlay = new QVBoxLayout(dynamicContainer);
+      vlay->setContentsMargins(4,4,4,4);
+      vlay->setSpacing(6);
+
+      // 3) 把它挂载到 scrollArea
+      ui->rangeContainer->setWidget(dynamicContainer);
+      ui->rangeContainer->setWidgetResizable(true);
+      ui->rangeContainer->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+      ui->rangeContainer->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+      // 4) 保存布局指针供 addRangeRow 使用
+      rangeLayout = vlay;
+    // 连接“添加范围”按钮
+    connect(ui->addRangeBtn, &QPushButton::clicked, this, &gCodeModulation::addRangeRow);
+    connect(ui->saveVBtn, &QPushButton::clicked, this, &gCodeModulation::on_saveBtn_clicked);
+
+    connect(ui->pbPaus, &QPushButton::clicked, this, &gCodeModulation::insertPaus);
+    connect(ui->pbdeleteCodeLine, &QPushButton::clicked, this, &gCodeModulation::deleteLine);
+    connect(ui->pbALLPaus, &QPushButton::clicked, this, &gCodeModulation::allInsertPaus);
+    connect(ui->pbDeleteALLPaus, &QPushButton::clicked, this, &gCodeModulation::allDeletePaus);
+    connect(ui->TransmissionBtn, &QPushButton::clicked,this, &gCodeModulation::TransmissionFile);
+
+    connect(ui->pbAganStart, &QPushButton::clicked, MainWindow::scanDetectCtrl, &ScanControlAbstract::on_aganStartScanBtn_clicked);
+
+    gcodePath = QCoreApplication::applicationDirPath() + "/PlcLogic/";
+    filePath=gcodePath+QString("%1.cnc").arg(workPiece);
 }
+
+
 
 gCodeModulation::~gCodeModulation()
 {
     delete ui;
+}
+
+void gCodeModulation::loadGCodeToPlainText()
+{
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(nullptr, QString::fromLocal8Bit("提示"),
+                                  QString::fromLocal8Bit("是否重新加载未更改数据？"),
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        // 执行重新加载操作
+        exportGCodeToFile(gcode);
+    }
+
+
+    QFile file(filePath); // gcodePath 是 G 代码文件的路径
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+
+        return;
+    }
+
+    QTextStream in(&file);
+    QString content = in.readAll();
+
+    ui->pTEgcode->clear();
+    ui->pTEgcode->setPlainText(content);
+
+    file.close();
+}
+
+void gCodeModulation::allInsertPaus()
+{
+    // 1. 原始文本按行拆分
+    // 默认就会保留空行
+    QStringList lines = ui->pTEgcode->toPlainText().split('\n');
+
+
+    // 2. 去除旧行号并重建
+    QStringList out;
+    int lineNum = 0;
+    for (int i = 0; i < lines.size(); ++i) {
+        // 去掉原行首的 Nxxx 和空白
+        QString content = lines[i];
+        content.remove(QRegularExpression(R"(^N\d+\s*)"));
+
+        // 拼接新行号 + 原内容
+        out << QString("N%1 %2").arg(lineNum).arg(content);
+        lineNum += 10;
+
+        // 对于非最后一行，再插入一条暂停指令
+        if (i + 1 < lines.size()) {
+            out << QString("N%1 M10 K10 L10").arg(lineNum);
+            lineNum += 10;
+        }
+    }
+
+    // 3. 将重建后的文本一次性写回编辑器
+    ui->pTEgcode->setPlainText(out.join('\n'));
+
+    // 4. 保存到文件
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this,
+                             QString::fromLocal8Bit("保存失败"),
+                             QString::fromLocal8Bit("无法保存到 %1:\n%2")
+                             .arg(filePath, file.errorString()));
+        return;
+    }
+    QTextStream outFile(&file);
+    outFile << ui->pTEgcode->toPlainText();
+    file.close();
+
+}
+
+
+void gCodeModulation::allDeletePaus(){
+
+    // 1. 按行拆分（保留空行）
+    QStringList lines = ui->pTEgcode->toPlainText().split('\n');
+
+    // 2. 过滤掉“暂停行”
+    //    我们认为所有包含“ M10 K10 L10” 的行都是暂停行
+    QStringList filtered;
+    for (const QString &line : lines) {
+        if (!line.contains(QRegularExpression(R"(\bM10\s+K10\s+L10\b)"))) {
+            filtered << line;
+        }
+    }
+
+    // 3. 重新去掉旧行号并按步长 10 重新编号
+    QStringList out;
+    int lineNum = 0;
+    for (int i = 0; i < filtered.size(); ++i) {
+        QString content = filtered[i];
+        // 去掉原行的 Nxxx 前缀
+        content.remove(QRegularExpression(R"(^N\d+\s*)"));
+        // 加上新行号
+        out << QString("N%1 %2").arg(lineNum).arg(content);
+        lineNum += 10;
+    }
+
+    // 4. 一次性写回编辑器
+    ui->pTEgcode->setPlainText(out.join('\n'));
+
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this,
+                             QString::fromLocal8Bit("保存失败"),
+                             QString::fromLocal8Bit("无法保存到 %1:\n%2")
+                             .arg(filePath, file.errorString()));
+        return;
+    }
+    QTextStream ts(&file);
+    ts << ui->pTEgcode->toPlainText();
+    file.close();
+
+
+
+
+}
+
+void gCodeModulation::insertPaus()
+{
+    QTextDocument *doc = ui->pTEgcode->document();
+    int insertLine = ui->sbPausLine->value(); // 获取要插入的位置（行号）
+
+    QTextBlock block = doc->findBlockByNumber(insertLine);
+    if (!block.isValid()) {
+        qWarning() << "Invalid line number:" << insertLine;
+        return;
+    }
+
+    // 创建文本游标并定位到指定行的末尾
+    QTextCursor cursor(block);
+    cursor.movePosition(QTextCursor::EndOfBlock);
+    cursor.insertBlock();
+
+    // 插入暂停指令
+    QString pauseText = "N%1  M10  K10  L10 ";
+    cursor.insertText(pauseText.arg((insertLine+1)*10));
+
+    // 更新后续行的行号
+    int totalBlocks = doc->blockCount();
+    for (int i = insertLine + 2; i < totalBlocks; i++) {
+        QTextBlock currentBlock = doc->findBlockByNumber(i);
+        if (!currentBlock.isValid())
+            continue;
+
+        QString lineText = currentBlock.text();
+        QRegularExpression re(R"(^N(\d+)\s+)");
+        QRegularExpressionMatch match = re.match(lineText);
+
+        qDebug()<<i<<"  "<<lineText;
+
+        if (match.hasMatch()) {
+            int newLineNumber = (i) * 10;
+            QString newLine = lineText;
+            newLine.replace(re, QString("N%1 ").arg(newLineNumber));
+            QTextCursor lineCursor(currentBlock);
+            lineCursor.select(QTextCursor::BlockUnderCursor);
+            lineCursor.removeSelectedText();
+            lineCursor.insertText("\n"+newLine);
+        }
+    }
+
+
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << ui->pTEgcode->toPlainText();
+        file.close();
+    } else {
+        QMessageBox::warning(this, QString::fromLocal8Bit("保存失败"),
+                             QString::fromLocal8Bit("无法保存到 %1:\n%2").arg(filePath, file.errorString()));
+    }
+}
+
+
+
+void gCodeModulation::deleteLine()
+{
+    QTextDocument *doc = ui->pTEgcode->document();
+    int deleteLine = ui->sbPausLine->value(); // 获取要删除的行号
+
+    QTextBlock block = doc->findBlockByNumber(deleteLine);
+    if (!block.isValid()) {
+        qWarning() << "Invalid line number:" << deleteLine;
+        return;
+    }
+
+    // 删除指定行
+    QTextCursor cursor(block);
+    cursor.select(QTextCursor::BlockUnderCursor);
+    cursor.removeSelectedText();
+    //cursor.deleteChar(); // 删除换行符
+    cursor.insertText("\n");
+    // 更新后续行的行号
+    int totalBlocks = doc->blockCount();
+    for (int i = deleteLine; i < totalBlocks; ++i) {
+        QTextBlock currentBlock = doc->findBlockByNumber(i);
+        if (!currentBlock.isValid())
+            continue;
+
+        QString lineText = currentBlock.text();
+        QRegularExpression re(R"(^N(\d+)\s+)");
+        QRegularExpressionMatch match = re.match(lineText);
+        if (match.hasMatch()) {
+            int newLineNumber = (i-1) * 10;
+            QString newLine = lineText;
+            newLine.replace(re, QString("N%1 ").arg(newLineNumber));
+            QTextCursor lineCursor(currentBlock);
+            lineCursor.select(QTextCursor::BlockUnderCursor);
+            lineCursor.removeSelectedText();
+            lineCursor.insertText(newLine+"\n");
+        }
+    }
+
+
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << ui->pTEgcode->toPlainText();
+        file.close();
+    } else {
+        QMessageBox::warning(this, QString::fromLocal8Bit("保存失败"),
+                             QString::fromLocal8Bit("无法保存到 %1:\n%2").arg(filePath, file.errorString()));
+    }
+}
+
+
+
+void gCodeModulation::exportGCodeToFile(const QString& gCode)
+{
+
+
+    QDir dir(gcodePath);
+    if (!dir.exists()) {
+        if (!dir.mkpath(gcodePath)) {
+            qDebug() << "Failed to create directory:" << gcodePath;
+            return;
+        }
+    }
+
+
+    // 打开文件并写入内容
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << gCode;
+        file.close();
+    } else {
+        qDebug() << "Can not open file:" << filePath;
+    }
+
+
+}
+
+
+
+void gCodeModulation::addRangeRow()
+{
+    QWidget *rowWidget = new QWidget;
+    QHBoxLayout *rowLayout = new QHBoxLayout(rowWidget);
+
+    QSpinBox *minBox = new QSpinBox;
+    QSpinBox *maxBox = new QSpinBox;
+    QSpinBox *vBox = new QSpinBox;
+    QSpinBox *accBox = new QSpinBox;
+    QPushButton *deleteBtn = new QPushButton(QString::fromLocal8Bit("删除"));
+
+    rowWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    rowWidget->setMinimumHeight(30);
+    rowLayout->setContentsMargins(4, 2, 4, 2);
+    rowLayout->setSpacing(8);
+
+    minBox->setRange(0, 1000);
+    maxBox->setRange(0, 1000);
+    vBox->setRange(0, 1000);
+    accBox->setRange(0, 1000);
+
+
+
+    rowLayout->addWidget(new QLabel(QString::fromLocal8Bit("范围:")));
+    rowLayout->addWidget(minBox);
+    rowLayout->addWidget(new QLabel("~"));
+    rowLayout->addWidget(maxBox);
+    rowLayout->addWidget(new QLabel(QString::fromLocal8Bit("v:")));
+    rowLayout->addWidget(vBox);
+    rowLayout->addWidget(new QLabel(QString::fromLocal8Bit("acc:")));
+    rowLayout->addWidget(accBox);
+    rowLayout->addWidget(deleteBtn);
+
+    rangeLayout->addWidget(rowWidget);
+
+    // 删除逻辑
+    connect(deleteBtn, &QPushButton::clicked, this, [=]() {
+        rangeLayout->removeWidget(rowWidget);
+        rowWidget->deleteLater();
+        // 可选：从列表中移除
+        for (int i = 0; i < rangeRows.size(); ++i) {
+            if (rangeRows[i].container == rowWidget) {
+                rangeRows.removeAt(i);
+                break;
+            }
+        }
+    });
+
+    // 存储组件引用
+    RangeRow row;
+    row.container = rowWidget;
+    row.minBox = minBox;
+    row.maxBox = maxBox;
+    row.vBox = vBox;
+    row.accBox = accBox;
+    rangeRows.append(row);
+}
+
+
+
+
+
+
+void gCodeModulation::on_saveBtn_clicked()
+{
+    savedRanges.clear();
+
+    for (const auto& row : rangeRows) {
+        int minVal = row.minBox->value();
+        int maxVal = row.maxBox->value();
+        int val    = row.vBox->value();
+        int acc    = row.accBox->value();
+
+        // 可选：校验
+        if (minVal > maxVal) std::swap(minVal, maxVal);
+
+        savedRanges.append({minVal, maxVal, val,acc});
+    }
+
+
+
+    QStringList lines = ui->pTEgcode->toPlainText().split('\n');
+
+
+    QStringList out;
+    QRegularExpression cmdRe("\\b(G0[123])\\b");  // 匹配 G01、G02、G03
+
+    for (const QString& line : lines) {
+        QString trimmedLine = line.trimmed();
+        QRegularExpressionMatch cmdMatch = cmdRe.match(trimmedLine);
+
+        if (cmdMatch.hasMatch()) {
+            QString cmd = cmdMatch.captured(1);  // 拿到 G01/G02/G03
+
+            if (cmd == "G01") {
+                // 直线运动，直接加固定速度/加速度
+                QString newLine = trimmedLine +
+                    QString(" F%1 E%2 E-%3")
+                        .arg(ui->dsbLineV->value())
+                        .arg(ui->dsbAccV->value())
+                        .arg(ui->dsbAccV->value());
+                out.append(newLine);
+                qDebug() << "line (G01):" << newLine;
+
+            } else {
+                // G02 或 G03 圆弧运动
+                // 提取 X/Y/I/J
+                QRegularExpression re("([XYIJ])([-\\d.]+)");
+                QRegularExpressionMatchIterator it = re.globalMatch(trimmedLine);
+
+                double x = 0, y = 0, i_val = 0, j_val = 0;
+                while (it.hasNext()) {
+                    auto m = it.next();
+                    QString axis = m.captured(1);
+                    double v = m.captured(2).toDouble();
+                    if (axis == "X") x = v;
+                    else if (axis == "Y") y = v;
+                    else if (axis == "I") i_val = v;
+                    else if (axis == "J") j_val = v;
+                }
+
+                double radius = calculateRadius(x, y, i_val, j_val);
+                std::pair<int, int> result   = getValueByRange(static_cast<int>(radius));
+
+                QString newLine = trimmedLine +
+                    QString(" F%1 E%2 E-%3")
+                        .arg(result.first)
+                        .arg(result.second)
+                        .arg(result.second);
+                out.append(newLine);
+                qDebug() << "arc (G02/G03):" << newLine;
+            }
+
+        } else {
+            // 不含 G01/G02/G03 的行，原样保留
+            out.append(trimmedLine);
+        }
+    }
+
+
+
+    // 写回编辑器
+    ui->pTEgcode->setPlainText(out.join('\n'));
+
+    // 保存到文件
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, tr("保存失败"),
+                             tr("无法保存到 %1:\n%2").arg(filePath, file.errorString()));
+        return;
+    }
+    QTextStream outFile(&file);
+    outFile << ui->pTEgcode->toPlainText();
+    file.close();
+
+
+    qDebug() << "保存完成，总数:" << savedRanges.size();
+}
+
+
+
+std::pair<int, int> gCodeModulation::getValueByRange(int input) {
+    for (const auto& r : savedRanges) {
+        if (input >= r.minValue && input <= r.maxValue) {
+            return std::make_pair(r.assignedValue, r.accValue);
+        }
+    }
+
+    // 如果没有匹配的范围，返回默认值
+    return std::make_pair(ui->dsbLineV->value(), ui->dsbAccV->value());
+}
+
+
+
+double gCodeModulation::calculateRadius(double endX, double endY, double centerI, double centerJ)
+{
+    double centerX = endX + centerI;
+    double centerY = endY + centerJ;
+    return std::hypot(endX - centerX, endY - centerY);
+}
+
+
+
+
+
+
+
+void gCodeModulation::TransmissionFile(){
+
+
+    //uploadFileWithSftpUPdate(filePath,"update","192.168.1.88","./PlcLogic/_cnc"+workPiece+".cnc",22,this);
+    uploadFileWithSftp();
+
+}
+
+
+
+
+int gCodeModulation::uploadFileWithSftp()
+{
+    // 进度条
+    QProgressDialog progress(QString::fromLocal8Bit("上传中..."), QString::fromLocal8Bit("取消"), 0, 100, nullptr);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setMinimumDuration(0);  // 立即显示
+    progress.setValue(0);  // 初始化进度
+
+    QString remotePath = "./PlcLogic/_cnc/" + workPiece + ".cnc";
+
+    const char *username = "update";
+    const char *password = "123456";
+    const char *hostname = "192.168.1.88";
+    const char *remoteFilePath = remotePath.toUtf8().constData();
+    const char *localFilePath = filePath.toUtf8().constData();
+    int port = 22;
+
+    // 初始化 libssh2
+    if (libssh2_init(0) != 0) {
+        std::cerr << "libssh2 initialization failed!" << std::endl;
+        return -1;
+    }
+
+    // 初始化 Windows Socket
+    WSADATA wsadata;
+    if (WSAStartup(MAKEWORD(2, 0), &wsadata) != 0) {
+        std::cerr << "WSAStartup failed!" << std::endl;
+        return -1;
+    }
+
+    // 创建 socket
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in sin;
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(port);
+    sin.sin_addr.s_addr = inet_addr(hostname);
+
+    if (::connect(sock, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0) {
+        std::cerr << "Failed to connect to host" << std::endl;
+        return -1;
+    }
+
+    // 创建 SSH 会话
+    LIBSSH2_SESSION *session = libssh2_session_init();
+    if (!session) {
+        std::cerr << "Failed to initialize libssh2 session" << std::endl;
+        return -1;
+    }
+
+    if (libssh2_session_handshake(session, sock) != 0) {
+        std::cerr << "SSH handshake failed" << std::endl;
+        return -1;
+    }
+
+    // 用户身份验证
+    if (libssh2_userauth_password(session, username, password) != 0) {
+        std::cerr << "Authentication failed" << std::endl;
+        return -1;
+    }
+
+    // 初始化 SFTP 会话
+    LIBSSH2_SFTP *sftp_session = libssh2_sftp_init(session);
+    if (!sftp_session) {
+        std::cerr << "Unable to initialize SFTP session" << std::endl;
+        return -1;
+    }
+
+    // 打开远程文件准备写入
+    LIBSSH2_SFTP_HANDLE *file_handle = libssh2_sftp_open(sftp_session, remoteFilePath,
+        LIBSSH2_FXF_WRITE | LIBSSH2_FXF_CREAT | LIBSSH2_FXF_TRUNC,
+        LIBSSH2_SFTP_S_IRUSR | LIBSSH2_SFTP_S_IWUSR | LIBSSH2_SFTP_S_IRGRP | LIBSSH2_SFTP_S_IROTH);
+    if (!file_handle) {
+        std::cerr << "Unable to open remote file for writing" << std::endl;
+        //return -1;
+        uploadFileWithSftp();
+    }
+
+    // 打开本地文件读取
+    FILE *local = fopen(localFilePath, "rb");
+    if (!local) {
+        std::cerr << "Failed to open local file" << std::endl;
+        return -1;
+    }
+
+    fseek(local, 0, SEEK_END);
+    long totalSize = ftell(local);
+    fseek(local, 0, SEEK_SET);
+    long transferredBytes = 0;
+    int currentProgress = 0;
+
+    // 缓冲区用于传输
+    char buffer[1024];
+    size_t n;
+
+    // 逐块读取并上传文件
+    while ((n = fread(buffer, 1, sizeof(buffer), local)) > 0) {
+        char *p = buffer;
+        while (n > 0) {
+            ssize_t written = libssh2_sftp_write(file_handle, p, n);
+            if (written < 0) {
+                std::cerr << "SFTP write error" << std::endl;
+                break;
+            }
+            p += written;
+            n -= written;
+
+            // 更新上传进度
+            transferredBytes += written;
+            currentProgress = static_cast<int>((transferredBytes * 100) / totalSize);
+            progress.setValue(currentProgress);
+            qApp->processEvents(); // 保持界面响应
+            if (progress.wasCanceled()) {
+                std::cerr << "Upload canceled" << std::endl;
+                fclose(local);
+                libssh2_sftp_close(file_handle);
+                libssh2_sftp_shutdown(sftp_session);
+                libssh2_session_disconnect(session, "Normal Shutdown");
+                libssh2_session_free(session);
+                closesocket(sock);
+                WSACleanup();
+                libssh2_exit();
+                return -1;
+            }
+        }
+    }
+
+    // 清理资源
+    fclose(local);
+    libssh2_sftp_close(file_handle);
+    libssh2_sftp_shutdown(sftp_session);
+    libssh2_session_disconnect(session, "Normal Shutdown");
+    libssh2_session_free(session);
+    closesocket(sock);
+    WSACleanup();
+    libssh2_exit();
+
+    _sleep(3000);
+    // 上传完成提示
+    std::cout << "File uploaded successfully!" << std::endl;
+    QMessageBox::information(nullptr, "Information", QString::fromLocal8Bit("传输完成"));
+    return 0;
+}
+
+
+
+//int gCodeModulation::uploadFileWithSftp()
+//{
+
+
+//    QProgressDialog progress(QString::fromLocal8Bit("上传中..."), QString::fromLocal8Bit("取消"), 0, 100, nullptr);
+//    progress.setWindowModality(Qt::WindowModal);
+//    progress.setMinimumDuration(0);  // 立即显示
+//    progress.setValue(0);  // 初始化进度
+
+
+
+//      QString remotePath="./PlcLogic/_cnc/"+workPiece+".cnc";
+
+//      const char *username = "update";
+//      const char *password = "123456";
+//      const char *hostname = "192.168.1.88";
+//      const char *remoteFilePath = remotePath.toUtf8().constData();
+//      const char *localFilePath = filePath.toUtf8().constData();
+//      int port = 22;
+
+//      // 初始化 libssh2
+//      libssh2_init(0);
+
+//      WSADATA wsadata;
+//      WSAStartup(MAKEWORD(2, 0), &wsadata);
+
+//      // 创建 socket
+//      SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+//      struct sockaddr_in sin;
+//      sin.sin_family = AF_INET;
+//      sin.sin_port = htons(port);
+//      sin.sin_addr.s_addr = inet_addr(hostname);
+
+//      if (::connect(sock, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0) {
+//          fprintf(stderr, "Failed to connect to host\n");
+//          return 1;
+//      }
+
+//      // 建立 SSH 会话
+//      LIBSSH2_SESSION *session = libssh2_session_init();
+//      libssh2_session_handshake(session, sock);
+
+//      // 登录
+//      if (libssh2_userauth_password(session, username, password)) {
+//          fprintf(stderr, "Authentication failed\n");
+//          return 1;
+//      }
+
+//      // 初始化 SFTP
+//      LIBSSH2_SFTP *sftp_session = libssh2_sftp_init(session);
+//      if (!sftp_session) {
+//          fprintf(stderr, "Unable to init SFTP session\n");
+//          return 1;
+//      }
+
+//      // 打开远程文件，准备写入（创建新文件或覆盖）
+//      LIBSSH2_SFTP_HANDLE *file_handle = libssh2_sftp_open(sftp_session, remoteFilePath,
+//          LIBSSH2_FXF_WRITE | LIBSSH2_FXF_CREAT | LIBSSH2_FXF_TRUNC,
+//          LIBSSH2_SFTP_S_IRUSR | LIBSSH2_SFTP_S_IWUSR |
+//          LIBSSH2_SFTP_S_IRGRP | LIBSSH2_SFTP_S_IROTH);
+//      if (!file_handle) {
+//          fprintf(stderr, "Unable to open remote file for writing\n");
+//          return 1;
+//      }
+
+//      // 打开本地文件读取内容
+//      FILE *local = fopen(localFilePath, "rb");
+//      if (!local) {
+//          fprintf(stderr, "Failed to open local file\n");
+//          return 1;
+//      }
+
+
+//      fseek(local, 0, SEEK_END);
+//      long totalSize = ftell(local);
+//      fseek(local, 0, SEEK_SET);
+//      long transferredBytes = 0;
+//      int currentProgress = 0;
+
+//      char buffer[1024];
+//      size_t n;
+//      while ((n = fread(buffer, 1, sizeof(buffer), local)) > 0) {
+//          char *p = buffer;
+//          while (n > 0) {
+//              ssize_t written = libssh2_sftp_write(file_handle, p, n);
+//              if (written < 0) {
+//                  fprintf(stderr, "SFTP write error\n");
+//                  break;
+//              }
+//              p += written;
+//              n -= written;
+
+//              transferredBytes += written;
+//              currentProgress = static_cast<int>((transferredBytes * 100) / totalSize);
+//              progress.setValue(currentProgress);
+//              qApp->processEvents(); // 保持界面响应
+//              if (progress.wasCanceled())  break;
+//          }
+
+
+
+
+//      }
+
+//      fclose(local);
+//      libssh2_sftp_close(file_handle);
+//      libssh2_sftp_shutdown(sftp_session);
+//      libssh2_session_disconnect(session, "Normal Shutdown");
+//      libssh2_session_free(session);
+//      closesocket(sock);
+//      WSACleanup();
+//      libssh2_exit();
+
+//      printf("File uploaded successfully!\n");
+//      _sleep(10000);
+//      QMessageBox::information(nullptr, "information", QString::fromLocal8Bit(" 传输完成   "));
+//      return 0;
+
+//}
+
+
+int gCodeModulation::uploadFileWithSftpUPdate( QString localFile,
+                                         QString remoteUser,
+                                        QString remoteHost,
+                                        QString remotePath,
+                                        int port,             // 新增端口参数
+                                        QWidget *parent)
+{
+    // 1. 计算本地文件总大小
+    QFileInfo fi(localFile);
+    qint64 totalBytes = fi.size();
+    if (totalBytes <= 0) {
+        QMessageBox::warning(parent, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("本地文件不存在或大小为 0"));
+        return -1;
+    }
+
+    // 2. 创建并显示进度对话框
+    QProgressDialog progressDlg(
+        QString::fromLocal8Bit("正在上传文件..."),
+        QString::fromLocal8Bit("取消"),
+        0,
+        int(totalBytes),
+        parent
+    );
+    progressDlg.setWindowModality(Qt::WindowModal);
+    progressDlg.show();
+
+    // 3. 初始化 Winsock & libssh2
+    WSADATA wsadata;
+    if (WSAStartup(MAKEWORD(2, 0), &wsadata) != 0) {
+        QMessageBox::warning(parent, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("WSAStartup 失败"));
+        return -1;
+    }
+    libssh2_init(0);
+
+    // 4. 建立 TCP socket 连接
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    struct sockaddr_in sin {};
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(port);
+    // Windows 下使用 inet_addr 转换 IPv4 地址
+    sin.sin_addr.s_addr = inet_addr(remoteHost.toUtf8().constData());
+
+    if (::connect(sock, (struct sockaddr*)(&sin), sizeof(sin)) != 0) {
+        QMessageBox::warning(parent, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("无法连接到服务器"));
+        WSACleanup();
+        return -1;
+    }
+
+    // 5. 建立 SSH 会话
+    LIBSSH2_SESSION *session = libssh2_session_init();
+    if (!session || libssh2_session_handshake(session, sock) != 0) {
+        QMessageBox::warning(parent, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("无法启动 SSH 会话"));
+        closesocket(sock);
+        WSACleanup();
+        return -1;
+    }
+    if (libssh2_userauth_password(session,
+                                  remoteUser.toUtf8().constData(),
+                                  "123456") != 0) {
+        QMessageBox::warning(parent, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("认证失败"));
+        libssh2_session_disconnect(session, "Auth Failed");
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return -1;
+    }
+
+    // 6. 初始化 SFTP 会话
+    LIBSSH2_SFTP *sftp = libssh2_sftp_init(session);
+    if (!sftp) {
+        QMessageBox::warning(parent, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("无法初始化 SFTP"));
+        libssh2_session_disconnect(session, "SFTP Init Failed");
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return -1;
+    }
+
+    // 7. 打开（或创建）远程文件
+    LIBSSH2_SFTP_HANDLE *remote = libssh2_sftp_open(sftp,
+        remotePath.toUtf8().constData(),
+        LIBSSH2_FXF_WRITE | LIBSSH2_FXF_CREAT | LIBSSH2_FXF_TRUNC,
+        LIBSSH2_SFTP_S_IRUSR | LIBSSH2_SFTP_S_IWUSR |
+        LIBSSH2_SFTP_S_IRGRP | LIBSSH2_SFTP_S_IROTH
+    );
+    if (!remote) {
+        QMessageBox::warning(parent, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("无法打开远程文件"));
+        libssh2_sftp_shutdown(sftp);
+        libssh2_session_disconnect(session, "File Open Failed");
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return -1;
+    }
+
+    // 8. 打开本地文件读取
+    QFile file(localFile);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::warning(parent, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("无法打开本地文件"));
+        libssh2_sftp_close(remote);
+        libssh2_sftp_shutdown(sftp);
+        libssh2_session_disconnect(session, "Local Open Failed");
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return -1;
+    }
+
+    // 9. 分块上传并更新进度
+    qint64 uploaded = 0;
+    const qint64 chunkSize = 32 * 1024;
+    while (!file.atEnd()) {
+        if (progressDlg.wasCanceled()) {
+            // 用户取消
+            libssh2_sftp_close(remote);
+            libssh2_sftp_shutdown(sftp);
+            libssh2_session_disconnect(session, "Aborted");
+            libssh2_session_free(session);
+            closesocket(sock);
+            WSACleanup();
+            QMessageBox::information(parent, QString::fromLocal8Bit("已取消"), QString::fromLocal8Bit("上传已取消"));
+            return -1;
+        }
+
+        QByteArray chunk = file.read(chunkSize);
+        const char *data = chunk.constData();
+        qint64 toWrite = chunk.size();
+        while (toWrite > 0) {
+            ssize_t rc = libssh2_sftp_write(remote, data, toWrite);
+            if (rc < 0) {
+                QMessageBox::warning(parent, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("SFTP 写入失败"));
+                file.close();
+                libssh2_sftp_close(remote);
+                libssh2_sftp_shutdown(sftp);
+                libssh2_session_disconnect(session, "Write Failed");
+                libssh2_session_free(session);
+                closesocket(sock);
+                WSACleanup();
+                return -1;
+            }
+            data += rc;
+            toWrite -= rc;
+            uploaded += rc;
+        }
+
+        progressDlg.setValue(int(uploaded));
+        QCoreApplication::processEvents();
+    }
+    file.close();
+
+    // 10. 清理资源
+    libssh2_sftp_close(remote);
+    libssh2_sftp_shutdown(sftp);
+    libssh2_session_disconnect(session, "Normal Shutdown");
+    libssh2_session_free(session);
+    closesocket(sock);
+    WSACleanup();
+    libssh2_exit();
+
+    progressDlg.setValue(int(totalBytes));
+    // 上传成功后，手动确认上传结果
+    QMessageBox msgBox(parent);
+    msgBox.setWindowTitle(QString::fromLocal8Bit("完成"));
+    msgBox.setText(QString::fromLocal8Bit("文件上传成功！"));
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.exec();  // 阻塞直到用户点击“确定”
+
+    return 0;
 }

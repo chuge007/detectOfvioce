@@ -15,7 +15,8 @@ TGraphicsViewRefactor::TGraphicsViewRefactor(QWidget *parent)
 :QGraphicsView(parent)
 {
     setRenderHint(QPainter::Antialiasing);
-    setCacheMode(QGraphicsView::CacheBackground);
+    //setCacheMode(QGraphicsView::CacheBackground);
+    setCacheMode(QGraphicsView::CacheNone);
     setScene(new QGraphicsScene());
     SetDefaultItem();
 
@@ -24,6 +25,7 @@ TGraphicsViewRefactor::TGraphicsViewRefactor(QWidget *parent)
     viewport()->setMouseTracking(true);
     setDragMode(QGraphicsView::ScrollHandDrag);  // 已设置
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse); // 缩放围绕鼠标
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     fitInView(sceneRect(), Qt::KeepAspectRatio); // 自动适配场景
@@ -593,4 +595,19 @@ void TGraphicsViewRefactor::mouseReleaseEvent(QMouseEvent *event)
     QGraphicsView::mouseReleaseEvent(event);
 }
 
+//中键双击居中
+void TGraphicsViewRefactor::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+    {
+        // 将视图中心设置为场景的中心
+        QRectF sceneRect = scene()->sceneRect(); // 场景矩形
+        QPointF centerPoint = sceneRect.center(); // 场景中心点
 
+        centerOn(centerPoint); // 让视图以 scene 中心为中心
+
+        return;
+    }
+
+    QGraphicsView::mouseDoubleClickEvent(event);
+}

@@ -1,11 +1,12 @@
-QT       += core gui widgets serialbus network sql  svg axcontainer charts opengl xml gui-private concurrent serialport
+QT       += core gui widgets serialbus network sql  svg axcontainer charts opengl xml gui-private concurrent serialport  printsupport widgets axbase
 
 #webenginewidgets
 #RC_ICONS = Phaseye.ico
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets network
 
-CONFIG += c++11  utf8
+CONFIG += c++11  utf8   console
+
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -20,22 +21,185 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     addroute_dialog.cpp \
+    ascan.cpp \
     dxflib/dl_dxf.cpp \
     dxflib/dl_writer_ascii.cpp \
     dxflib/dxfhelper.cpp \
     dxflib/dxfreader.cpp \
+    gcodemodulation.cpp \
+    imageProcessing.cpp \
+    imageprocessing.cpp \
     main.cpp \
     mainwindow.cpp \
     scanMovecontrl/scandetect_frictionwelding.cpp \
     widgetDefin/Graphics_view_zoom.cpp \
     widgetDefin/QTableViewSpe.cpp \
+    widgetDefin/databasemanager.cpp \
     widgetDefin/graphicTool.cpp \
     widgetDefin/route_worksence.cpp \
     widgetDefin/tgraphicsviewrefactor.cpp
 
 HEADERS += \
-    DataBase.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HBase.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HConst.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HCtype.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HDeclSpec.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HErrorDef.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HExtern.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HIntDef.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HInterfaceC.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HMacro.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HParallel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HProto.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HVersNum.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/Halcon.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HalconC.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/HalconCDefs.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/IPType.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconc/Hdevthread.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconc/Hvector.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HBarCode.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HBarrier.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HBeadInspectionModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HBgEsti.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HCalibData.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HCamPar.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HCameraSetupModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HClassBox.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HClassGmm.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HClassKnn.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HClassLUT.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HClassMlp.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HClassSvm.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HClassTrainData.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HColorTransLUT.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HComponentModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HComponentTraining.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HComputeDevice.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HCondition.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDataBase.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDataCode2D.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDeepMatching3D.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDeformableModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDeformableSurfaceMatchingResult.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDeformableSurfaceModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDescriptorModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDevThread.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDevWindowStack.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDict.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDlClassifier.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDlClassifierResult.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDlClassifierTrainResult.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDlDevice.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDlLayer.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDlModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDlModelCounting.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDlModelOcr.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDlPrune.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDrawingObject.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HDualQuaternion.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HEncryptedItem.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HEvent.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HException.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HFeatureSet.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HFile.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HFramegrabber.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HFunction1D.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HGenericShapeModelResult.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HHandle.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HHandleBase.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HHomMat2D.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HHomMat3D.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HIOChannel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HIODevice.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HIOStream.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HImage.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HInfo.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HLexicon.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HMatrix.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HMeasure.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HMemoryBlock.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HMessage.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HMessageQueue.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HMetrologyModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HMisc.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HMutex.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HNCCModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HOCRBox.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HOCRCnn.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HOCRKnn.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HOCRMlp.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HOCRSvm.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HOCV.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HObject.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HObjectBase.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HObjectModel3D.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HOperatorOverloads.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HOperatorSet.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HOperatorSetLegacy.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HPose.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HQuaternion.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HRegion.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HSampleIdentifier.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HScatteredDataInterpolator.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HScene3D.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HSerial.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HSerializedItem.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HShapeModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HShapeModel3D.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HSheetOfLightModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HSmartPtr.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HSocket.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HStereoModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HString.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HStructuredLightModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HSurfaceMatchingResult.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HSurfaceModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HSystem.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HTemplate.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HTextModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HTextResult.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HTextureInspectionModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HTextureInspectionResult.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HTuple.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HTupleElement.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HTupleLegacy.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HVariationModel.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HVector.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HWindow.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HXLD.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HXLDCont.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HXLDDistTrans.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HXLDExtPara.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HXLDModPara.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HXLDPara.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HXLDPoly.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HalconAPI.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HalconCpp.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HalconCppForwards.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HalconCppIncludes.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hclib/hclib_types.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hdevengine/HDevEngineCpp.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/CIOFrameGrab.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/CIOFrameGrabDefines.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/CIOIIDevice.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/CIOIIDeviceDefines.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/CORE1.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/DBNew.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HAlloc.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HBaseGP.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HComputeDeviceExt.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HError.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HInstance.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HInstanceDefines.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HMessageQueue.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HObjectModel3D.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HRLClip.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HXLD.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HpThread.h \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/IOSpy.h \
     addroute_dialog.h \
+    ascan.h \
     dxflib/dl_attributes.h \
     dxflib/dl_codes.h \
     dxflib/dl_creationadapter.h \
@@ -49,19 +213,33 @@ HEADERS += \
     dxflib/dl_writer_ascii.h \
     dxflib/dxfhelper.h \
     dxflib/dxfreader.h \
+    gcodemodulation.h \
+    imageProcessing.h \
+    imageprocessing.h \
+    libssh2_1.11.0_x64/libssh2.h \
+    libssh2_1.11.0_x64/libssh2_publickey.h \
+    libssh2_1.11.0_x64/libssh2_sftp.h \
     mainwindow.h \
     scanMovecontrl/modbusconfig.h \
     scanMovecontrl/scancontrolabstract.h \
     scanMovecontrl/scandetect_frictionwelding.h \
+    tool.h \
     widgetDefin/CoustomGraphicsView.h \
     widgetDefin/Graphics_view_zoom.h \
     widgetDefin/QTableViewSpe.h \
+    widgetDefin/databasemanager.h \
     widgetDefin/graphicTool.h \
     widgetDefin/route_worksence.h \
     widgetDefin/tgraphicsviewrefactor.h
 
 FORMS += \
+    ImageProcessing.ui \
     addroute_dialog.ui \
+    ascan.ui \
+    gcodemodulation.ui \
+    imageProcessing.ui \
+    imageprocessing.ui \
+    imageprocessing.ui \
     mainwindow.ui
 
 #INCLUDEPATH += $$PWD/include
@@ -196,6 +374,8 @@ UT_SDK_VTK_LIBS = -lvtkChartsCore-$${UT_SDK_VTK_VERSION} \
     -lvtkViewsQt-$${UT_SDK_VTK_VERSION} \
     -lvtkzlib-$${UT_SDK_VTK_VERSION} \
 
+
+
 CONFIG(debug, debug|release){
 UT_SDK_OTHER_LIBS += -lopencv_core453d \
     -lopencv_imgproc453d
@@ -327,3 +507,53 @@ QMAKE_LFLAGS += -Wl,-rpath,$${UT_SDK_LIBS_PATH}
 }
 
 
+
+DISTFILES += \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/lib/x64-win64/halcon.lib \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/lib/x64-win64/halconc.lib \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/lib/x64-win64/halconcpp.lib \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/lib/x64-win64/halconcppxl.lib \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/lib/x64-win64/halconcxl.lib \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/lib/x64-win64/halconxl.lib \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/lib/x64-win64/hdevenginecpp.lib \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/lib/x64-win64/hdevenginecppxl.lib \
+    C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/lib/x64-win64/libiomp5md.lib \
+    libssh2_1.11.0_x64/libssh2.dll \
+    libssh2_1.11.0_x64/libssh2.lib \
+    libssh2_1.11.0_x64/libssh2_static.lib
+
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2d
+else:unix: LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2
+
+INCLUDEPATH += $$PWD/libssh2_1.11.0_x64
+DEPENDPATH += $$PWD/libssh2_1.11.0_x64
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2_static
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2_staticd
+else:unix: LIBS += -L$$PWD/libssh2_1.11.0_x64/ -llibssh2_static
+
+INCLUDEPATH += $$PWD/libssh2_1.11.0_x64
+DEPENDPATH += $$PWD/libssh2_1.11.0_x64
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/libssh2_1.11.0_x64/liblibssh2_static.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/libssh2_1.11.0_x64/liblibssh2_staticd.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/libssh2_1.11.0_x64/libssh2_static.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/libssh2_1.11.0_x64/libssh2_staticd.lib
+else:unix: PRE_TARGETDEPS += $$PWD/libssh2_1.11.0_x64/liblibssh2_static.a
+
+
+
+INCLUDEPATH += C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include
+LIBS += -LC:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/lib/x64-win64 \
+        -lhalcon \
+        -lhalconc \
+        -lhalconcpp \
+        -lhalconcppxl \
+        -lhalconcxl \
+        -lhalconxl \
+        -lhdevenginecpp \
+        -lhdevenginecppxl \
+        -llibiomp5md
