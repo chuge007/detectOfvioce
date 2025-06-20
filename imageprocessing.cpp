@@ -524,7 +524,14 @@ double imageprocessing::action(){
   //转为区域（此时才能真正填充）
   GenRegionContourXld(ho_ContoursMoved, &ho_RegionCAD, "filled");
 
+  HObject   ConnectedContours;
+  Connection(ho_ContoursMoved, &ConnectedContours);
 
+
+    HTuple  Num;
+    CountObj(ConnectedContours, &Num);
+
+    qDebug()<<"Num"<<Num.I();
 
    HTuple color = HTuple(255).TupleConcat(0).TupleConcat(0); // 红色 RGB(255,0,0)
    PaintXld(ho_ContoursMoved, ho_OriginImage, &ImageWithXLD, color);

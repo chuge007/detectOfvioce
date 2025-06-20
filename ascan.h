@@ -33,6 +33,7 @@ public:
     std::vector<std::pair<float, float>> getNeighbors(float x, float y, float z, float r, float searchRange, float stepSize);
     void autoCorretionPathAlgrith(int index, float& x, float& y, float& z, float& r);
 
+    void waitForSignal(int timeoutMs=3000);
 private slots:
     void onNewConnection();  // 处理新连接
     void onReadyRead();      // 处理接收到的数据
@@ -42,6 +43,11 @@ private slots:
     void stepCorretionPath();
 
     void stopCorretionPath();
+
+
+signals:
+    void signalUpdated();
+
 private:
     Ui::ascan *ui;
     QTcpServer *tcpServer;  // TCP 服务器对象

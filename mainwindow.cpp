@@ -168,11 +168,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pbBackO,&QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::onBackOriginBtn_clicked);
 
     connect(ui->startScan_But, &QPushButton::clicked, this, &MainWindow::pbStartScanBtn);
+
     connect(ui->lineVelocity_lin, &QLineEdit::editingFinished, this, &MainWindow::PblinVelocity_lin);
     connect(ui->arcVelocity_lin, &QLineEdit::editingFinished, this, &MainWindow::PbarcVelocity_lin);
     connect(ui->AxleVelocity_lin, &QLineEdit::editingFinished, this, &MainWindow::PbAxleVelocity_lin);
     connect(ui->pointVelocity_lin, &QLineEdit::editingFinished, this, &MainWindow::PbPointVelocity_lin);
+
     connect(ui->setOrigin_but, &QPushButton::clicked, this, &MainWindow::PbSetOrigin);
+    connect(ui->smooth_but, &QPushButton::clicked, this, &MainWindow::PbsmoothCurve);
+    connect(ui->PoseCalculation_but, &QPushButton::clicked, this, &MainWindow::CalculatingAngles);
     connect(ui->insertArcPos_but, &QPushButton::clicked, this, &MainWindow::pbAddArcPos);
     connect(ui->insertLinePos_but, &QPushButton::clicked, this, &MainWindow::pbAddLinePos);
     connect(ui->DXFimport_but, &QPushButton::clicked, this, &MainWindow::pbDXFimportBut);
@@ -226,13 +230,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(addRoute, &addRoute_dialog::addBut_r_released, scanDetectCtrl, &ScanControlAbstract::on_rAddBtn_released);
 
 
-//    connect(scanDetectCtrl->modbusClient, &QModbusClient::stateChanged, this, [](QModbusDevice::State state){
-//        qDebug() << "[Modbus] State changed to:" << state;
-//    });
+    //    connect(scanDetectCtrl->modbusClient, &QModbusClient::stateChanged, this, [](QModbusDevice::State state){
+    //        qDebug() << "[Modbus] State changed to:" << state;
+    //    });
 
-//    connect(scanDetectCtrl->modbusClient, &QModbusClient::errorOccurred, this, [](QModbusDevice::Error error){
-//        qWarning() << "[Modbus] Error:" << error;
-//    });
+    //    connect(scanDetectCtrl->modbusClient, &QModbusClient::errorOccurred, this, [](QModbusDevice::Error error){
+    //        qWarning() << "[Modbus] Error:" << error;
+    //    });
 
 
     imageProcessingTool = new imageprocessing();
@@ -357,17 +361,21 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
 {
     qDebug()<<"updateAddRoute";
     dbManager->db.transaction();
-
+    QList<QString> curStartPos_list;
     if (addRoute->exec()) {
 
 
 
-        if (curRow<=0){return;}
-        QString x0=QString::number(model->data(model->index(curRow-1, 10), Qt::DisplayRole).toFloat(), 'f', 3);
-        QString y0=QString::number(model->data(model->index(curRow-1, 11), Qt::DisplayRole).toFloat(), 'f', 3);
-        QString z0=QString::number(model->data(model->index(curRow-1, 12), Qt::DisplayRole).toFloat(), 'f', 3);
-        QString r0=QString::number(model->data(model->index(curRow-1, 13), Qt::DisplayRole).toFloat(), 'f', 3);
-        QList<QString> curStartPos_list = {x0,y0,z0,r0};
+        if (curRow<=0){
+            curStartPos_list = {ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),
+                                ui->zCurPos_lab->text(),ui->rCurPos_lab->text()};
+        }else{
+            QString x0=QString::number(model->data(model->index(curRow-1, 10), Qt::DisplayRole).toFloat(), 'f', 3);
+            QString y0=QString::number(model->data(model->index(curRow-1, 11), Qt::DisplayRole).toFloat(), 'f', 3);
+            QString z0=QString::number(model->data(model->index(curRow-1, 12), Qt::DisplayRole).toFloat(), 'f', 3);
+            QString r0=QString::number(model->data(model->index(curRow-1, 13), Qt::DisplayRole).toFloat(), 'f', 3);
+            curStartPos_list={x0,y0,z0,r0};
+        }
 
         if(edit==0){
 
@@ -399,7 +407,7 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
         if (arc == 1) {
 
 
-            model->setData(model->index(curRow, 0), curRow);
+            //model->setData(model->index(curRow, 0), curRow);
             model->setData(model->index(curRow, 1), "arc");
             model->setData(model->index(curRow, 2), curStartPos_list.at(0));
             model->setData(model->index(curRow, 3), curStartPos_list.at(1));
@@ -419,7 +427,7 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
                       " end"<<curEndPos_list;
         } else {
 
-            model->setData(model->index(curRow, 0), curRow);
+            //model->setData(model->index(curRow, 0), curRow);
             model->setData(model->index(curRow, 1), "line");
             model->setData(model->index(curRow, 2), curStartPos_list.at(0));
             model->setData(model->index(curRow, 3), curStartPos_list.at(1));
@@ -433,6 +441,21 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
             qDebug()<<"***lin:*****start="<< curStartPos_list <<
                       " end"<<curEndPos_list;
         }
+
+        for (int row = 0; row < model->rowCount(); row++) {
+            model->setData(model->index(row, 0), row);  // 第 0 列设置为当前行号
+        }
+
+        QString x0=QString::number(model->data(model->index(curRow, 10), Qt::DisplayRole).toFloat(), 'f', 3);
+        QString y0=QString::number(model->data(model->index(curRow, 11), Qt::DisplayRole).toFloat(), 'f', 3);
+        QString z0=QString::number(model->data(model->index(curRow, 12), Qt::DisplayRole).toFloat(), 'f', 3);
+        QString r0=QString::number(model->data(model->index(curRow, 13), Qt::DisplayRole).toFloat(), 'f', 3);
+        curStartPos_list={x0,y0,z0,r0};
+
+        model->setData(model->index(curRow+1, 2), curStartPos_list.at(0));
+        model->setData(model->index(curRow+1, 3), curStartPos_list.at(1));
+        model->setData(model->index(curRow+1, 4), curStartPos_list.at(2));
+        model->setData(model->index(curRow+1, 5), curStartPos_list.at(3));
 
 
 
@@ -489,11 +512,15 @@ void MainWindow::pbAddArcPos()
         QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
         return;
     }
-    int route_rowNum=model->rowCount();
-    if (route_rowNum < 0) {
-        QMessageBox::information(this," warning ",QString::fromLocal8Bit(" 请先选择要编辑的行 "));
-        return;
+    int route_rowNum;
+    route_rowNum= ui->tableView->currentIndex().row();
+    if(route_rowNum<0){
+        route_rowNum=model->rowCount();
+    }else{
+
+        route_rowNum+=1;
     }
+
     addRoute->update_Ui(1,ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text(),NULL,NULL,NULL,NULL);
     updateAddRoute(1,0,route_rowNum);
 
@@ -508,11 +535,16 @@ void MainWindow::pbAddLinePos()
         QMessageBox::warning(nullptr, "error",QString::fromLocal8Bit( " 通讯未连接   "));
         return;
     }
-    int route_rowNum=model->rowCount();
-    if (route_rowNum < 0) {
-        QMessageBox::information(this," warning ",QString::fromLocal8Bit(" 请先选择要编辑的行 "));
-        return;
+    int route_rowNum;
+
+    route_rowNum= ui->tableView->currentIndex().row();
+    if(route_rowNum<0){
+        route_rowNum=model->rowCount();
+    }else{
+
+        route_rowNum+=1;
     }
+
     addRoute->update_Ui(0,ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text(),NULL,NULL,NULL,NULL);
     updateAddRoute(0,0,route_rowNum);
     ui->messText_lin->setText(QString::fromLocal8Bit(" 图元已添加   "));
@@ -553,47 +585,39 @@ void MainWindow::on_editPos_but_clicked()
 void MainWindow::on_delete_but_clicked()
 {
 
-    dbManager->db.transaction(); // 开始一个事务
+
+    // 开始事务
+    dbManager->db.transaction();
+
     QItemSelection selection(ui->tableView->selectionModel()->selection());
-    QList<int> rows;
-    foreach(const QModelIndex & index, selection.indexes())
-    {
-        rows.append( index.row() );
+    QSet<int> rowsSet;
+    foreach (const QModelIndex &index, selection.indexes()) {
+        rowsSet.insert(index.row());
     }
+    QList<int> rows = rowsSet.values();
+    std::sort(rows.begin(), rows.end(), std::greater<int>());  // 降序删除行，避免影响后面行号
 
-
-    int ok = QMessageBox::warning(this,QString::fromLocal8Bit("删除选中的行!"),QString::fromLocal8Bit("你确定删除当前选取中的行吗?"),QMessageBox::Yes,QMessageBox::No);
-    if(ok == QMessageBox::Yes)
-    {
-        int prev = -1;
-        for( int i = rows.count() - 1; i >= 0; i -= 1 )
-        {
-            int current = rows[i];
-            if( current != prev )
-            {
-                QSqlQuery query(dbManager->db);
-                // 1. 更新插入位置之后的行的 sort_order 值
-                query.prepare("UPDATE default_testdb SET sort_order = sort_order - 1 WHERE sort_order >= :insertOrder");
-                query.bindValue(":insertOrder", current);
-                if (!query.exec()) {
-                    qDebug() << "Failed to update sort_order: " << query.lastError();
-                    return;
-                }
-                model->removeRows( current, 1 );
-                prev = current;
-            }
+    int ret = QMessageBox::warning(this, QStringLiteral("删除选中行"), QStringLiteral("确定删除选中行吗？"), QMessageBox::Yes | QMessageBox::No);
+    if (ret == QMessageBox::Yes) {
+        for (int row : rows) {
+            model->removeRow(row);  // 直接调用QSqlTableModel的removeRow
         }
-
-        model->submitAll(); //提交，在数据库中删除该行
-
+        if (!model->submitAll()) {
+            qDebug() << "提交失败:" << model->lastError();
+            dbManager->db.rollback();
+            return;
+        }
+        dbManager->db.commit();
+    } else {
+        model->revertAll();
+        dbManager->db.commit();  // 不删除也要提交事务结束
     }
-    else
-    {
-        model->revertAll(); //如果不删除，则撤销
+
+    for (int row = 0; row < model->rowCount(); row++) {
+        model->setData(model->index(row, 0), row);  // 第 0 列设置为当前行号
     }
 
-    updateSence();
-    dbManager->db.commit(); // 提交
+
 }
 
 
@@ -681,6 +705,11 @@ void MainWindow::pbWriteInPLC()
 void MainWindow::pbStartScanBtn(){
 
     qDebug()<<"pbStartScanBtn";
+    if(!scanDetectCtrl->modbusState()){
+        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
+        return;
+    }
+
     ui->messText_lin->setText(QString::fromLocal8Bit(" 开始启动   "));
     if(isSelectChange){
 
@@ -1151,7 +1180,7 @@ void MainWindow::pbDXFimportBut()
 
 
     sortModelLine();
-    CalculatingAngles();
+
 }
 
 void MainWindow::sortModelLine()
@@ -1493,6 +1522,10 @@ void MainWindow::pbsetTrajec_start_clicked()
 QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
 {
 
+
+
+
+
     bool ok;
 
     //double addV=10;
@@ -1503,9 +1536,9 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
     double inputR =0;
     int row_count =model->rowCount();
     float x0,y0,z0,r0,x1,y1,z1,r1,x2,y2,z2,r2;
-    int firstNum=10;
+    int firstNum=0;
     if(row_count<0){return "";}
-    for(int i = 0; i < row_count; ++i)
+    for(int i = 0; i < row_count; i++)
     {
         name=model->data(model->index(i, 1), Qt::DisplayRole).toString();
         x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
@@ -1529,14 +1562,14 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
 
 
             gCode += QString("N%1 G01 X%2 Y%3 Z%4 A%5\n")
-                    .arg(firstNum+10)
+                    .arg(firstNum+=10)
                     .arg(x0)
                     .arg(y0)
                     .arg(z0)
                     .arg(r2);
 
             gCode += QString("N%1 G01 X%2 Y%3 Z%4 A%5\n")
-                    .arg(firstNum+10)
+                    .arg(firstNum+=10)
                     .arg(x2)
                     .arg(y2)
                     .arg(z2)
@@ -1583,10 +1616,21 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
             float I = center.x() - A.x();
             float J = center.y() - A.y();
 
+            if(i==0){
+
+                gCode += QString("N%1 G01 X%2 Y%3 Z%4 A%5\n")
+                        .arg(firstNum+=10)
+                        .arg(A.x())
+                        .arg(A.y())
+                        .arg(z0)
+                        .arg(r0);
+
+            }
+
 
             if(direction=="CW"){
                 gCode += QString("N%1 G02 X%2 Y%3 Z%4 A%5 I%6 J%7 \n")
-                        .arg(firstNum)
+                        .arg(firstNum+=10)
                         .arg(C.x())
                         .arg(C.y())
                         .arg(z2)
@@ -1597,7 +1641,7 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
             }
             else if(direction=="CCW"){
                 gCode += QString("N%1 G03 X%2 Y%3 Z%4 A%5 I%6 J%7 \n")
-                        .arg(firstNum)
+                        .arg(firstNum+=10)
                         .arg(C.x())
                         .arg(C.y())
                         .arg(z2)
@@ -1608,12 +1652,271 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
             }
 
         }
-        firstNum+=10;
+
+
     }
-    gCode+=QString("N%1 G01 X0  Y0 Z0 A0\n").arg(firstNum);
+
+
+
+
+    //    if (std::abs(r2) > 180) {
+    //        int step = 90;
+    //        int count = 1;
+    //        int sign = (r2 > 0) ? -1 : 1;
+
+    //        r2 += sign * step;
+    //        for (float a = r2; std::abs(a) > 90; a += sign * step) {
+    //            gCode += QString("N%1 G00 X0 Y0 Z0 A%2 E50 F30 F-30\n")
+    //                         .arg(firstNum += 10 )
+    //                         .arg(QString::number(a, 'f', 1));
+
+    //            qDebug()<<"gCode:"<<QString("N%1 G01 X0 Y0 Z0 A%2\n")
+    //                      .arg(firstNum  )
+    //                      .arg(QString::number(a, 'f', 1));
+
+    //            gCode+=QString("N%1 G04 P0.5\n").arg(firstNum += 10 );
+    //            count++;
+
+    //        }
+
+    //    }
+
+
+    gCode+=QString("N%1 G01 X0  Y0 Z0 A0\n").arg(firstNum+10);
     gCode += "M30";//程序结束
     return gCode;
 }
+
+
+//void MainWindow::CalculatingAngles(){
+
+//    bool ok;
+//    dbManager->db.transaction();
+
+//    QMessageBox::StandardButton reply;
+//    reply = QMessageBox::question(nullptr, QString::fromLocal8Bit("提示"),
+//                                  QString::fromLocal8Bit("是否校准当前点为第一个点，并把其R值作为角度计算的基点？（否则以0作为基点）"),
+//                                  QMessageBox::Yes | QMessageBox::No);
+
+//   double inputR;
+
+//   if (reply == QMessageBox::Yes){
+
+
+//       inputR=ui->rCurPos_lab->text().toDouble();
+
+
+
+//   }else{
+
+//     inputR=0;
+//   }
+
+
+//    int row_count =model->rowCount();
+//    float x0,y0,z0,r0,x1,y1,z1,r1,x2,y2,z2,r2;
+//    QString name;
+
+//    if(row_count<0){return ;}
+
+//    for(int i = 0; i < row_count; i++)
+//    {
+//        name=model->data(model->index(i, 1), Qt::DisplayRole).toString();
+//        x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
+//        y0=model->data(model->index(i, 3), Qt::DisplayRole).toFloat();
+//        z0=model->data(model->index(i, 4), Qt::DisplayRole).toFloat();
+//        r0=model->data(model->index(i, 5), Qt::DisplayRole).toFloat();
+
+//        x1=model->data(model->index(i, 6), Qt::DisplayRole).toFloat();
+//        y1=model->data(model->index(i, 7), Qt::DisplayRole).toFloat();
+//        z1=model->data(model->index(i, 8), Qt::DisplayRole).toFloat();
+//        r1=model->data(model->index(i, 9), Qt::DisplayRole).toFloat();
+
+//        x2=model->data(model->index(i, 10), Qt::DisplayRole).toFloat();
+//        y2=model->data(model->index(i, 11), Qt::DisplayRole).toFloat();
+//        z2=model->data(model->index(i, 12), Qt::DisplayRole).toFloat();
+//        r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
+
+
+
+
+
+
+
+//        //如果是直线，角度跟随不变
+
+//        if(name=="line"){
+//            float dx = x2 - x0;
+//            float dy = y2 - y0;
+
+
+//            // 计算方向角
+//            float angleRad = std::atan2(dy, dx);
+//            float angleDeg = (angleRad * 180.0 / M_PI);
+
+//            float angleDegEquivalence;
+//            int cycleNum = inputR / 360;
+
+//            qDebug()<<"___________________";
+//            qDebug()<<"angleDegbefor: "<<angleDeg<<"   "<<i;
+
+//            // 让姿态角随方向走
+//            if (angleDeg>=0){
+
+//                if(cycleNum>=0){
+
+//                    angleDegEquivalence=angleDeg+((cycleNum-1)*360);
+//                    angleDeg=angleDeg+(cycleNum*360);
+
+//                }else{
+
+//                    angleDegEquivalence=(angleDeg)-((cycleNum+1)*360);
+//                    angleDeg=angleDeg-(cycleNum*360);
+//                }
+
+
+
+
+//            }else{
+
+//                if(cycleNum>=0){
+
+//                    angleDegEquivalence=(angleDeg)+((cycleNum-1)*360);
+//                    angleDeg=angleDeg+(cycleNum*360);
+//                }else{
+
+//                    angleDegEquivalence=(angleDeg)-((cycleNum+1)*360);
+//                    angleDeg=angleDeg-(cycleNum*360);
+//                }
+
+//                 qDebug()<<"angleDegbefor  <0 "<<i;
+//            }
+
+//            float DifferenceA =fabs(angleDegEquivalence-inputR);
+//            float DifferenceB =fabs(angleDeg-inputR);
+
+
+//            qDebug()<<"curryR"<<inputR<<"   cycleNum:"<<cycleNum;
+//            qDebug()<<"angleDegEquivalence: "<<angleDegEquivalence<<"   "<<i;
+//            qDebug()<<"angleDegafter: "<<angleDeg<<"   "<<i;
+//            qDebug()<<"DifferenceA: "<<DifferenceA<<"   "<<i;
+//            qDebug()<<"DifferenceB: "<<DifferenceB<<"   "<<i;
+
+//            qDebug()<<"______________________________________";
+
+
+//            inputR = (DifferenceA < DifferenceB) ? angleDegEquivalence : angleDeg;
+
+//            double Previous_r0;
+//            if(i!=0){
+//                 Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
+//            }else{
+
+//                 Previous_r0=inputR;
+//            }
+//            model->setData(model->index(i, 4), 0);
+//            model->setData(model->index(i, 5), std::round(Previous_r0*100)/100);
+//            model->setData(model->index(i, 8), 0);
+//            model->setData(model->index(i, 12), 0);
+//            model->setData(model->index(i, 13), std::round(inputR * 100.0) / 100.0);
+
+
+//            //qDebug()<<"line: "<<inputR<<"   "<<i;
+
+//        }else{
+
+//            QPointF A, B, C;
+//            A= QPointF( x0,y0 );
+//            C = QPointF( x2,y2 );
+//            B= QPointF( x1,y1 );
+
+//            float area = (B.x() - A.x()) * (C.y() - A.y()) - (B.y() - A.y()) * (C.x() - A.x());
+//            if (fabs(area) < 1e-9) {
+//                //throw std::runtime_error("三点共线，无法构成圆弧");
+//                qDebug()<<"Three points are not collinear";
+//            }
+//            //计算中点和垂直方向向量
+//            QPointF M1((A.x() + B.x()) / 2, (A.y() + B.y()) / 2);
+//            QPointF M2((B.x() + C.x()) / 2, (B.y() + C.y()) / 2);
+
+//            QPointF d1(B.y() - A.y(), A.x() - B.x()); // AB 的垂直向量
+//            QPointF d2(C.y() - B.y(), B.x() - C.x()); // BC 的垂直向量
+
+//            // 求两条中垂线的交点
+//            float det = d1.x() * d2.y() - d1.y() * d2.x();
+//            if (fabs(det) < 1e-9) {
+//                //throw std::runtime_error("计算中垂线交点失败");
+//                qDebug()<<"Failed to calculate the intersection point of the perpendicular line in the middle";
+//            }
+
+//            float t = ((M2.x() - M1.x()) * d2.y() - (M2.y() - M1.y()) * d2.x()) / det;
+//            QPointF center(M1.x() + t * d1.x(), M1.y() + t * d1.y());
+
+//            // 计算半径
+//            //double radius = std::hypot(center.x() - A.x(), center.y() - A.y());
+
+//            // 判断旋转方向
+//            float crossProduct = (B.x() - A.x()) * (C.y() - B.y()) - (B.y() - A.y()) * (C.x() - B.x());
+//            QString direction = crossProduct > 0 ? "CCW" : "CW";
+
+//            float I = center.x() - A.x();
+//            float J = center.y() - A.y();
+
+
+//            // 将点转换为从圆心出发的向量
+//            QPointF vec1 = A - center;
+//            QPointF vec2 = C - center;
+//            // 计算两向量夹角（弧度）
+//            float angle = std::atan2(vec2.y(), vec2.x()) - std::atan2(vec1.y(), vec1.x());
+
+//            // 根据方向调整角度方向和范围
+//            if (direction == "CW" && angle > 0) {
+//                angle -= 2 * M_PI;
+//            }
+//            else if (direction == "CCW" && angle < 0) {
+//                angle += 2 * M_PI;
+//            }
+
+//            // 将弧度转为角度（如果你希望以角度为单位加到 inputR 上）
+//            double angleDeg = (angle * 180.0 / M_PI);
+
+//            inputR+=angleDeg;
+
+//            double Previous_r0;
+//            if(i!=0){
+//                Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
+//            }else {
+//                Previous_r0=inputR;
+//            }
+//            model->setData(model->index(i, 4), 0);
+//            model->setData(model->index(i, 5), std::round(Previous_r0*100)/100);
+//            model->setData(model->index(i, 8), 0);
+//            model->setData(model->index(i, 12), 0);
+//            model->setData(model->index(i, 13), std::round(inputR * 100.0) / 100.0);
+
+
+//        }
+
+
+//        model->setData(model->index(0, 5),model->data(model->index(0, 13), Qt::DisplayRole).toFloat());
+
+
+//    }
+
+//    model->submitAll();
+//    model->select();
+
+
+//    if (!dbManager->db.commit()) {
+//        qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
+//        QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
+//        dbManager->db.rollback();
+//    }
+
+//}
+
+
+
 
 
 void MainWindow::CalculatingAngles(){
@@ -1621,20 +1924,31 @@ void MainWindow::CalculatingAngles(){
     bool ok;
     dbManager->db.transaction();
 
-    QModelIndex index = model->index(0, 13);
-    double inputR=model->data(model->index(0, 13), Qt::DisplayRole).toFloat();
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(nullptr, QString::fromLocal8Bit("提示"),
+                                  QString::fromLocal8Bit("是否校准当前点为第一个点，并把其R值作为角度计算的基点？（否则以0作为基点）"),
+                                  QMessageBox::Yes | QMessageBox::No);
 
-    if (!index.isValid() || std::isnan(inputR)) {
-        inputR = 0.0;  // 默认值
+    double inputR,startR;
+
+    if (reply == QMessageBox::Yes){
+
+
+        startR=ui->rCurPos_lab->text().toDouble();
+
+    }else{
+
+        startR=0;
     }
 
+    inputR=startR;
     int row_count =model->rowCount();
     float x0,y0,z0,r0,x1,y1,z1,r1,x2,y2,z2,r2;
     QString name;
 
     if(row_count<0){return ;}
 
-    for(int i = 0; i < row_count; ++i)
+    for(int i = 0; i < row_count; i++)
     {
         name=model->data(model->index(i, 1), Qt::DisplayRole).toString();
         x0=model->data(model->index(i, 2), Qt::DisplayRole).toFloat();
@@ -1650,15 +1964,23 @@ void MainWindow::CalculatingAngles(){
         x2=model->data(model->index(i, 10), Qt::DisplayRole).toFloat();
         y2=model->data(model->index(i, 11), Qt::DisplayRole).toFloat();
         z2=model->data(model->index(i, 12), Qt::DisplayRole).toFloat();
-        //r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
+        r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
 
 
 
 
+        // 调整为与 inputR 最接近的角度
+        auto adjustAngleContinuity = [](float angleDeg, float inputR) -> float {
+            float delta = angleDeg - inputR;
+            qDebug() << "adjustAngleContinuity angleDeg: " << angleDeg ;
+            qDebug() << "delta: " << delta ;
+            qDebug() << "inputR: " << inputR ;
+            return angleDeg - std::round(delta / 360.0f) * 360.0f;
+        };
 
 
 
-
+        //如果是直线，角度跟随不变
 
         if(name=="line"){
             float dx = x2 - x0;
@@ -1667,67 +1989,30 @@ void MainWindow::CalculatingAngles(){
 
             // 计算方向角
             float angleRad = std::atan2(dy, dx);
-            float angleDeg = (angleRad * 180.0 / M_PI)+(inputR);
-
-            float angleDegEquivalence;
-            int cycleNum = r2 / 360;
-
-            qDebug()<<"___________________";
-            qDebug()<<"angleDegbefor: "<<angleDeg<<"   "<<i;
-
-            // 让姿态角随方向走
-            if (angleDeg>=0){
-
-                if(cycleNum>=0){
-
-                    angleDegEquivalence=(angleDeg)-((cycleNum-1)*360);
-                    angleDeg=angleDeg+(cycleNum*360);
-                }else{
-
-                    angleDegEquivalence=(angleDeg)+((cycleNum+1)*360);
-                    angleDeg=angleDeg-(cycleNum*360);
-                }
+            float angleDeg = angleRad * 180.0f / M_PI;
 
 
+            angleDeg = adjustAngleContinuity(angleDeg, inputR);
+
+            qDebug() << "Adjusted angleDeg: " << angleDeg << " i=" << i;
+
+            inputR = angleDeg+startR;
+
+            double Previous_r0;
+            if(i!=0){
+                Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
             }else{
 
-                if(cycleNum>=0){
-
-                    angleDegEquivalence=(angleDeg)-((cycleNum-1)*360);
-                    angleDeg=angleDeg+(cycleNum*360);
-                }else{
-
-                    angleDegEquivalence=(angleDeg)+((cycleNum+1)*360);
-                    angleDeg=angleDeg-(cycleNum*360);
-                }
+                Previous_r0=inputR;
             }
-
-            float DifferenceA =fabs(angleDegEquivalence-r2);
-            float DifferenceB =fabs(angleDeg-r2);
-
-            qDebug()<<"______________________________________";
-            qDebug()<<"curryR"<<r2<<"   cycleNum:"<<cycleNum;
-            qDebug()<<"DifferenceA: "<<DifferenceA<<"   "<<i;
-            qDebug()<<"DifferenceB: "<<DifferenceB<<"   "<<i;
-            qDebug()<<"angleDeg2: "<<angleDegEquivalence<<"   "<<i;
-            qDebug()<<"angleDegafter: "<<angleDeg<<"   "<<i;
-
-            if(DifferenceA<DifferenceB){
-                r2=angleDegEquivalence;
-            }else{
-                r2=angleDeg;
-            }
-
-            double Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
-
             model->setData(model->index(i, 4), 0);
             model->setData(model->index(i, 5), std::round(Previous_r0*100)/100);
             model->setData(model->index(i, 8), 0);
             model->setData(model->index(i, 12), 0);
-            model->setData(model->index(i, 13), std::round(r2 * 100.0) / 100.0);
+            model->setData(model->index(i, 13), std::round(inputR * 100.0) / 100.0);
 
 
-            qDebug()<<"line: "<<r2<<"   "<<i;
+            //qDebug()<<"line: "<<inputR<<"   "<<i;
 
         }else{
 
@@ -1783,22 +2068,32 @@ void MainWindow::CalculatingAngles(){
                 angle += 2 * M_PI;
             }
 
-            // 将弧度转为角度（如果你希望以角度为单位加到 r2 上）
-            double angleDeg = (angle * 180.0 / M_PI)+(inputR);
+            // 将弧度转为角度（如果你希望以角度为单位加到 inputR 上）
+            double angleDeg = (angle * 180.0 / M_PI);
 
-            // 加到 r2 上
-            r2 += angleDeg;
+            inputR+=angleDeg;
 
-            qDebug()<<"arc: "<<r2<<"   "<<i;
-            double Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
-
+            double Previous_r0;
+            if(i!=0){
+                Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
+            }else {
+                Previous_r0=inputR;
+            }
             model->setData(model->index(i, 4), 0);
             model->setData(model->index(i, 5), std::round(Previous_r0*100)/100);
             model->setData(model->index(i, 8), 0);
             model->setData(model->index(i, 12), 0);
-            model->setData(model->index(i, 13), std::round(r2 * 100.0) / 100.0);
+            model->setData(model->index(i, 13), std::round(inputR * 100.0) / 100.0);
 
 
+        }
+
+
+        if(i==0&&name!="line"){
+            model->setData(model->index(0, 5),startR);
+        }
+        else if(i==0&&name=="line"){
+            model->setData(model->index(0, 5),model->data(model->index(0, 13), Qt::DisplayRole).toFloat());
         }
 
     }
@@ -1815,6 +2110,8 @@ void MainWindow::CalculatingAngles(){
 
 }
 
+
+
 void MainWindow::PbCreatGcode()
 {
     if(ui->cBworkpiece->currentText()==""){
@@ -1825,7 +2122,9 @@ void MainWindow::PbCreatGcode()
     QString gCode = generateGCode();
     gcodeEidt->gcode=gCode;
     gcodeEidt->workPiece=ui->cBworkpiece->currentText();
+    gcodeEidt->filePath=gcodeEidt->gcodePath+QString("%1.cnc").arg(gcodeEidt->workPiece);
 
+    qDebug()<<"gcode filePath :"<<gcodeEidt->filePath;
     gcodeEidt->show();
     QTimer::singleShot(0, gcodeEidt, [this](){
         gcodeEidt->loadGCodeToPlainText();
@@ -1917,6 +2216,7 @@ void MainWindow::PbtrajectoryOffset() {
     double inputY = ui->traject_y0->text().toDouble(&ok);
     double inputR = ui->traject_r0->text().toDouble(&ok); // 角度
 
+
     // 获取第一个点的原始坐标
     double originalX = model->data(model->index(0, 2), Qt::DisplayRole).toFloat();
     double originalY = model->data(model->index(0, 3), Qt::DisplayRole).toFloat();
@@ -1924,7 +2224,7 @@ void MainWindow::PbtrajectoryOffset() {
     // 计算平移偏移量
     _translationX = originalX - inputX;
     _translationY = originalY - inputY;
-    _translationR = inputR;
+    _translationR = inputR-originR;
 
     // 将角度转换为弧度
     double radians = _translationR * M_PI / 180.0;
@@ -1996,13 +2296,13 @@ void MainWindow::PbtrajectoryOffset() {
     }
 
 
-    currentR=currentR-_translationR;
+    originR=inputR;
     settings->setValue("_translationX", _translationX);
     settings->setValue("_translationY", _translationY);
     settings->setValue("_translationR", _translationR);
-    settings->setValue("currentR", currentR);
+    settings->setValue("originR", originR);
 
-    ui->messText_lin->setText(QString::fromLocal8Bit("当前角度:%1").arg(currentR));
+    ui->messText_lin->setText(QString::fromLocal8Bit("当前角度:%1").arg(originR));
     model->submitAll();
     model->select();
     updateSence();
@@ -2068,8 +2368,303 @@ void MainWindow::PbSetOrigin(){
 
 
 }
+//___________________________________
+
+template<typename T>
+T clamp(T value, T minVal, T maxVal)
+{
+    return std::max(minVal, std::min(value, maxVal));
+}
+
+struct ArcInsertResult {
+    QPointF q0;      // 圆弧起点（替代前图元终点）
+    QPointF q2;      // 圆弧终点（替代后图元起点）
+    QPointF center;  // 圆心
+    qreal radius;
+};
 
 
+
+
+
+bool computeSmoothArc(QPointF P0, QPointF V0, QPointF P2, QPointF V2, qreal smoothFactor, ArcInsertResult& result)
+{
+    if (V0.manhattanLength() == 0 || V2.manhattanLength() == 0)
+        return false;
+
+    V0 /= std::hypot(V0.x(), V0.y());
+    V2 /= std::hypot(V2.x(), V2.y());
+
+    QPointF Q0 = P0 + V0 * smoothFactor;
+    QPointF Q2 = P2 - V2 * smoothFactor;
+
+    QPointF n0(-V0.y(), V0.x());
+    QPointF n2(V2.y(), -V2.x());
+
+    qreal a1 = n0.x(), b1 = -n2.x();
+    qreal a2 = n0.y(), b2 = -n2.y();
+    qreal c1 = Q2.x() - Q0.x();
+    qreal c2 = Q2.y() - Q0.y();
+
+    qreal det = a1 * b2 - a2 * b1;
+    if (qFuzzyIsNull(det)) return false;
+
+    qreal t = (c1 * b2 - c2 * b1) / det;
+    QPointF center = Q0 + n0 * t;
+    qreal radius = std::hypot(Q0.x() - center.x(), Q0.y() - center.y());
+
+    result.q0 = Q0;
+    result.q2 = Q2;
+    result.center = center;
+    result.radius = radius;
+
+    return true;
+}
+
+
+
+
+void MainWindow::insertSmoothArcBetween(int prevRow, int nextRow, qreal smoothFactor)
+{
+    if (prevRow < 0 || nextRow >= model->rowCount()) return;
+
+    // 取出前后点和方向向量
+    QPointF p0(model->data(model->index(prevRow, 10)).toFloat(),
+               model->data(model->index(prevRow, 11)).toFloat());
+    QPointF p1(model->data(model->index(prevRow, 2)).toFloat(),
+               model->data(model->index(prevRow, 3)).toFloat());
+    QPointF v0 = p0 - p1;
+
+    QPointF p2(model->data(model->index(nextRow, 2)).toFloat(),
+               model->data(model->index(nextRow, 3)).toFloat());
+    QPointF p3(model->data(model->index(nextRow, 10)).toFloat(),
+               model->data(model->index(nextRow, 11)).toFloat());
+    QPointF v2 = p3 - p2;
+
+    ArcInsertResult result;
+    if (!computeSmoothArc(p0, v0, p2, v2, smoothFactor, result)) {
+        QMessageBox::warning(this, "Error", QString::fromLocal8Bit("无法计算平滑圆弧，方向矢量可能无效"));
+        return;
+    }
+
+    // 修改前图元终点为 q0
+    model->setData(model->index(prevRow, 10), result.q0.x());
+    model->setData(model->index(prevRow, 11), result.q0.y());
+
+    // 修改后图元起点为 q2
+    model->setData(model->index(nextRow, 2), result.q2.x());
+    model->setData(model->index(nextRow, 3), result.q2.y());
+
+    // 插入新行
+    int insertRow = nextRow;
+    model->insertRow(insertRow);
+
+    model->setData(model->index(insertRow, 0), insertRow);  // id
+    model->setData(model->index(insertRow, 1), "arc");
+
+    model->setData(model->index(insertRow, 2), result.q0.x());
+    model->setData(model->index(insertRow, 3), result.q0.y());
+    model->setData(model->index(insertRow, 4), 0.0);  // z
+    model->setData(model->index(insertRow, 5), 0.0);  // r
+
+    model->setData(model->index(insertRow, 6), result.center.x());
+    model->setData(model->index(insertRow, 7), result.center.y());
+    model->setData(model->index(insertRow, 8), 0.0);
+    model->setData(model->index(insertRow, 9), 0.0);
+
+    model->setData(model->index(insertRow, 10), result.q2.x());
+    model->setData(model->index(insertRow, 11), result.q2.y());
+    model->setData(model->index(insertRow, 12), 0.0);
+    model->setData(model->index(insertRow, 13), 0.0);
+
+    model->submitAll();
+    model->select();
+    updateSence();
+}
+
+
+bool isDirectionSmooth(const QPointF& dir1, const QPointF& dir2, qreal angleTolDeg = 5.0)
+{
+    qDebug() << "=== isDirectionSmooth DEBUG START ===";
+    qDebug() << "dir1:" << dir1 << "dir2:" << dir2;
+
+    // Dot product
+    qreal dot = dir1.x() * dir2.x() + dir1.y() * dir2.y();
+    qDebug() << "Dot product:" << dot;
+
+    // Vector lengths
+    qreal len1 = std::hypot(dir1.x(), dir1.y());
+    qreal len2 = std::hypot(dir2.x(), dir2.y());
+    qDebug() << "Length of dir1:" << len1 << "Length of dir2:" << len2;
+
+    // Invalid direction if either vector has zero length
+    if (len1 == 0 || len2 == 0) {
+        qDebug() << "One of the vectors has zero length. Returning false.";
+        return false;
+    }
+
+    // Cosine of angle between vectors
+    qreal cosAngle = dot / (len1 * len2);
+    qDebug() << "Raw cos(angle):" << cosAngle;
+
+    // Clamp to avoid domain error in acos
+    cosAngle = clamp(cosAngle, -1.0, 1.0);
+    qDebug() << "Clamped cos(angle):" << cosAngle;
+
+    // Convert to degrees
+    qreal angleDeg = std::acos(cosAngle) * 180.0 / M_PI;
+    qDebug() << "Angle between vectors (degrees):" << angleDeg;
+
+    // Check against tolerance
+    bool result = std::abs(angleDeg) <= angleTolDeg;
+    qDebug() << "Is angle <= tolerance" << angleTolDeg << ":" << result;
+    qDebug() << "=== isDirectionSmooth DEBUG END ===";
+
+    return result;
+}
+
+
+QPointF getArcTangentAtPoint(const QPointF& center, const QPointF& pt)
+{
+    QPointF radial = pt - center;
+    return QPointF(-radial.y(), radial.x());  // 默认逆时针方向切线
+}
+
+
+QPointF getCircleCenterFrom3Points(const QPointF& A, const QPointF& B, const QPointF& C)
+{
+    // 计算边的中点
+    QPointF midAB = (A + B) / 2.0;
+    QPointF midBC = (B + C) / 2.0;
+
+    // 向量 AB 和 BC
+    QPointF vecAB = B - A;
+    QPointF vecBC = C - B;
+
+    // 构造中垂线方向（垂直向量）
+    QPointF perpAB(-vecAB.y(), vecAB.x());
+    QPointF perpBC(-vecBC.y(), vecBC.x());
+
+    // 解交点：midAB + t1 * perpAB = midBC + t2 * perpBC
+    double a1 = perpAB.x();
+    double b1 = -perpBC.x();
+    double c1 = midBC.x() - midAB.x();
+
+    double a2 = perpAB.y();
+    double b2 = -perpBC.y();
+    double c2 = midBC.y() - midAB.y();
+
+    double D = a1 * b2 - a2 * b1;
+
+    if (std::abs(D) < 1e-6) {
+        // 共线或几乎共线，无法确定唯一圆心
+        return QPointF(0, 0);
+    }
+
+    double t1 = (c1 * b2 - c2 * b1) / D;
+    return midAB + t1 * perpAB;
+}
+
+
+void MainWindow::PbsmoothCurve(){
+
+    double Zsmooth=15.0;
+
+    QString text=ui->cBworkpiece->currentText();
+
+    text=text+"_smoodth";
+
+    createOrSwitchTable(text,true);
+
+    // 添加新工件名称到 QComboBox
+    ui->cBworkpiece->addItem(text);
+    // 设置新添加的工件为当前选中项
+    ui->cBworkpiece->setCurrentText(text);
+
+    WorkpieceList.push_back(text);
+
+    QStringList list = QStringList::fromVector(WorkpieceList);
+
+    settings->setValue("WorkpieceList", list);
+
+    saveSetting();
+
+    int rowCount = model->rowCount();
+    if (rowCount < 2) return;
+
+    int offset = 0;  // 插入行会导致总行数增加，注意偏移
+
+
+    for (int i = 0; i < rowCount - 1; ++i)
+    {
+        int rowA = i ;
+        int rowB = rowA + 1;
+
+        QString typeA = model->data(model->index(rowA, 1)).toString().toLower();
+        QString typeB = model->data(model->index(rowB, 1)).toString().toLower();
+
+        QPointF A_start(model->data(model->index(rowA, 2)).toFloat(),
+                        model->data(model->index(rowA, 3)).toFloat());
+        QPointF A_tran(model->data(model->index(rowA, 8)).toFloat(),
+                       model->data(model->index(rowA, 9)).toFloat());
+        QPointF A_end(model->data(model->index(rowA, 10)).toFloat(),
+                      model->data(model->index(rowA, 11)).toFloat());
+
+        QPointF B_start(model->data(model->index(rowB, 2)).toFloat(),
+                        model->data(model->index(rowB, 3)).toFloat());
+        QPointF B_tran(model->data(model->index(rowB, 8)).toFloat(),
+                       model->data(model->index(rowB, 9)).toFloat());
+        QPointF B_end(model->data(model->index(rowB, 10)).toFloat(),
+                      model->data(model->index(rowB, 11)).toFloat());
+
+        bool smooth;
+
+        if (typeA == "line" && typeB == "line") {
+
+            QPointF dirA = A_end - A_start;
+            QPointF dirB = B_end - B_start;  // 或视方向选择 B_tran - B_start
+
+            smooth = isDirectionSmooth(dirA, dirB, Zsmooth);
+
+
+        } else if (typeA == "line" && typeB == "arc") {
+            QPointF centerB = getCircleCenterFrom3Points(B_start, B_tran, B_end);
+            QPointF lineDir = A_end - A_start;
+            QPointF arcTangent = getArcTangentAtPoint(centerB, B_start);
+
+            smooth = isDirectionSmooth(lineDir, arcTangent, Zsmooth);
+
+        } else if (typeA == "arc" && typeB == "line") {
+            QPointF centerA = getCircleCenterFrom3Points(A_start, A_tran, A_end);
+            QPointF lineDir = B_end - B_start;
+            QPointF arcTangent = getArcTangentAtPoint(centerA, A_end);
+
+            smooth = isDirectionSmooth(lineDir, arcTangent, Zsmooth);
+
+        } else if (typeA == "arc" && typeB == "arc") {
+            QPointF centerA = getCircleCenterFrom3Points(A_start, A_tran, A_end);
+            QPointF centerB = getCircleCenterFrom3Points(B_start, B_tran, B_end);
+
+            QPointF tangentA = getArcTangentAtPoint(centerA, A_end);
+            QPointF tangentB = getArcTangentAtPoint(centerB, B_start);
+
+            smooth = isDirectionSmooth(tangentA, tangentB, Zsmooth);
+        }
+
+        if (!smooth) {
+            //insertSmoothArcBetween(rowA, rowB, smoothFactor);  // 调用你已有函数
+            offset += 1;
+            qDebug() << "No smooth at" << A_end<<"  "<<i<<"\n\n";
+        }
+    }
+
+
+}
+
+
+
+
+//_______________________________________________________________________________
 void MainWindow::selectWorkpiece(){
 
 
@@ -2110,9 +2705,18 @@ void MainWindow::pbnewPiece(){
         }
 
     }
+
+    if(WorkpieceList.contains(text)){
+        ui->cBworkpiece->setCurrentText(text);
+        createOrSwitchTable(text, false);  // 切换到新表
+        return;}
+
+
     if (ok && !text.isEmpty()) {
 
         createOrSwitchTable(text,true);
+
+
 
         // 添加新工件名称到 QComboBox
         ui->cBworkpiece->addItem(text);
@@ -2237,114 +2841,70 @@ void MainWindow::cbSelectPlcType(int index){
 // 上移按钮点击事件
 void MainWindow::pbmoveUpForSort()
 {
-    // 获取当前选中的行
-    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedIndexes();
-    if (selectedIndexes.isEmpty()) return;
 
-    int row = selectedIndexes.first().row();
-    int rowCount = model->rowCount();
-    if (row ==0) {return;  }
 
-    // 获取当前行和下一行的数据
-    QSqlRecord currentRecord = model->record(row);
-    QSqlRecord nextRecord = model->record(row -1);
+    int row = ui->tableView->currentIndex().row();
+    if (row <= 0) return;
 
-    // 开始执行交换操作
-    QSqlQuery query(dbManager->db);
+    int aboveRow = row - 1;
 
-    // 先将当前行的 id 设置为临时值 -1
-    query.prepare("UPDATE Initialization SET id=-1 WHERE id=:id");
-    query.bindValue(":id", currentRecord.value("id"));
-    if (!query.exec()) {
-        qDebug() << "Error updating current row to temp id: " << query.lastError().text();
+    // 获取当前和上一行的 id（或 sort_order）
+    QVariant currentId = model->data(model->index(row, 0));
+    QVariant aboveId   = model->data(model->index(aboveRow, 0));
+
+    // 交换两行的 id
+    model->setData(model->index(row, 0), aboveId);
+    model->setData(model->index(aboveRow, 0), currentId);
+
+    // 提交更改
+    if (!model->submitAll()) {
+        qDebug() << "上移提交失败：" << model->lastError().text();
+        model->revertAll();
         return;
     }
 
-    // 将下一行的 id 设置为当前行的 id
-    query.prepare("UPDATE Initialization SET id=:id WHERE id=:next_id");
-    query.bindValue(":id", currentRecord.value("id"));
-    query.bindValue(":next_id", nextRecord.value("id"));
-    if (!query.exec()) {
-        qDebug() << "Error updating next row to current id: " << query.lastError().text();
-        return;
+    for (int row = 0; row < model->rowCount(); row++) {
+        model->setData(model->index(row, 0), row);  // 第 0 列设置为当前行号
     }
 
-    // 将临时 id (-1) 设置为下一行的 id
-    query.prepare("UPDATE Initialization SET id=:id WHERE id=-1");
-    query.bindValue(":id", nextRecord.value("id"));
-    if (!query.exec()) {
-        qDebug() << "Error updating temp id to next id: " << query.lastError().text();
-        return;
-    }
-
-    // 提交更改并调试
-    if (model->submitAll()) {
-        qDebug() << "Changes submitted successfully.";
-    } else {
-        qDebug() << "Error submitting changes: " << model->lastError().text();
-    }
-
-
-    // 重新选择数据以更新视图
+    // 重新选中交换后的那一行
     model->select();
+    ui->tableView->selectRow(aboveRow);
     updateSence();
 }
 
 // 下移按钮点击事件
 void MainWindow::pbmoveDownForSort()
 {
-    // 获取当前选中的行
-    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedIndexes();
-    if (selectedIndexes.isEmpty()) return;
 
-    int row = selectedIndexes.first().row();
+
+    int row = ui->tableView->currentIndex().row();
     int rowCount = model->rowCount();
-    if (row ==rowCount) {return;  }
+    if (row >= rowCount - 1) return;
 
-    // 获取当前行和下一行的数据
-    QSqlRecord currentRecord = model->record(row);
-    QSqlRecord nextRecord = model->record(row +1);
+    int belowRow = row + 1;
 
+    // 获取当前和下一行的 id（或 sort_order）
+    QVariant currentId = model->data(model->index(row, 0));
+    QVariant belowId   = model->data(model->index(belowRow, 0));
 
-    // 开始执行交换操作
-    QSqlQuery query(dbManager->db);
+    // 交换两行的 id
+    model->setData(model->index(row, 0), belowId);
+    model->setData(model->index(belowRow, 0), currentId);
 
-    // 先将当前行的 id 设置为临时值 -1
-    query.prepare("UPDATE Initialization SET id=-1 WHERE id=:id");
-    query.bindValue(":id", currentRecord.value("id"));
-    if (!query.exec()) {
-        qDebug() << "Error updating current row to temp id: " << query.lastError().text();
+    // 提交更改
+    if (!model->submitAll()) {
+        qDebug() << "下移提交失败：" << model->lastError().text();
+        model->revertAll();
         return;
     }
 
-    // 将下一行的 id 设置为当前行的 id
-    query.prepare("UPDATE Initialization SET id=:id WHERE id=:next_id");
-    query.bindValue(":id", currentRecord.value("id"));
-    query.bindValue(":next_id", nextRecord.value("id"));
-    if (!query.exec()) {
-        qDebug() << "Error updating next row to current id: " << query.lastError().text();
-        return;
+    for (int row = 0; row < model->rowCount(); row++) {
+        model->setData(model->index(row, 0), row);  // 第 0 列设置为当前行号
     }
-
-    // 将临时 id (-1) 设置为下一行的 id
-    query.prepare("UPDATE Initialization SET id=:id WHERE id=-1");
-    query.bindValue(":id", nextRecord.value("id"));
-    if (!query.exec()) {
-        qDebug() << "Error updating temp id to next id: " << query.lastError().text();
-        return;
-    }
-
-    // 提交更改并调试
-    if (model->submitAll()) {
-        qDebug() << "Changes submitted successfully.";
-    } else {
-        qDebug() << "Error submitting changes: " << model->lastError().text();
-    }
-
-
-
-    // 重新选择数据以更新视图
+    // 重新选中交换后的那一行
     model->select();
+    ui->tableView->selectRow(belowRow);
     updateSence();
 }
 
@@ -2493,6 +3053,17 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
         }
 
         if (q.next()) {
+
+
+            QString clearSQL = QString("DELETE FROM %1;").arg(qtgt);
+            if (!q.exec(clearSQL)) {
+                qDebug() << "清空目标表失败：" << q.lastError().text() << clearSQL;
+                dbManager->db.rollback();
+                return;
+            }
+
+
+
             QString copySQL = QString(
                         "INSERT INTO %1 SELECT * FROM %2;"
                         ).arg(qtgt).arg(qsrc);
@@ -2590,6 +3161,7 @@ void MainWindow::initSetting() {
     ui->traject_z0->setText(settings->value("traject_z0", "0").toString());
     ui->traject_r0->setText(settings->value("traject_r0", "0").toString());
 
+    originR=settings->value("originR", "0").toDouble();
     // Load workpiece list
     QStringList pieces = settings->value("WorkpieceList", QStringList()).toStringList();
     if (pieces.isEmpty()) {

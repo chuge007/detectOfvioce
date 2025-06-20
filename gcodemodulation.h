@@ -43,12 +43,6 @@ public:
 
     int uploadFileWithSftp();
 
-    int uploadFileWithSftpUPdate( QString localFile,
-                                            QString remoteUser,
-                                            QString remoteHost,
-                                            QString remotePath,
-                                            int port,             // 新增端口参数
-                                            QWidget *parent);
 
 private slots:
     void allInsertPaus();
@@ -58,6 +52,8 @@ private slots:
 
     void addRangeRow();
     void on_saveBtn_clicked();
+
+    void on_trajectory_smooth_clicked();
 
     void TransmissionFile();
 

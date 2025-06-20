@@ -12,11 +12,23 @@ int main(int argc, char *argv[])
 {
     //QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 
-    //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    //QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+
 
     QApplication a(argc, argv);
+
+
+//    qreal currentDpi = QGuiApplication::primaryScreen()->logicalDotsPerInch();
+//    QFont defaultFont = a.font();
+//    QFontInfo fontInfo(defaultFont);  // 获取当前字体信息
+//    qreal baseDpi = fontInfo.pixelSize() / defaultFont.pointSizeF() * 72.0;
+
+//    // 然后缩放
+//    defaultFont.setPointSizeF(defaultFont.pointSizeF() * currentDpi / baseDpi);
+//    a.setFont(defaultFont);
 
 
     QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);

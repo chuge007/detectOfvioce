@@ -40,7 +40,7 @@ void scanDetect_frictionWelding::initWidget()
     modbusClient = new QModbusTcpClient(this);
 
     timer = new QTimer(this);
-    timer->setInterval(120);
+    timer->setInterval(50);
 
 }
 
