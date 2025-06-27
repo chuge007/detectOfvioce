@@ -557,3 +557,6 @@ LIBS += -LC:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/l
         -lhdevenginecpp \
         -lhdevenginecppxl \
         -llibiomp5md
+
+RESOURCES += \
+    resource.qrc

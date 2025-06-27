@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QList>
 #include<QMessageBox>
+#include <QCloseEvent>
+
 addRoute_dialog::addRoute_dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addRoute_dialog)

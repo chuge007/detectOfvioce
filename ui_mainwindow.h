@@ -12,6 +12,7 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -87,6 +88,9 @@ public:
     QComboBox *processType_cb;
     QLabel *label_22;
     QPushButton *pbBackO;
+    QPushButton *smooth_but;
+    QPushButton *PoseCalculation_but;
+    QDoubleSpinBox *smoothX_dsb;
     TGraphicsViewRefactor *graphicsView;
     QTabWidget *tabWidget;
     QWidget *tab_2;
@@ -99,6 +103,7 @@ public:
     QTableView *tableView;
     QPushButton *moveUpTabelRow_btu;
     QPushButton *moveDownTabelRow_btu;
+    QWidget *tab;
     QComboBox *plcType_cb;
     QLabel *label_3;
     QLabel *label_15;
@@ -286,7 +291,7 @@ public:
         alarmReset_but->setSizePolicy(sizePolicy);
         setOrigin_but = new QPushButton(frame);
         setOrigin_but->setObjectName(QString::fromUtf8("setOrigin_but"));
-        setOrigin_but->setGeometry(QRect(590, 140, 101, 41));
+        setOrigin_but->setGeometry(QRect(710, 140, 101, 41));
         sizePolicy.setHeightForWidth(setOrigin_but->sizePolicy().hasHeightForWidth());
         setOrigin_but->setSizePolicy(sizePolicy);
         stopScan_but = new QPushButton(frame);
@@ -432,7 +437,7 @@ public:
         selectAxitO_cb->addItem(QString());
         selectAxitO_cb->addItem(QString());
         selectAxitO_cb->setObjectName(QString::fromUtf8("selectAxitO_cb"));
-        selectAxitO_cb->setGeometry(QRect(590, 90, 101, 41));
+        selectAxitO_cb->setGeometry(QRect(710, 90, 101, 41));
         sizePolicy.setHeightForWidth(selectAxitO_cb->sizePolicy().hasHeightForWidth());
         selectAxitO_cb->setSizePolicy(sizePolicy);
         selectAxitO_cb->setLayoutDirection(Qt::LeftToRight);
@@ -445,7 +450,7 @@ public:
         line_7->setFrameShadow(QFrame::Sunken);
         frame_2 = new QFrame(frame);
         frame_2->setObjectName(QString::fromUtf8("frame_2"));
-        frame_2->setGeometry(QRect(710, 40, 291, 151));
+        frame_2->setGeometry(QRect(820, 40, 181, 151));
         sizePolicy.setHeightForWidth(frame_2->sizePolicy().hasHeightForWidth());
         frame_2->setSizePolicy(sizePolicy);
         frame_2->setStyleSheet(QString::fromUtf8("border: 2px solid rgb(200, 200, 200);\n"
@@ -471,6 +476,19 @@ public:
         pbBackO->setGeometry(QRect(1500, 100, 101, 41));
         sizePolicy.setHeightForWidth(pbBackO->sizePolicy().hasHeightForWidth());
         pbBackO->setSizePolicy(sizePolicy);
+        smooth_but = new QPushButton(frame);
+        smooth_but->setObjectName(QString::fromUtf8("smooth_but"));
+        smooth_but->setGeometry(QRect(560, 140, 141, 41));
+        sizePolicy.setHeightForWidth(smooth_but->sizePolicy().hasHeightForWidth());
+        smooth_but->setSizePolicy(sizePolicy);
+        PoseCalculation_but = new QPushButton(frame);
+        PoseCalculation_but->setObjectName(QString::fromUtf8("PoseCalculation_but"));
+        PoseCalculation_but->setGeometry(QRect(710, 40, 101, 41));
+        sizePolicy.setHeightForWidth(PoseCalculation_but->sizePolicy().hasHeightForWidth());
+        PoseCalculation_but->setSizePolicy(sizePolicy);
+        smoothX_dsb = new QDoubleSpinBox(frame);
+        smoothX_dsb->setObjectName(QString::fromUtf8("smoothX_dsb"));
+        smoothX_dsb->setGeometry(QRect(560, 90, 141, 41));
         frame_2->raise();
         imageProcess_but->raise();
         startScan_But->raise();
@@ -504,6 +522,9 @@ public:
         selectAxitO_cb->raise();
         line_7->raise();
         pbBackO->raise();
+        smooth_but->raise();
+        PoseCalculation_but->raise();
+        smoothX_dsb->raise();
         graphicsView = new TGraphicsViewRefactor(centralwidget);
         graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
         graphicsView->setEnabled(true);
@@ -516,7 +537,7 @@ public:
         graphicsView->setInteractive(true);
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
-        tabWidget->setGeometry(QRect(1200, 130, 821, 1031));
+        tabWidget->setGeometry(QRect(1220, 130, 801, 1051));
         sizePolicy.setHeightForWidth(tabWidget->sizePolicy().hasHeightForWidth());
         tabWidget->setSizePolicy(sizePolicy);
         tabWidget->setLayoutDirection(Qt::LeftToRight);
@@ -569,6 +590,9 @@ public:
         sizePolicy.setHeightForWidth(moveDownTabelRow_btu->sizePolicy().hasHeightForWidth());
         moveDownTabelRow_btu->setSizePolicy(sizePolicy);
         tabWidget->addTab(tab_2, QString());
+        tab = new QWidget();
+        tab->setObjectName(QString::fromUtf8("tab"));
+        tabWidget->addTab(tab, QString());
         plcType_cb = new QComboBox(centralwidget);
         plcType_cb->addItem(QString());
         plcType_cb->addItem(QString());
@@ -821,6 +845,8 @@ public:
 
         label_22->setText(QApplication::translate("MainWindow", "\345\267\245\350\211\272\347\261\273\345\236\213\357\274\232", nullptr));
         pbBackO->setText(QApplication::translate("MainWindow", "\345\233\236\345\216\237\347\202\271", nullptr));
+        smooth_but->setText(QApplication::translate("MainWindow", "\344\270\200\351\224\256\351\241\272\346\273\221", nullptr));
+        PoseCalculation_but->setText(QApplication::translate("MainWindow", "\345\247\277\346\200\201\350\256\241\347\256\227", nullptr));
         moveDirectionNot_but->setText(QApplication::translate("MainWindow", "\350\277\220\345\212\250\346\226\271\345\220\221\345\217\215\350\275\254", nullptr));
         insertArcPos_but->setText(QApplication::translate("MainWindow", "\346\217\222\345\205\245\345\234\206\345\274\247", nullptr));
         delete_but->setText(QApplication::translate("MainWindow", "\345\210\240\351\231\244", nullptr));
@@ -830,6 +856,7 @@ public:
         moveUpTabelRow_btu->setText(QApplication::translate("MainWindow", "\345\220\221\344\270\212\347\247\273\345\212\250\350\241\214", nullptr));
         moveDownTabelRow_btu->setText(QApplication::translate("MainWindow", "\345\220\221\344\270\213\347\247\273\345\212\250\350\241\214", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("MainWindow", "Trajectory Scan", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", " plcState", nullptr));
         plcType_cb->setItemText(0, QApplication::translate("MainWindow", "h5u", nullptr));
         plcType_cb->setItemText(1, QApplication::translate("MainWindow", "ac700", nullptr));
 

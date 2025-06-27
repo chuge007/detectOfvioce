@@ -550,7 +550,7 @@
     <widget class="QPushButton" name="setOrigin_but">
      <property name="geometry">
       <rect>
-       <x>590</x>
+       <x>710</x>
        <y>140</y>
        <width>101</width>
        <height>41</height>
@@ -1077,7 +1077,7 @@
     <widget class="QComboBox" name="selectAxitO_cb">
      <property name="geometry">
       <rect>
-       <x>590</x>
+       <x>710</x>
        <y>90</y>
        <width>101</width>
        <height>41</height>
@@ -1135,9 +1135,9 @@
     <widget class="QFrame" name="frame_2">
      <property name="geometry">
       <rect>
-       <x>710</x>
+       <x>820</x>
        <y>40</y>
-       <width>291</width>
+       <width>181</width>
        <height>151</height>
       </rect>
      </property>
@@ -1230,6 +1230,54 @@
       <string>回原点</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="smooth_but">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>140</y>
+       <width>141</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>一键顺滑</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="PoseCalculation_but">
+     <property name="geometry">
+      <rect>
+       <x>710</x>
+       <y>40</y>
+       <width>101</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>姿态计算</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="smoothX_dsb">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>90</y>
+       <width>141</width>
+       <height>41</height>
+      </rect>
+     </property>
+    </widget>
     <zorder>frame_2</zorder>
     <zorder>imageProcess_but</zorder>
     <zorder>startScan_But</zorder>
@@ -1263,6 +1311,9 @@
     <zorder>selectAxitO_cb</zorder>
     <zorder>line_7</zorder>
     <zorder>pbBackO</zorder>
+    <zorder>smooth_but</zorder>
+    <zorder>PoseCalculation_but</zorder>
+    <zorder>smoothX_dsb</zorder>
    </widget>
    <widget class="TGraphicsViewRefactor" name="graphicsView">
     <property name="enabled">
@@ -1307,10 +1358,10 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>1200</x>
+      <x>1220</x>
       <y>130</y>
-      <width>821</width>
-      <height>1031</height>
+      <width>801</width>
+      <height>1051</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1500,6 +1551,11 @@
        <string>向下移动行</string>
       </property>
      </widget>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string> plcState</string>
+     </attribute>
     </widget>
    </widget>
    <widget class="QComboBox" name="plcType_cb">

@@ -42,6 +42,7 @@ public:
 
     HObject ho_OriginImage;
     HTuple windowHandle;
+    double contourArea;
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 

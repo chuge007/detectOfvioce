@@ -70,6 +70,7 @@ void ascan::onReadyRead()
 
     PointSing=message.toDouble();
     isSingUPdate=true;
+    emit signalUpdated();
 
     if(isStanPointSing){
         stanPointSing=message.toDouble();
@@ -83,9 +84,9 @@ void ascan::onReadyRead()
 void ascan::onSendstanPoint()
 {
     if (tcpSocket) {
+        isStanPointSing=true;
         sendData("1");  // 发送一个“1”到服务器
     }
-    isStanPointSing=true;
 }
 
 void ascan::sendData(const QString &data)
@@ -96,7 +97,19 @@ void ascan::sendData(const QString &data)
     }
 }
 
+void ascan::waitForSignal(int timeoutMs) {
+    QEventLoop loop;
+    QTimer timeoutTimer;
+    timeoutTimer.setSingleShot(true);
 
+    // 信号触发时退出循环
+    connect(this, &ascan::signalUpdated, &loop, &QEventLoop::quit);
+    // 超时也退出循环
+    connect(&timeoutTimer, &QTimer::timeout, &loop, &QEventLoop::quit);
+
+    timeoutTimer.start(timeoutMs);
+    loop.exec();  // 进入事件循环，阻塞直到 quit()
+}
 
 
 void ascan::autoCorretionPath(){
@@ -118,12 +131,6 @@ void ascan::autoCorretionPath(){
 
         if(stopCorretion){return;}
 
-
-
-        while (!stepCorretion) {
-            _sleep(1500);
-            QApplication::processEvents();  // 处理事件，避免UI阻塞
-        }
 
         qDebug()<<"autoCorretionPath-stepCorretion";
 
@@ -241,64 +248,66 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
     // 设置搜索范围和步长
     float searchRange = ui->searchRange_dSb->value();  // 搜索范围（单位）
     float stepSize = ui->searchStep_dsb->value();     // 步长（单位）
-
+    float bestSignalDiff;
 
     qDebug()<<"searchRange:"<<searchRange;
 
     qDebug()<<"stepSize:"<<stepSize;
 
 
-    sendData("1");  // 发送请求信号，等待信号更新
-    // 等待信号更新（通过阻塞等待，直到接收到信号后继续）
-    while (!isSingUPdate) {
-        _sleep(1000);
-        QApplication::processEvents();  // 处理事件，避免UI阻塞
-    }
+    // 获取当前点的邻域，基于步长和搜索范围
+    std::vector<std::pair<float, float>> neighbors = getNeighbors(currentX, currentY, currentZ, currentR, searchRange, stepSize);
 
-    qDebug()<<"is autoCorretionPathAlgrith-getSing:"<<isSingUPdate;
+    qDebug()<<"getNeighbors:"<<neighbors;
 
+    bool isFirst = true;  // 标记是否为第一个元素
 
-    float bestSignalDiff = std::abs(PointSing - targetSignal);
+    for (auto& neighbor : neighbors) {
+        float nx = neighbor.first;
+        float ny = neighbor.second;
 
-        // 获取当前点的邻域，基于步长和搜索范围
-        std::vector<std::pair<float, float>> neighbors = getNeighbors(currentX, currentY, currentZ, currentR, searchRange, stepSize);
+        qDebug()<<"nx:"<<nx<<"  "<<"ny"<<ny;
 
-        for (auto& neighbor : neighbors) {
-            float nx = neighbor.first;
-            float ny = neighbor.second;
-
-            // 移动到邻居位置
-            mw->scanDetectCtrl->runTargetPosition(nx, ny, currentZ, currentR);  // 执行目标位置移动
-            qDebug()<<"autoCorretionPathAlgrith-runTargetPosition";
+        // 移动到邻居位置
+        mw->scanDetectCtrl->runTargetPosition(nx, ny, currentZ, currentR);  // 执行目标位置移动
+        qDebug()<<"autoCorretionPathAlgrith-runTargetPosition";
 
 
-            // 发送信号请求
-            sendData("1");  // 发送请求信号，等待信号更新
+        // 发送信号请求
+        sendData("1");  // 发送请求信号，等待信号更新
 
-            // 等待信号更新（通过阻塞等待，直到接收到信号后继续）
-            while (isSingUPdate) {
-                _sleep(500);
-                QApplication::processEvents();  // 处理事件，避免UI阻塞
-            }
+        waitForSignal();  // 阻塞直到接收到信号或超时
 
-            // 计算当前邻域点的信号差值
-            float diff = std::abs(PointSing - targetSignal);  // 使用接收到的信号与目标信号进行比较
+        // 计算当前邻域点的信号差值
+        float diff = std::abs(PointSing - targetSignal);  // 使用接收到的信号与目标信号进行比较
 
-            // 如果找到更接近目标信号的点，更新当前点
-            if (diff < bestSignalDiff) {
-                currentX = nx;
-                currentY = ny;
-                bestSignalDiff = diff;
-            }
 
-            isSingUPdate=false;
-
+        if (isFirst) {
+            bestSignalDiff=diff;
+            isFirst = false;
         }
 
-        mw->scanDetectCtrl->runTargetPosition(currentX, currentY, currentZ, currentR);  // 执行目标位置移动
+        // 如果找到更接近目标信号的点，更新当前点
+        if (diff < bestSignalDiff) {
+            currentX = nx;
+            currentY = ny;
+            bestSignalDiff = diff;
+        }
+
+        isSingUPdate=false;
 
 
+        qDebug() <<"neighbor"<<neighbor.first<<"  "<<neighbor.second;
+    }
 
+    mw->scanDetectCtrl->runTargetPosition(currentX, currentY, currentZ, currentR);  // 执行目标位置移动
+
+
+    qDebug() << "runTargetPosition  "
+             << "X:" << currentX
+             << "Y:" << currentY
+             << "Z:" << currentZ
+             << "R:" << currentR;
 }
 
 
@@ -309,9 +318,7 @@ std::vector<std::pair<float, float>> ascan::getNeighbors(float x, float y, float
     // 在 x, y 方向进行小范围的探索（根据搜索范围和步长）
     for (float dx = -searchRange; dx <= searchRange; dx += stepSize) {
         for (float dy = -searchRange; dy <= searchRange; dy += stepSize) {
-            if (dx != 0 || dy != 0) {  // 排除当前点本身
-                neighbors.push_back({x + dx, y + dy});
-            }
+            neighbors.push_back({x + dx, y + dy});
         }
     }
 
