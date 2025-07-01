@@ -18,6 +18,7 @@
 #include "gcodemodulation.h"
 #include "databasemanager.h"
 #include "scancontrolabstract.h"
+#include "mathtool.h"
 
 #include <QProgressDialog>
 #include <QSet>
@@ -54,6 +55,9 @@ public:
         double r;
     };
 
+
+
+
     static ScanControlAbstract *scanDetectCtrl;
 
     QString curryWorkpieceName;
@@ -62,7 +66,8 @@ public:
     double _translationX=0;
     double _translationY=0;
     double _translationR=0;
-    double  currentR=0;
+    double  originR=0;
+
 
     int m_lastClickedRow;
     bool m_isSelected ;
@@ -104,6 +109,8 @@ private slots:
 
     void PbCreatGcode();
 
+    void CalculatingAngles();
+
     void PbImageProcess();
 
     void PbSetOrigin();
@@ -111,6 +118,8 @@ private slots:
     void PbMoveToPosition();
 
     void PbtrajectoryOffset();
+
+    void PbsmoothCurve();
 
     void PbAxleVelocity_lin();
     void PblinVelocity_lin();
@@ -150,6 +159,13 @@ private slots:
     void saveSetting();
 
     void initSetting();
+
+
+    //_________
+
+public:
+
+    void insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal smoothFactor);
 
 private:
 
@@ -213,7 +229,6 @@ private:
     void tableSelectionChanged();
     void graphicsSelectionChanged();
 
-    void CalculatingAngles();
 
 
     QString generateGCode();

@@ -40,7 +40,7 @@ void scanDetect_frictionWelding::initWidget()
     modbusClient = new QModbusTcpClient(this);
 
     timer = new QTimer(this);
-    timer->setInterval(120);
+    timer->setInterval(50);
 
 }
 
@@ -179,11 +179,11 @@ void scanDetect_frictionWelding::on_connectBtn_clicked()
 
 bool scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType type,
                                                    quint16 address, QString Value) {
+    updateCurPos=true;
     if (modbusClient->state() != QModbusDevice::ConnectedState) {
         qWarning() << "Modbus client not connected.";
         return false;
     }
-
     modbusClient->setTimeout(3000);
     modbusClient->setNumberOfRetries(2);
 
@@ -234,6 +234,7 @@ bool scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient, 
     std::cout << "sendStringCommand success: " << Value.toStdString()
               << " to address: " << address << std::endl;
     reply->deleteLater();
+    updateCurPos=false;
     return true;
 }
 
@@ -242,6 +243,8 @@ bool scanDetect_frictionWelding::sendStringCommand(QModbusClient *modbusClient, 
 bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, QModbusDataUnit::RegisterType rGtype,
                                                   quint16 address)
 {
+    updateCurPos=true;
+
     if (modbusClient->state() != QModbusDevice::ConnectedState) {
         qWarning() << "Modbus client not connected.";
         return false;
@@ -285,6 +288,7 @@ bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, Q
     QTimer::singleShot(200, &delayLoop, &QEventLoop::quit);
     delayLoop.exec();
 
+    updateCurPos=false;
     return sendValue(0);
 }
 
@@ -431,6 +435,7 @@ bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, Q
 
 bool scanDetect_frictionWelding::sendCommandValue(QModbusClient *modbusClient, QModbusDataUnit::RegisterType rGtype,
                                                   quint16 address,float value){
+     updateCurPos=true;
     if(modbusClient->state() != QModbusDevice::ConnectedState)
         return false;
     qDebug()<<"sendCommandValue:"<<address;
@@ -450,6 +455,7 @@ bool scanDetect_frictionWelding::sendCommandValue(QModbusClient *modbusClient, Q
     loop.exec();  // 等待 finished 信号
     bool success = (reply->error() == QModbusDevice::NoError);
     reply->deleteLater();
+    updateCurPos=false;
     return success;
 }
 
@@ -904,7 +910,7 @@ void scanDetect_frictionWelding::selectProcessType(int type){
 void scanDetect_frictionWelding::runTargetPosition(double x, double y ,double z, double r)
 {
 
-
+    updateCurPos=true;
     if(modbusClient->state() != QModbusDevice::ConnectedState){
         QMessageBox::information(nullptr," warning ",QString::fromLocal8Bit(" 通讯未连接 "));
         return;
@@ -946,7 +952,7 @@ void scanDetect_frictionWelding::runTargetPosition(double x, double y ,double z,
     bool success = (reply->error() == QModbusDevice::NoError);
     reply->deleteLater();
 
-
+    updateCurPos=false;
     sendPulseCommand(modbusClient,QModbusDataUnit::Coils,4822);
 
     qDebug()<<basePlcData.curX<<"sg";
@@ -1031,9 +1037,12 @@ void scanDetect_frictionWelding::performTasks()
 
 void scanDetect_frictionWelding::updataCurrentPos()
 {
+    if (updateCurPos) return;
     if (modbusClient->state() != QModbusDevice::ConnectedState)
         return;
 
+
+      updateCurPos = true;  // 标记为繁忙
     // 从地址 50 开始，读取 8 个寄存器（X/Y/Z/R 各 2 个）
     QModbusDataUnit data(QModbusDataUnit::HoldingRegisters, basePlcData.curX, 8);
 
@@ -1041,6 +1050,8 @@ void scanDetect_frictionWelding::updataCurrentPos()
     if (reply) {
         if (!reply->isFinished()) {
             connect(reply, &QModbusReply::finished, [=]() {
+
+                  updateCurPos = false;
                 if (reply->error() == QModbusDevice::NoError) {
                     const QModbusDataUnit result = reply->result();
 
@@ -1072,7 +1083,11 @@ void scanDetect_frictionWelding::updataCurrentPos()
             });
         } else {
             reply->deleteLater();
+              updateCurPos = false;
         }
+    }else{
+
+          updateCurPos = false;
     }
 }
 
@@ -1645,9 +1660,9 @@ void scanDetect_frictionWelding::writeHoldingRegistersData(int address, quint16 
 
 void scanDetect_frictionWelding::writeAxisVelocity(int address, quint16 size, float data)
 {
+    updateCurPos=true;
     if(modbusClient->state() != QModbusDevice::ConnectedState)
         return;
-
     QModbusDataUnit modbusData(QModbusDataUnit::HoldingRegisters,  address, size);
 
     auto xpos = writeModbusFloatData(data);
@@ -1669,6 +1684,8 @@ void scanDetect_frictionWelding::writeAxisVelocity(int address, quint16 size, fl
             reply->deleteLater();
         }
     }
+
+    updateCurPos=false;
 }
 
 
@@ -1776,6 +1793,7 @@ void scanDetect_frictionWelding::writeAxisReset()
     if(modbusClient->state() != QModbusDevice::ConnectedState)
         return;
 
+    updateCurPos=true;
     QModbusDataUnit modbusData(QModbusDataUnit::Coils,  basePlcData.AlarmReset, 1);
     modbusData.setValue(0, 1);
     auto reply = modbusClient->sendWriteRequest(modbusData, 1);
@@ -1792,6 +1810,8 @@ void scanDetect_frictionWelding::writeAxisReset()
             reply->deleteLater();
         }
     }
+
+    updateCurPos=false;
 }
 
 

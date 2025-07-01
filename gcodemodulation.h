@@ -11,6 +11,7 @@
 #include <QUrl>
 #include <QFile>
 #include <QObject>
+#include <cmath>
 
 struct RangeData {
     int minValue;
@@ -18,6 +19,11 @@ struct RangeData {
     int assignedValue;
     int accValue;
 };
+
+struct Point {
+    float x, y, z;
+};
+
 
 namespace Ui {
 class gCodeModulation;
@@ -43,21 +49,21 @@ public:
 
     int uploadFileWithSftp();
 
-    int uploadFileWithSftpUPdate( QString localFile,
-                                            QString remoteUser,
-                                            QString remoteHost,
-                                            QString remotePath,
-                                            int port,             // 新增端口参数
-                                            QWidget *parent);
-
+    Point getPointAtDistance(float x0, float y0, float z0,
+                             float x1, float y1, float z1,
+                             float distance);
 private slots:
     void allInsertPaus();
     void allDeletePaus();
     void insertPaus();
     void deleteLine();
 
+    void autoSave();
+
     void addRangeRow();
     void on_saveBtn_clicked();
+
+    void on_trajectory_smooth_clicked();
 
     void TransmissionFile();
 

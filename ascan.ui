@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1344</width>
-    <height>1067</height>
+    <width>800</width>
+    <height>498</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -78,7 +78,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="searchRange_dSb"/>
+       <widget class="QDoubleSpinBox" name="searchRange_dSb">
+        <property name="minimum">
+         <double>9.000000000000000</double>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_3">
@@ -88,7 +92,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="searchStep_dsb"/>
+       <widget class="QDoubleSpinBox" name="searchStep_dsb">
+        <property name="value">
+         <double>1.000000000000000</double>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

@@ -31,6 +31,7 @@ SOURCES += \
     imageprocessing.cpp \
     main.cpp \
     mainwindow.cpp \
+    mathtool.cpp \
     scanMovecontrl/scandetect_frictionwelding.cpp \
     widgetDefin/Graphics_view_zoom.cpp \
     widgetDefin/QTableViewSpe.cpp \
@@ -220,6 +221,7 @@ HEADERS += \
     libssh2_1.11.0_x64/libssh2_publickey.h \
     libssh2_1.11.0_x64/libssh2_sftp.h \
     mainwindow.h \
+    mathtool.h \
     scanMovecontrl/modbusconfig.h \
     scanMovecontrl/scancontrolabstract.h \
     scanMovecontrl/scandetect_frictionwelding.h \
@@ -557,3 +559,6 @@ LIBS += -LC:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/l
         -lhdevenginecpp \
         -lhdevenginecppxl \
         -llibiomp5md
+
+RESOURCES += \
+    resource.qrc

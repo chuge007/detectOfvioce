@@ -73,6 +73,7 @@ void imageprocessing::init()
     ascanImagePath = settings->value("ascanImagePath", "").toString();
     xldPath = settings->value("xldPath", "").toString();
 
+   contourArea=settings->value("contourArea", "").toDouble();
     ui->lbprocessImage->setText(ascanImagePath);
 
     // 如果已有路径，则载入
@@ -109,7 +110,7 @@ void imageprocessing::pbSetImagePath()
     scene->setSceneRect(pix.rect());
     ui->gVimageprocess->fitInView(pix.rect(), Qt::KeepAspectRatio);
 
-   ReadImage(&ho_OriginImage, ascanImagePath.toStdString().c_str());
+    ReadImage(&ho_OriginImage, ascanImagePath.toStdString().c_str());
 
     xldPath = QFileDialog::getOpenFileName(
                 this,
@@ -478,88 +479,152 @@ void DrawTextOnImage(HObject& ho_R, HObject& ho_G, HObject& ho_B, const std::str
 }
 
 
-double imageprocessing::action(){
+double imageprocessing::action() {
+    HObject  ho_Contours, ho_ContoursUnion, ho_Region;
 
-  isDraw=false;
+    // Local control variables
+    HTuple  hv_DxfStatus, hv_Area, hv_Row, hv_Column;
 
-  if(!windowOpened){
-    HTuple width, height;
-    GetImageSize(ho_OriginImage, &width, &height);
-    OpenWindow(0, 0, width.I(), height.I(), 0, "visible", "", &windowHandle);
-    SetPart(windowHandle, 0, 0, height.I() - 1, width.I() - 1);
-    windowOpened=true;
-  }
-  // Local iconic variables
-  HObject  ho_Contours, ho_ContoursUnion, ho_ContoursMoved;
-  HObject  ho_RegionCAD, ho_Image, ho_ImageGray, ho_ResultImage,ImageWithXLD;
+    //1. 读取 DXF 并合并轮廓
+    ReadContourXldDxf(&ho_Contours,xldPath.toStdString().c_str(), HTuple(), HTuple(), &hv_DxfStatus);
+    UnionAdjacentContoursXld(ho_Contours, &ho_ContoursUnion, 10, 1, "attr_keep");
 
-  // Local control variables
-  HTuple  hv_DxfStatus, hv_area, hv_row, hv_clo;
-  HTuple  hv_DeltaRow, hv_DeltaColumn;
-  HTuple  hv_HomMat2D, hv_HomMat2DTranslate, hv_ImageGrayArea;
-  HTuple  hv_Row, hv_Column, hv_ResultImageArea;
+    //2. 将轮廓转为区域（必须封闭轮廓才有效）
+    GenRegionContourXld(ho_ContoursUnion, &ho_Region, "filled");
 
-  //1. 读取 DXF 文件为 XLD 轮廓
-  ReadContourXldDxf(&ho_Contours, xldPath.toStdString().c_str(), HTuple(), HTuple(), &hv_DxfStatus);
-
-  //合并线段（推荐）
-  UnionAdjacentContoursXld(ho_Contours, &ho_ContoursUnion, 10, 1, "attr_keep");
+    //3. 计算面积和质心
+    AreaCenter(ho_Region, &hv_Area, &hv_Row, &hv_Column);
 
 
-  AreaCenterPointsXld(ho_ContoursUnion, &hv_area, &hv_row, &hv_clo);
+   settings->setValue("contourArea", hv_Area.D());
 
 
-  //计算当前质心到目标位置的平移距离
-  hv_DeltaRow = hv_row-originScene_draw_contours.x();
-  hv_DeltaColumn = hv_clo-originScene_draw_contours.y();
-
-
-  HomMat2dIdentity(&hv_HomMat2D);
-  HomMat2dTranslate(hv_HomMat2D, hv_row+hv_DeltaRow, hv_clo+hv_DeltaColumn, &hv_HomMat2DTranslate);
-  AffineTransContourXld(ho_Contours, &ho_ContoursMoved, hv_HomMat2DTranslate);
-
-
-
-
-  //转为区域（此时才能真正填充）
-  GenRegionContourXld(ho_ContoursMoved, &ho_RegionCAD, "filled");
-
-
-
-   HTuple color = HTuple(255).TupleConcat(0).TupleConcat(0); // 红色 RGB(255,0,0)
-   PaintXld(ho_ContoursMoved, ho_OriginImage, &ImageWithXLD, color);
-
-   DispObj(ImageWithXLD, windowHandle);
-
-   WaitSeconds(0.001);
-  //TestShow(ImageWithXLD);
-
-  if(!isDraw){return 0;}
-
-  //4. 提取该区域内图像内容
-  ReduceDomain(ho_OriginImage, ho_RegionCAD, &ho_ResultImage);
-
-  //AreaCenter(ho_ImageGray, &hv_ImageGrayArea, &hv_Row, &hv_Column);
-
-  AreaCenter(ho_ResultImage, &hv_ResultImageArea, &hv_Row, &hv_Column);
-
-  ShowImg(ho_ResultImage);
-
-  regionArea=hv_ResultImageArea.D();
-
-  isDraw=false;
-
-
-  if (windowOpened)
-  {
-      CloseWindow(windowHandle);
-      windowOpened = false;
-  }
-
-  qDebug()<<"originScene_draw_contours"<<originScene_draw_contours.x()<<"   originScene_draw_contours"<<originScene_draw_contours.y()<<"    "<<"regionArea"<<regionArea;
-  return hv_ResultImageArea.D();
+   qDebug()<<"contour Area:"<<hv_Area.D();
 
 }
+
+
+//double imageprocessing::action() {
+//    qDebug() << "[Action] action() started";
+//    try {
+//        isDraw = false;
+
+//        if (!windowOpened) {
+//            HTuple width, height;
+//            GetImageSize(ho_OriginImage, &width, &height);
+//            qDebug() << "[Action] Image size:" << width.I() << "x" << height.I();
+//            OpenWindow(0, 0, width.I(), height.I(), 0, "visible", "", &windowHandle);
+//            SetPart(windowHandle, 0, 0, height.I() - 1, width.I() - 1);
+//            windowOpened = true;
+//            qDebug() << "[Action] HALCON window opened";
+//        }
+
+//        // Local iconic variables
+//        HObject ho_Contours, ho_ContoursUnion, ho_ContoursMoved;
+//        HObject ho_RegionCAD, ho_Image, ho_ImageGray, ho_ResultImage, ImageWithXLD;
+
+//        // Local control variables
+//        HTuple hv_DxfStatus, hv_area, hv_row, hv_clo;
+//        HTuple hv_DeltaRow, hv_DeltaColumn;
+//        HTuple hv_HomMat2D, hv_HomMat2DTranslate, hv_ImageGrayArea;
+//        HTuple hv_Row, hv_Column, hv_ResultImageArea;
+
+//        // 检查 DXF 文件是否存在
+//        qDebug() << "[Action] Reading DXF from:" << xldPath;
+//        if (!QFile::exists(xldPath)) {
+//            qDebug() << "[Error] DXF file not found:" << xldPath;
+//            return 0;
+//        }
+
+//        HTuple genParamNames, genParamValues;
+
+//        genParamNames.Append("read_attributes");
+//        genParamValues.Append("false");  // 不读取属性
+
+//        genParamNames.Append("min_num_points");
+//        genParamValues.Append(20);       // 圆/弧最小采样点数
+
+//        genParamNames.Append("max_approx_error");
+//        genParamValues.Append(0.25);     // 最大逼近误差（像素）
+
+//        try {
+//            ReadContourXldDxf(&ho_Contours,
+//                              xldPath.toStdString().c_str(),
+//                              genParamNames,
+//                              genParamValues,
+//                              &hv_DxfStatus);
+//            qDebug() << "[Action] DXF Status:" << hv_DxfStatus.I();
+//        } catch (HException &e) {
+//            qDebug() << "[Error] ReadContourXldDxf exception:" << e.ErrorMessage().Text();
+//            return 0;
+//        }
+
+
+//        // 2. 合并线段
+//        UnionAdjacentContoursXld(ho_Contours, &ho_ContoursUnion, 10, 1, "attr_keep");
+//        qDebug() << "[Action] UnionAdjacentContoursXld done";
+
+//        // 3. 计算质心
+//        AreaCenterPointsXld(ho_ContoursUnion, &hv_area, &hv_row, &hv_clo);
+//        qDebug() << "[Action] Centroid:" << hv_row.D() << "," << hv_clo.D();
+
+//        // 4. 计算平移
+//        hv_DeltaRow = hv_row - originScene_draw_contours.x();
+//        hv_DeltaColumn = hv_clo - originScene_draw_contours.y();
+//        qDebug() << "[Action] Translate by: ΔRow=" << hv_DeltaRow.D() << ", ΔCol=" << hv_DeltaColumn.D();
+
+//        HomMat2dIdentity(&hv_HomMat2D);
+//        HomMat2dTranslate(hv_HomMat2D, hv_row + hv_DeltaRow, hv_clo + hv_DeltaColumn, &hv_HomMat2DTranslate);
+//        AffineTransContourXld(ho_Contours, &ho_ContoursMoved, hv_HomMat2DTranslate);
+//        qDebug() << "[Action] Affine transform done";
+
+//        // 5. 转为区域填充
+//        GenRegionContourXld(ho_ContoursMoved, &ho_RegionCAD, "filled");
+//        qDebug() << "[Action] Generated filled region";
+
+//        // 6. 连接轮廓
+//        HObject ConnectedContours;
+//        Connection(ho_ContoursMoved, &ConnectedContours);
+//        qDebug() << "[Action] Connected contours";
+
+//        // 7. 显示线条
+//        HTuple color = HTuple(255).TupleConcat(0).TupleConcat(0); // 红色 RGB
+//        PaintXld(ho_ContoursMoved, ho_OriginImage, &ImageWithXLD, color);
+//        DispObj(ImageWithXLD, windowHandle);
+//        qDebug() << "[Action] Displayed contours";
+
+//        WaitSeconds(0.001);
+
+//        if (!isDraw) {
+//            qDebug() << "[Action] Drawing not triggered";
+//            return 0;
+//        }
+
+//        // 8. 提取区域内图像内容
+//        ReduceDomain(ho_OriginImage, ho_RegionCAD, &ho_ResultImage);
+//        AreaCenter(ho_ResultImage, &hv_ResultImageArea, &hv_Row, &hv_Column);
+//        ShowImg(ho_ResultImage);
+//        qDebug() << "[Action] Extracted region area:" << hv_ResultImageArea.D();
+
+//        regionArea = hv_ResultImageArea.D();
+
+//        if (windowOpened) {
+//            CloseWindow(windowHandle);
+//            windowOpened = false;
+//            qDebug() << "[Action] HALCON window closed";
+//        }
+
+//        qDebug() << "[Action] originScene_draw_contours x=" << originScene_draw_contours.x()
+//                 << ", y=" << originScene_draw_contours.y()
+//                 << ", regionArea=" << regionArea;
+
+//        return regionArea;
+
+//    } catch (HException &e) {
+//        qDebug() << "[Error] HALCON Exception:" << e.ErrorMessage().Text();
+//        return 0;
+//    }
+//}
 
 void imageprocessing::pbImageProcess()
 {
@@ -874,6 +939,7 @@ void imageprocessing::pbTestReport()
         QString::fromLocal8Bit("长度 mm"),
         QString::fromLocal8Bit("高度 mm"),
         QString::fromLocal8Bit("水平 mm"),
+        QString::fromLocal8Bit("比例 mm"),
         QString::fromLocal8Bit("幅值 %"),
         QString::fromLocal8Bit("当量值 dB"),
         QString::fromLocal8Bit("幅值区域"),
@@ -906,7 +972,7 @@ void imageprocessing::pbTestReport()
             "",
             QString::number(d.width, 'f', 2),
 
-            //QString::number(d.ratio * 100.0, 'f', 2)
+            QString::number((d.area/contourArea) * 100.0, 'f', 2),
             "",       // 幅值 %
             "", "", "", ""                                  // 留空：当量值dB、幅值区域、缺陷性质、缺陷评定
         };

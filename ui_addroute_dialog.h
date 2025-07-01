@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'addroute_dialog.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.4
+** Created by: Qt User Interface Compiler version 5.14.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -294,45 +294,45 @@ public:
 
     void retranslateUi(QDialog *addRoute_dialog)
     {
-        addRoute_dialog->setWindowTitle(QApplication::translate("addRoute_dialog", "Create Route", nullptr));
+        addRoute_dialog->setWindowTitle(QCoreApplication::translate("addRoute_dialog", "Create Route", nullptr));
         yCurPos_lab->setText(QString());
-        RxSub_btn->setText(QApplication::translate("addRoute_dialog", "X-", nullptr));
-        label_9->setText(QApplication::translate("addRoute_dialog", "mm", nullptr));
-        label_6->setText(QApplication::translate("addRoute_dialog", "X\357\274\232", nullptr));
-        label_7->setText(QApplication::translate("addRoute_dialog", "Y\357\274\232", nullptr));
-        RyAdd_btn->setText(QApplication::translate("addRoute_dialog", "Y+", nullptr));
-        label_8->setText(QApplication::translate("addRoute_dialog", "mm", nullptr));
+        RxSub_btn->setText(QCoreApplication::translate("addRoute_dialog", "X-", nullptr));
+        label_9->setText(QCoreApplication::translate("addRoute_dialog", "mm", nullptr));
+        label_6->setText(QCoreApplication::translate("addRoute_dialog", "X\357\274\232", nullptr));
+        label_7->setText(QCoreApplication::translate("addRoute_dialog", "Y\357\274\232", nullptr));
+        RyAdd_btn->setText(QCoreApplication::translate("addRoute_dialog", "Y+", nullptr));
+        label_8->setText(QCoreApplication::translate("addRoute_dialog", "mm", nullptr));
         xCurPos_lab->setText(QString());
-        RxAdd_btn->setText(QApplication::translate("addRoute_dialog", "X+", nullptr));
-        RySub_btn->setText(QApplication::translate("addRoute_dialog", "Y-", nullptr));
-        RrAdd_btn->setText(QApplication::translate("addRoute_dialog", "R+", nullptr));
-        RrSub_btn->setText(QApplication::translate("addRoute_dialog", "R-", nullptr));
+        RxAdd_btn->setText(QCoreApplication::translate("addRoute_dialog", "X+", nullptr));
+        RySub_btn->setText(QCoreApplication::translate("addRoute_dialog", "Y-", nullptr));
+        RrAdd_btn->setText(QCoreApplication::translate("addRoute_dialog", "R+", nullptr));
+        RrSub_btn->setText(QCoreApplication::translate("addRoute_dialog", "R-", nullptr));
         rCurPos_lab->setText(QString());
-        label_10->setText(QApplication::translate("addRoute_dialog", "R\357\274\232", nullptr));
-        label_11->setText(QApplication::translate("addRoute_dialog", "mm", nullptr));
-        label_3->setText(QApplication::translate("addRoute_dialog", "\350\277\207\346\270\241\347\202\271\357\274\232", nullptr));
+        label_10->setText(QCoreApplication::translate("addRoute_dialog", "R\357\274\232", nullptr));
+        label_11->setText(QCoreApplication::translate("addRoute_dialog", "mm", nullptr));
+        label_3->setText(QCoreApplication::translate("addRoute_dialog", "\350\277\207\346\270\241\347\202\271\357\274\232", nullptr));
         yTrans_lin->setText(QString());
         xTrans_lin->setText(QString());
         rTrans_lin->setText(QString());
         zTrans_lin->setText(QString());
-        label_14->setText(QApplication::translate("addRoute_dialog", "X", nullptr));
-        label_2->setText(QApplication::translate("addRoute_dialog", "\347\273\210\347\202\271\357\274\232", nullptr));
+        label_14->setText(QCoreApplication::translate("addRoute_dialog", "X", nullptr));
+        label_2->setText(QCoreApplication::translate("addRoute_dialog", "\347\273\210\347\202\271\357\274\232", nullptr));
         rEnd_lin->setText(QString());
         xEnd_lin->setText(QString());
-        label_12->setText(QApplication::translate("addRoute_dialog", "R", nullptr));
+        label_12->setText(QCoreApplication::translate("addRoute_dialog", "R", nullptr));
         yEnd_lin->setText(QString());
-        label_13->setText(QApplication::translate("addRoute_dialog", "Y", nullptr));
+        label_13->setText(QCoreApplication::translate("addRoute_dialog", "Y", nullptr));
         zEnd_lin->setText(QString());
-        label_17->setText(QApplication::translate("addRoute_dialog", "Z", nullptr));
-        setCurposToEnd_but->setText(QApplication::translate("addRoute_dialog", "\350\256\276\345\256\232\344\270\272\347\273\210\347\202\271", nullptr));
-        pb_accept->setText(QApplication::translate("addRoute_dialog", "OK", nullptr));
-        pb_reject->setText(QApplication::translate("addRoute_dialog", "Cancel", nullptr));
-        setCursPosToTrans_but->setText(QApplication::translate("addRoute_dialog", "\350\256\276\345\256\232\344\270\272\350\277\207\345\272\246\347\202\271", nullptr));
-        label_15->setText(QApplication::translate("addRoute_dialog", "Z\357\274\232", nullptr));
-        label_16->setText(QApplication::translate("addRoute_dialog", "mm", nullptr));
+        label_17->setText(QCoreApplication::translate("addRoute_dialog", "Z", nullptr));
+        setCurposToEnd_but->setText(QCoreApplication::translate("addRoute_dialog", "\350\256\276\345\256\232\344\270\272\347\273\210\347\202\271", nullptr));
+        pb_accept->setText(QCoreApplication::translate("addRoute_dialog", "OK", nullptr));
+        pb_reject->setText(QCoreApplication::translate("addRoute_dialog", "Cancel", nullptr));
+        setCursPosToTrans_but->setText(QCoreApplication::translate("addRoute_dialog", "\350\256\276\345\256\232\344\270\272\350\277\207\345\272\246\347\202\271", nullptr));
+        label_15->setText(QCoreApplication::translate("addRoute_dialog", "Z\357\274\232", nullptr));
+        label_16->setText(QCoreApplication::translate("addRoute_dialog", "mm", nullptr));
         zCurPos_lab->setText(QString());
-        RzSub_Btn->setText(QApplication::translate("addRoute_dialog", "Z-", nullptr));
-        RzAdd_btn->setText(QApplication::translate("addRoute_dialog", "Z+", nullptr));
+        RzSub_Btn->setText(QCoreApplication::translate("addRoute_dialog", "Z-", nullptr));
+        RzAdd_btn->setText(QCoreApplication::translate("addRoute_dialog", "Z+", nullptr));
     } // retranslateUi
 
 };
