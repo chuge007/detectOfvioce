@@ -89,7 +89,7 @@ void gCodeModulation::loadGCodeToPlainText()
 
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(nullptr, QString::fromLocal8Bit("提示"),
-                                  QString::fromLocal8Bit("是否重新加载未更改数据？"),
+                                  QString::fromLocal8Bit("是否重新加载数据？"),
                                   QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         // 执行重新加载操作

@@ -2287,6 +2287,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="placeholderText">
+          <string>回车确认</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -2349,6 +2352,9 @@
          </property>
          <property name="text">
           <string/>
+         </property>
+         <property name="placeholderText">
+          <string>回车确认</string>
          </property>
         </widget>
        </item>
@@ -2413,6 +2419,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="placeholderText">
+          <string>回车确认</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -2476,6 +2485,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="placeholderText">
+          <string>回车确认</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -2538,6 +2550,9 @@
          </property>
          <property name="text">
           <string/>
+         </property>
+         <property name="placeholderText">
+          <string>回车确认</string>
          </property>
         </widget>
        </item>

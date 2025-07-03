@@ -354,6 +354,13 @@ void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
     circle->setBrush(QBrush(Qt::red));  // 红色
     scene->addItem(circle);
 
+
+    float x0=model->data(model->index(0, 2), Qt::DisplayRole).toFloat();
+    float y0=model->data(model->index(0, 3), Qt::DisplayRole).toFloat();
+
+    QGraphicsEllipseItem* circleStart = new QGraphicsEllipseItem((x0 - 20)*scaleFactor, (y0 - 20)*scaleFactor, 40*scaleFactor, 40*scaleFactor); // 半径为20
+    circle->setBrush(QBrush(Qt::green));
+    scene->addItem(circleStart);
 }
 
 
@@ -752,7 +759,7 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
 
         // 在新位置绘制红色小圆圈
         QGraphicsEllipseItem* circle = new QGraphicsEllipseItem((posx - 20)*factor, (posy - 20)*factor, 40*factor, 40*factor); // 半径为20
-        circle->setBrush(QBrush(Qt::red));  // 红色
+        circle->setBrush(QBrush(Qt::yellow));  // 红色
         //circle->setFlag(QGraphicsItem::ItemIgnoresTransformations);
         scene->addItem(circle);
         // 显示坐标文字
@@ -766,7 +773,7 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
         scene->addItem(textItem);
 
         if(GlobeUniquePoints.length()>3){
-            QString coordText = QString::fromLocal8Bit("轨迹首非相连，请检查红点处有无衔接好（红点数量不能大于2）");
+            QString coordText = QString::fromLocal8Bit("轨迹首非相连，请检查黄点绿点处有无衔接好（黄点绿点数量不能大于2）");
             QGraphicsTextItem* textItem = new QGraphicsTextItem(coordText);
             textItem->setDefaultTextColor(Qt::black); // 设置字体颜色
             textItem->setFont(QFont("Arial", 25));    // 设置字体大小
@@ -814,6 +821,12 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
             scene->addItem(arc);
             rownum_itme_lst.append(row);
 
+        }
+
+        if(i==0){
+            QGraphicsEllipseItem* circle = new QGraphicsEllipseItem((x0 - 20)*factor, (y0 - 20)*factor, 40*factor, 40*factor); // 半径为20
+            circle->setBrush(QBrush(Qt::green));
+            scene->addItem(circle);
         }
     }
 
@@ -1258,16 +1271,23 @@ void MainWindow::sortModelLine()
     QString candidatePoint1 ;
     QString candidatePoint2;
     if(uniquePoints.size()==0){
-        QSqlRecord rec = model->record(0);
-        double sx = rec.value(2).toDouble();
-        double sy = rec.value(3).toDouble();
-        QString sKey = QString::number(sx, 'f', AantalDesimalePlekke) + "_" + QString::number(sy, 'f', AantalDesimalePlekke);
-        double ex = rec.value(10).toDouble();
-        double ey = rec.value(11).toDouble();
-        QString eKey = QString::number(ex, 'f', AantalDesimalePlekke) + "_" + QString::number(ey, 'f', AantalDesimalePlekke);
-        candidatePoint1 = sKey;
-        candidatePoint2 = sKey;
-        GlobeUniquePoints={sKey};
+        for (int i = 0; i < model->rowCount(); ++i) {
+            QSqlRecord rec = model->record(i);
+            qDebug()<<"*************************************************************************************************";
+            if (rec.value(1).toString() == "line") {
+                qDebug()<<"candidatePoint1 if for line";
+                double sx = rec.value(2).toDouble();
+                double sy = rec.value(3).toDouble();
+                QString sKey = QString::number(sx, 'f', AantalDesimalePlekke) + "_" + QString::number(sy, 'f', AantalDesimalePlekke);
+                double ex = rec.value(10).toDouble();
+                double ey = rec.value(11).toDouble();
+                QString eKey = QString::number(ex, 'f', AantalDesimalePlekke) + "_" + QString::number(ey, 'f', AantalDesimalePlekke);
+                candidatePoint1 = sKey;
+                candidatePoint2 = sKey;
+                GlobeUniquePoints={sKey};
+                break;
+            }
+        }
     }else {
 
         candidatePoint1 = uniquePoints.at(0);
@@ -1940,6 +1960,12 @@ void MainWindow::CalculatingAngles(){
 
     bool ok;
     dbManager->db.transaction();
+
+    QString type=model->data(model->index(0, 1), Qt::DisplayRole).toString();
+    if(type=="arc"){
+        QMessageBox::warning(this, "错误", "起点所在图元要为直线");
+        return;
+    }
 
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(nullptr, QString::fromLocal8Bit("提示"),
@@ -2817,30 +2843,40 @@ void MainWindow::pbmoveUpForSort()
     QVariant currentId = model->data(model->index(row, 0));
     QVariant aboveId   = model->data(model->index(aboveRow, 0));
 
-    // 交换两行的 id
-    model->setData(model->index(row, 0), aboveId);
-    model->setData(model->index(aboveRow, 0), currentId);
+    // 获取当前行和上一行的列数
+    int columnCount = model->columnCount();
 
-    // 提交更改
-    if (!model->submitAll()) {
-        qDebug() << "上移提交失败：" << model->lastError().text();
-        model->revertAll();
-        return;
+    // 交换当前行和上一行的所有列的数据
+    for (int col = 0; col < columnCount; ++col) {
+        QVariant currentData = model->data(model->index(row, col));
+        QVariant aboveData = model->data(model->index(aboveRow, col));
+
+        // 交换两行的列数据
+        model->setData(model->index(row, col), aboveData);
+        model->setData(model->index(aboveRow, col), currentData);
     }
+
 
     for (int row = 0; row < model->rowCount(); row++) {
         model->setData(model->index(row, 0), row);  // 第 0 列设置为当前行号
     }
 
     // 重新选中交换后的那一行
+    if (!model->submitAll()) {
+        qDebug() << "上移提交失败：" << model->lastError().text();
+        model->revertAll();
+        return;
+    }
+
     model->select();
     if (!dbManager->db.commit()) {
         qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
         QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
         dbManager->db.rollback();
     }
-    ui->tableView->selectRow(aboveRow);
     updateSence();
+    ui->tableView->selectRow(aboveRow);
+
 }
 
 // 下移按钮点击事件
@@ -2858,10 +2894,23 @@ void MainWindow::pbmoveDownForSort()
     QVariant currentId = model->data(model->index(row, 0));
     QVariant belowId   = model->data(model->index(belowRow, 0));
 
-    // 交换两行的 id
-    model->setData(model->index(row, 0), belowId);
-    model->setData(model->index(belowRow, 0), currentId);
+    // 获取当前行和上一行的列数
+    int columnCount = model->columnCount();
 
+    // 交换当前行和上一行的所有列的数据
+    for (int col = 0; col < columnCount; ++col) {
+        QVariant currentData = model->data(model->index(row, col));
+        QVariant aboveData = model->data(model->index(belowRow, col));
+
+        // 交换两行的列数据
+        model->setData(model->index(row, col), aboveData);
+        model->setData(model->index(belowRow, col), currentData);
+    }
+
+    for (int row = 0; row < model->rowCount(); row++) {
+        model->setData(model->index(row, 0), row);  // 第 0 列设置为当前行号
+    }
+    // 重新选中交换后的那一行
     // 提交更改
     if (!model->submitAll()) {
         qDebug() << "下移提交失败：" << model->lastError().text();
@@ -2869,10 +2918,6 @@ void MainWindow::pbmoveDownForSort()
         return;
     }
 
-    for (int row = 0; row < model->rowCount(); row++) {
-        model->setData(model->index(row, 0), row);  // 第 0 列设置为当前行号
-    }
-    // 重新选中交换后的那一行
     model->select();
 
     if (!dbManager->db.commit()) {
@@ -2880,8 +2925,9 @@ void MainWindow::pbmoveDownForSort()
         QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
         dbManager->db.rollback();
     }
-    ui->tableView->selectRow(belowRow);
     updateSence();
+    ui->tableView->selectRow(belowRow);
+
 
 
 }

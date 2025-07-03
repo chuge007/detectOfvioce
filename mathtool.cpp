@@ -279,31 +279,31 @@ bool mathTool::intersectInfiniteLinesByPoints(const QPointF& p1, const QPointF& 
                                               QPointF& intersection)
 {
     // 直线1的参数
-       double A1 = p2.y() - p1.y();
-       double B1 = p1.x() - p2.x();
-       double C1 = A1 * p1.x() + B1 * p1.y();
+    double A1 = p2.y() - p1.y();
+    double B1 = p1.x() - p2.x();
+    double C1 = A1 * p1.x() + B1 * p1.y();
 
-       // 直线2的参数
-       double A2 = p4.y() - p3.y();
-       double B2 = p3.x() - p4.x();
-       double C2 = A2 * p3.x() + B2 * p3.y();
+    // 直线2的参数
+    double A2 = p4.y() - p3.y();
+    double B2 = p3.x() - p4.x();
+    double C2 = A2 * p3.x() + B2 * p3.y();
 
-       double det = A1 * B2 - A2 * B1;
+    double det = A1 * B2 - A2 * B1;
 
-       if (std::abs(det) < 1e-10) {
-           // 平行或重合，没交点
-           return false;
-       }
+    if (std::abs(det) < 1e-10) {
+        // 平行或重合，没交点
+        return false;
+    }
 
-       double x = (C1 * B2 - C2 * B1) / det;
-       double y = (A1 * C2 - A2 * C1) / det;
+    double x = (C1 * B2 - C2 * B1) / det;
+    double y = (A1 * C2 - A2 * C1) / det;
 
-       intersection = QPointF(x, y);
-       return true;
+    intersection = QPointF(x, y);
+    return true;
 }
 
 QPointF mathTool::computeControlPoint(const QPointF& t2, const QPointF& f, const QPointF& circleCenter,
-                            const QLineF& lineC, double weir)
+                                      const QLineF& lineC, double weir)
 {
     // 方向向量 dir = t2 - circleCenter
     QPointF dir = t2 - circleCenter;
@@ -351,19 +351,28 @@ bool mathTool::isSegmentIntersectCircle(const QPointF& A, const QPointF& B, cons
     return d <= R;
 }
 
-QLineF mathTool::offsetLineSegment(const QPointF& A, const QPointF& B, const QPointF& circleCenter, double offsetR) {
+QLineF mathTool::offsetLineSegment(const QPointF& A, const QPointF& B, const QPointF& circleCenter, double offsetR, bool towardCenter)
+{
     QPointF dir = B - A;
-    dir /= std::hypot(dir.x(), dir.y());
-    QPointF normal(-dir.y(), dir.x());
+    dir /= std::hypot(dir.x(), dir.y());  // 单位方向向量
+
+    QPointF normal(-dir.y(), dir.x());    // 左旋90°得到垂直向量
 
     QPointF mid = (A + B) / 2.0;
     QPointF toCenter = circleCenter - mid;
-    if (QPointF::dotProduct(toCenter, normal) < 0)
+
+    bool isToward = (QPointF::dotProduct(toCenter, normal) >= 0);
+
+    // 如果用户要求朝向圆心（默认），但当前方向不是朝向圆心，则反转
+    // 如果用户要求远离圆心，但当前方向是朝向圆心，也反转
+    if (isToward != towardCenter) {
         normal = -normal;
+    }
 
     QPointF offset = normal * offsetR;
     return QLineF(A + offset, B + offset);
 }
+
 
 bool mathTool::intersectLineCircle(const QLineF& line, const QPointF& center, double radius, QPointF& result) {
     QPointF p0 = line.p1();
@@ -400,6 +409,24 @@ bool mathTool::intersectLineCircle(const QLineF& line, const QPointF& center, do
     return found;
 }
 
+double mathTool::angleBetweenVectors(const QPointF& from1, const QPointF& to1,
+                                     const QPointF& from2, const QPointF& to2)
+{
+    QPointF v1 = to1 - from1;
+    QPointF v2 = to2 - from2;
+
+    double dot = QPointF::dotProduct(v1, v2);
+    double len1 = std::hypot(v1.x(), v1.y());
+    double len2 = std::hypot(v2.x(), v2.y());
+
+    if (qFuzzyIsNull(len1) || qFuzzyIsNull(len2))
+        return 0.0;  // 避免除以 0
+
+    double cosAngle = dot / (len1 * len2);
+    cosAngle = clamp(cosAngle, -1.0, 1.0);
+    return std::acos(cosAngle) * 180.0 / M_PI;
+}
+
 QPointF mathTool::projectToLine(const QPointF& P, const QPointF& A, const QPointF& B) {
     QPointF AB = B - A;
     double t = QPointF::dotProduct(P - A, AB) / QPointF::dotProduct(AB, AB);
@@ -413,46 +440,64 @@ bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
 {
 
     QPointF circleCenter =getCircleCenterFrom3Points(start2, tran2, end2);
+    double angle = mathTool::angleBetweenVectors(end1, circleCenter, end1, start1);
 
-    double R = std::hypot(circleCenter.x() - start2.x(), circleCenter.y() - start2.y());
-    if (R < 0) return false;
+    qDebug()<<"angle"<<angle;
+    double newR;
+    QLineF lineC;
+    double circleR = std::hypot(circleCenter.x() - start2.x(), circleCenter.y() - start2.y());
+    if (circleR < 0) return false;
+    if(angle<90){
 
-    qDebug()<<"circleCenter  "<<circleCenter;
+        bool intersect = isSegmentIntersectCircle(start1, end1, circleCenter, circleR);
+        newR = intersect ? (circleR - r) : (circleR + r);
+        if (newR <= 0) return false;
 
-    qDebug()<<"R  "<<circleCenter;
-    bool intersect = isSegmentIntersectCircle(start1, end1, circleCenter, R);
-    double newR = intersect ? (R - r) : (R + r);
-    if (newR <= 0) return false;
+        lineC = offsetLineSegment(start1, end1, circleCenter, r,true);
 
-    qDebug()<<"intersect  "<<intersect;
-    // 偏移直线段
-    QLineF lineC = offsetLineSegment(start1, end1, circleCenter, r);
+    }else {
+        bool intersect = isSegmentIntersectCircle(start1, end1, circleCenter, circleR);
+        newR = intersect ? (circleR + r) : (circleR - r);
+        if (newR <= 0) return false;
 
-    qDebug()<<"lineC  "<<lineC;
+        lineC = offsetLineSegment(start1, end1, circleCenter, r,false);
+    }
+
+
     // 求交点
-    QPointF f;
-    if (!intersectLineCircle(lineC, circleCenter, newR, f))
+    QPointF smoothCircleCenter;
+    if (!intersectLineCircle(lineC, circleCenter, newR, smoothCircleCenter))
         return false;
 
 
-    qDebug()<<"intersectLineCircle  "<<f;
     // 得到 t1: f 到线段a 的垂足
-    t1 = projectToLine(f, start1, end1);
+    t1 = projectToLine(smoothCircleCenter, start1, end1);
 
     // 得到 t2: f → 圆心方向 与圆b的交点
-    QPointF dir = f-circleCenter;
-    qDebug()<<"dir  "<<dir;
+    QPointF dir = smoothCircleCenter-circleCenter;
+
 
     QLineF lineToCircle(circleCenter,  dir * 1e8);
-    if (!intersectLineCircle(lineToCircle, circleCenter, R, t2))
+    if (!intersectLineCircle(lineToCircle, circleCenter, circleR, t2))
         return false;
 
     // 控制点为圆心方向外凸点（中间）
-   QLineF lineS=extendLineFromPoint(start1, start2, 1e6);
-   control = computeControlPoint(t2, f, circleCenter, lineS, r);
+    QLineF lineS=extendLineFromPoint(start1, start2, 1e6);
+
+    control = computeControlPoint(t2, smoothCircleCenter, circleCenter, lineS, r);
+
+   qDebug()<<"smoothCircleCenter-circleCenter  "<<dir;
+
+    qDebug()<<"lineC  "<<lineC;
+
+    qDebug()<<"circleCenter  "<<circleCenter;
+
+    qDebug()<<"intersectLineCircle  "<<smoothCircleCenter;
 
     qDebug()<<"t1  "<<t1;
+
     qDebug()<<"control  "<<control;
+
     qDebug()<<"t2  "<<t2;
     return true;
 }

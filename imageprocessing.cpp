@@ -84,7 +84,7 @@ void imageprocessing::init()
         scene->setSceneRect(pix.rect());
         ui->gVimageprocess->fitInView(pix.rect(), Qt::KeepAspectRatio);
 
-        ReadImage(&ho_OriginImage, ascanImagePath.toStdString().c_str());
+        //ReadImage(&ho_OriginImage, ascanImagePath.toStdString().c_str());
     }
 
 }

@@ -1307,18 +1307,23 @@ public:
 
         label_5->setText(QCoreApplication::translate("MainWindow", "\350\275\264\351\200\237\345\272\246\357\274\232", nullptr));
         scanVelocity_lin->setText(QString());
+        scanVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
         label_14->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
         label_23->setText(QCoreApplication::translate("MainWindow", "\345\256\232\344\275\215\351\200\237\345\272\246\357\274\232", nullptr));
         AxleVelocity_lin->setText(QString());
+        AxleVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
         label_17->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
         label_24->setText(QCoreApplication::translate("MainWindow", "\347\202\271\345\212\250\351\200\237\345\272\246\357\274\232", nullptr));
         pointVelocity_lin->setText(QString());
+        pointVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
         label_21->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
         label_16->setText(QCoreApplication::translate("MainWindow", "\347\233\264\347\272\277\351\200\237\345\272\246\357\274\232", nullptr));
         lineVelocity_lin->setText(QString());
+        lineVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
         label_18->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
         label_20->setText(QCoreApplication::translate("MainWindow", "\345\234\206\345\274\247\351\200\237\345\272\246\357\274\232", nullptr));
         arcVelocity_lin->setText(QString());
+        arcVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
         label_19->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
     } // retranslateUi
 

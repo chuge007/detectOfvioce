@@ -45,6 +45,8 @@ public:
     bool intersectInfiniteLinesByPoints(const QPointF& p1, const QPointF& p2,
                                                   const QPointF& p3, const QPointF& p4,
                                                   QPointF& intersection);
+    double angleBetweenVectors(const QPointF& from1, const QPointF& to1,
+                                         const QPointF& from2, const QPointF& to2);
 
     QPointF computeControlPoint(const QPointF& t2, const QPointF& f, const QPointF& circleCenter,
                                 const QLineF& lineC, double weir);
@@ -53,7 +55,7 @@ public:
     bool isSegmentIntersectCircle(const QPointF& A, const QPointF& B, const QPointF& center, double R);
 
     // 将线段向法线方向偏移指定半径
-    QLineF offsetLineSegment(const QPointF& A, const QPointF& B, const QPointF& circleCenter, double offsetR);
+    QLineF offsetLineSegment(const QPointF& A, const QPointF& B, const QPointF& circleCenter, double offsetR, bool towardCenter);
 
     // 求直线与圆的交点（取较近或精度内匹配的交点）
     bool intersectLineCircle(const QLineF& line, const QPointF& center, double radius, QPointF& result);
