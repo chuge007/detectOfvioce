@@ -305,6 +305,7 @@ public:
         trajectory_smooth_dsb->setObjectName(QString::fromUtf8("trajectory_smooth_dsb"));
         sizePolicy.setHeightForWidth(trajectory_smooth_dsb->sizePolicy().hasHeightForWidth());
         trajectory_smooth_dsb->setSizePolicy(sizePolicy);
+        trajectory_smooth_dsb->setValue(10.000000000000000);
 
         gridLayout_4->addWidget(trajectory_smooth_dsb, 0, 1, 1, 1);
 

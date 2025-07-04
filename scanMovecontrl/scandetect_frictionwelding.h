@@ -138,7 +138,7 @@ private:
     AxisJog axisInch = AxisJog::NotAxisJog;      //寸动
     AxisJog  axisJog = AxisJog::NotAxisJog;      //点动
 
-
+    AxisJog lastAxisJog = AxisJog::NotAxisJog;
     float curZ,curR;
 
 

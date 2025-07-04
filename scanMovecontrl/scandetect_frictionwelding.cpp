@@ -40,7 +40,7 @@ void scanDetect_frictionWelding::initWidget()
     modbusClient = new QModbusTcpClient(this);
 
     timer = new QTimer(this);
-    timer->setInterval(50);
+    timer->setInterval(200);
 
 }
 
@@ -1096,27 +1096,33 @@ void scanDetect_frictionWelding::updataCurrentPos()
 void scanDetect_frictionWelding::perfromJogTasks()
 {
     //qDebug()<<"****perfromJogTasks******";
-    if(axisInch != AxisJog::NotAxisJog && axisJog == AxisJog::NotAxisJog){
-        if(!isJogDone){
-            int address = 0;
-            float data = 0;
-            bool state = isJogCrossed(address, data);
+//    if(axisInch != AxisJog::NotAxisJog && axisJog == AxisJog::NotAxisJog){
+//        if(!isJogDone){
+//            int address = 0;
+//            float data = 0;
+//            bool state = isJogCrossed(address, data);
 
-            if(state){
-                writeHoldingRegistersData(address, 2, data);
-            }else {
-                axisInch = AxisJog::NotAxisJog;
-            }
-        }else {
-            if(axisInch == XJogAdd || axisInch == XJogSub){
-                readAxisJogStatus(basePlcData.xDone);
-            }else if (axisInch == YJogAdd || axisInch == YJogSub) {
-                readAxisJogStatus(basePlcData.YDone);
-            }
-        }
-    }
+//            if(state){
+//                writeHoldingRegistersData(address, 2, data);
+//            }else {
+//                axisInch = AxisJog::NotAxisJog;
+//            }
+//        }else {
+//            if(axisInch == XJogAdd || axisInch == XJogSub){
+//                readAxisJogStatus(basePlcData.xDone);
+//            }else if (axisInch == YJogAdd || axisInch == YJogSub) {
+//                readAxisJogStatus(basePlcData.YDone);
+//            }
+//        }
+//    }
 
     if(axisJog != AxisJog::NotAxisJog && axisInch == AxisJog::NotAxisJog){
+
+        if (axisJog == lastAxisJog) {
+            return;  // 不往下执行
+        }
+
+
         switch (axisJog) {
         case XJogAddPressed:{
             writeAxisJog(basePlcData.X_ADD, true);
@@ -1168,6 +1174,8 @@ void scanDetect_frictionWelding::perfromJogTasks()
             writeAxisJog(basePlcData.R_SUB, false);
         }break;
         }
+
+        lastAxisJog=axisJog;
     }
 }
 

@@ -359,7 +359,7 @@ void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
     float y0=model->data(model->index(0, 3), Qt::DisplayRole).toFloat();
 
     QGraphicsEllipseItem* circleStart = new QGraphicsEllipseItem((x0 - 20)*scaleFactor, (y0 - 20)*scaleFactor, 40*scaleFactor, 40*scaleFactor); // 半径为20
-    circle->setBrush(QBrush(Qt::green));
+    circleStart->setBrush(QBrush(Qt::green));
     scene->addItem(circleStart);
 }
 
@@ -1655,6 +1655,7 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
 
             if(i==0){
 
+
                 gCode += QString("N%1 G01 X%2 Y%3 Z%4 A%5\n")
                         .arg(firstNum+=10)
                         .arg(A.x())
@@ -1961,11 +1962,11 @@ void MainWindow::CalculatingAngles(){
     bool ok;
     dbManager->db.transaction();
 
-    QString type=model->data(model->index(0, 1), Qt::DisplayRole).toString();
-    if(type=="arc"){
-        QMessageBox::warning(this, "错误", "起点所在图元要为直线");
-        return;
-    }
+//    QString type=model->data(model->index(0, 1), Qt::DisplayRole).toString();
+//    if(type=="arc"){
+//        QMessageBox::warning(this, "错误", "起点所在图元要为直线");
+//        return;
+//    }
 
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(nullptr, QString::fromLocal8Bit("提示"),
@@ -2120,7 +2121,41 @@ void MainWindow::CalculatingAngles(){
             if(i!=0){
                 Previous_r0= model->data(model->index(i-1, 13), Qt::DisplayRole).toFloat();
             }else {
-                Previous_r0=inputR;
+
+                QPointF A, B, C;
+                A= QPointF( x0,y0 );
+                C = QPointF( x2,y2 );
+                B= QPointF( x1,y1 );
+
+                mathTool mathtool;
+                QPointF cen = mathtool.getCircleCenterFrom3Points(A, B, C);
+                QPointF start(x0, y0);
+                QPointF PerpendicularLine = start - cen;
+
+                // 判断顺逆时针
+                QPointF v1 = B - A;
+                QPointF v2 = C - B;
+                double cross = v1.x() * v2.y() - v1.y() * v2.x();
+
+                QPointF tangent;
+                if (cross > 0) {
+                    tangent = QPointF(-PerpendicularLine.y(), PerpendicularLine.x()); // 逆时针
+                } else {
+                    tangent = QPointF(PerpendicularLine.y(), -PerpendicularLine.x()); // 顺时针
+                }
+
+                // 计算角度
+                double angleRad = std::atan2(tangent.y(), tangent.x());
+                double angleDeg = angleRad * 180.0 / M_PI;
+                if (angleDeg < 0) angleDeg += 360.0;
+
+                qDebug() << "切线方向:" << tangent << "角度:" << angleDeg;
+
+
+                model->setData(model->index(0, 5),angleDeg);
+                inputR+=angleDeg;
+                Previous_r0=angleDeg;
+
             }
             model->setData(model->index(i, 4), 0);
             model->setData(model->index(i, 5), std::round(Previous_r0*100)/100);
@@ -2131,13 +2166,6 @@ void MainWindow::CalculatingAngles(){
 
         }
 
-
-        if(i==0&&name!="line"){
-            model->setData(model->index(0, 5),startR);
-        }
-        else if(i==0&&name=="line"){
-            model->setData(model->index(0, 5),model->data(model->index(0, 13), Qt::DisplayRole).toFloat());
-        }
 
     }
 
@@ -3045,7 +3073,16 @@ void MainWindow::pbMoveDirectionNot(){
 
 void MainWindow::pbGetModelPoint(){
 
-    if(m_isSelected){
+    bool reverseAll = QApplication::keyboardModifiers() & Qt::ControlModifier;
+
+    if(reverseAll){
+
+        ui->traject_x0->setText(ui->xCurPos_lab->text());
+        ui->traject_y0->setText(ui->yCurPos_lab->text());
+        ui->traject_z0->setText(ui->zCurPos_lab->text());
+        ui->traject_r0->setText(ui->rCurPos_lab->text());
+
+    }else if(m_isSelected){
 
         // 弹出对话框让用户选点类型……
         QStringList options;

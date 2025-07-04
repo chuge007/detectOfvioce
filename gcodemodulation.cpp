@@ -531,7 +531,7 @@ void gCodeModulation::on_saveBtn_clicked()
 
 QString generateG01Command(const Point& targetPoint, const QString& originalLine) {
     // 使用正则表达式提取出括号中的原始坐标
-    QRegularExpression re(R"(\(N(\d+) G01 XF([\d\.]+) YF([\d\.]+) ZF([\d\.]+) XS([\d\.]+) YS([\d\.]+) ZS([\d\.]+) A([\d\.]+)\))");
+    QRegularExpression re(R"(\(N(\d+)\s+G01\s+XF\s*([\d\.-]+)\s+YF\s*([\d\.-]+)\s+ZF\s*([\d\.-]+)\s+XS\s*([\d\.-]+)\s+YS\s*([\d\.-]+)\s+ZS\s*([\d\.-]+)\s+A\s*([\d\.-]+)\))");
     QRegularExpressionMatch match = re.match(originalLine);
 
     if (match.hasMatch()) {
@@ -597,13 +597,16 @@ void gCodeModulation::on_trajectory_smooth_clicked(){
                                          std::pow(z1 - z0, 2));
             // 获取距离参数，乘以 1.5
             float distance = ui->trajectory_smooth_dsb->value();
-
-            if(distance3D>distance){continue;}
-
+            qDebug()<<"distance3D :"<<distance3D;
+            qDebug()<<"distance :"<<distance;
+            if(distance3D<distance){continue;}
+            qDebug()<<"line :"<<line;
             // 计算目标点，假设从 (x0, y0, z0) 到 (x1, y1, z1) 的路径
             Point targetPoint = getPointAtDistance(x0, y0, z0, x1, y1, z1, distance);
 
             line = generateG01Command(targetPoint, line);
+
+            qDebug()<<"line :"<<line;
             // 输出计算后的目标点
             qDebug() << "targetPoint: (" << targetPoint.x << ", " << targetPoint.y << ", " << targetPoint.z << ")";
         } else {
@@ -743,8 +746,23 @@ double gCodeModulation::calculateRadius(double endX, double endY, double centerI
 
 void gCodeModulation::TransmissionFile(){
 
+    QStringList lines = ui->pTEgcode->toPlainText().split('\n');
+    bool hasE = false;
 
-    //uploadFileWithSftpUPdate(filePath,"update","192.168.1.88","./PlcLogic/_cnc"+workPiece+".cnc",22,this);
+    for (const QString &line : lines) {
+        if (line.contains('E')) {
+            hasE = true;
+            break;  // 找到就不再检查其他行
+        }
+    }
+
+    if (!hasE) {
+        QMessageBox::warning(this,
+            QString::fromLocal8Bit("提示"),
+            QString::fromLocal8Bit("没有速度参数，请先保存速度！"));
+        return;  // 或者 return 某个值，或执行你的后续逻辑
+    }
+
     uploadFileWithSftp();
 
 }
