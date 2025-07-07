@@ -28,11 +28,12 @@ public:
 
     bool    stopCorretion=false;
 
+    int     numStepCorretion;
     MainWindow *mw;
 
     std::vector<std::pair<float, float>> getNeighbors(float x, float y, float z, float r, float searchRange, float stepSize);
     void autoCorretionPathAlgrith(int index, float& x, float& y, float& z, float& r);
-
+    void moveAndWaitUntilReached(double targetX, double targetY, double targetZ, double targetR);
     void waitForSignal(int timeoutMs=3000);
 private slots:
     void onNewConnection();  // 处理新连接
@@ -55,9 +56,9 @@ private:
     void startServer();     // 启动监听
     void sendData(const QString &data);  // 发送数据
 
+    void disConnection();
 
-
-
+   QTimer* checkTimer = nullptr;
 };
 
 #endif // ASCAN_H

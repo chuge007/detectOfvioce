@@ -15,9 +15,9 @@
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGraphicsView>
 #include <QtWidgets/QGridLayout>
-#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -32,11 +32,13 @@ public:
     QGridLayout *gridLayout_2;
     QLabel *disPlayIformationLb;
     QFrame *frame;
-    QHBoxLayout *horizontalLayout;
+    QGridLayout *gridLayout_4;
+    QLabel *label_3;
     QLabel *label_2;
     QDoubleSpinBox *searchRange_dSb;
-    QLabel *label_3;
     QDoubleSpinBox *searchStep_dsb;
+    QLabel *label_4;
+    QSpinBox *stepCorretionNum_sB;
     QFrame *frame_2;
     QGridLayout *gridLayout;
     QPushButton *pbstepCorrect;
@@ -90,29 +92,40 @@ public:
         frame->setObjectName(QString::fromUtf8("frame"));
         frame->setFrameShape(QFrame::StyledPanel);
         frame->setFrameShadow(QFrame::Raised);
-        horizontalLayout = new QHBoxLayout(frame);
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        gridLayout_4 = new QGridLayout(frame);
+        gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
+        label_3 = new QLabel(frame);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+
+        gridLayout_4->addWidget(label_3, 0, 3, 1, 1);
+
         label_2 = new QLabel(frame);
         label_2->setObjectName(QString::fromUtf8("label_2"));
 
-        horizontalLayout->addWidget(label_2);
+        gridLayout_4->addWidget(label_2, 0, 0, 1, 1);
 
         searchRange_dSb = new QDoubleSpinBox(frame);
         searchRange_dSb->setObjectName(QString::fromUtf8("searchRange_dSb"));
         searchRange_dSb->setMinimum(9.000000000000000);
 
-        horizontalLayout->addWidget(searchRange_dSb);
-
-        label_3 = new QLabel(frame);
-        label_3->setObjectName(QString::fromUtf8("label_3"));
-
-        horizontalLayout->addWidget(label_3);
+        gridLayout_4->addWidget(searchRange_dSb, 0, 1, 1, 1);
 
         searchStep_dsb = new QDoubleSpinBox(frame);
         searchStep_dsb->setObjectName(QString::fromUtf8("searchStep_dsb"));
         searchStep_dsb->setValue(1.000000000000000);
 
-        horizontalLayout->addWidget(searchStep_dsb);
+        gridLayout_4->addWidget(searchStep_dsb, 0, 4, 1, 1);
+
+        label_4 = new QLabel(frame);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+
+        gridLayout_4->addWidget(label_4, 1, 0, 1, 1);
+
+        stepCorretionNum_sB = new QSpinBox(frame);
+        stepCorretionNum_sB->setObjectName(QString::fromUtf8("stepCorretionNum_sB"));
+        stepCorretionNum_sB->setMaximum(999999999);
+
+        gridLayout_4->addWidget(stepCorretionNum_sB, 1, 1, 1, 1);
 
 
         gridLayout_3->addWidget(frame, 2, 1, 1, 1);
@@ -157,8 +170,9 @@ public:
         ascan->setWindowTitle(QCoreApplication::translate("ascan", "Form", nullptr));
         label->setText(QCoreApplication::translate("ascan", "\344\277\241\346\201\257\357\274\232", nullptr));
         disPlayIformationLb->setText(QString());
-        label_2->setText(QCoreApplication::translate("ascan", "\346\220\234\347\264\242\350\214\203\345\233\264\357\274\232", nullptr));
         label_3->setText(QCoreApplication::translate("ascan", "\346\220\234\347\264\242\346\255\245\351\225\277\357\274\232", nullptr));
+        label_2->setText(QCoreApplication::translate("ascan", "\346\220\234\347\264\242\350\214\203\345\233\264\357\274\232", nullptr));
+        label_4->setText(QCoreApplication::translate("ascan", "\345\215\225\346\255\245\347\272\240\345\201\217\347\202\271\357\274\232", nullptr));
         pbstepCorrect->setText(QCoreApplication::translate("ascan", "\345\215\225\346\255\245\347\272\240\345\201\217", nullptr));
         autoCorrection_but->setText(QCoreApplication::translate("ascan", "\350\207\252\345\212\250\347\272\240\345\201\217", nullptr));
         saveScanStan_but->setText(QCoreApplication::translate("ascan", "\344\277\235\345\255\230\346\240\207\345\207\206\347\202\271", nullptr));

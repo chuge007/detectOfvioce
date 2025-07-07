@@ -4,6 +4,13 @@
 #include "./libssh2_1.11.0_x64/libssh2.h"
 #include "./libssh2_1.11.0_x64/libssh2_publickey.h"
 #include "./libssh2_1.11.0_x64/libssh2_sftp.h"
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <iostream>
+#include <string>
+#include <QString>
+#include <libssh2.h>
+#include <libssh2_sftp.h>
 
 #include <stdio.h>
 #include <winsock2.h>
@@ -996,5 +1003,101 @@ Point gCodeModulation::getPointAtDistance(float x0, float y0, float z0,
 
 
 
+bool gCodeModulation::deleteRemoteFile(const QString& workPiece) {
+    QString remotePath = "./PlcLogic/_cnc/" + workPiece + ".cnc";
+    std::string remotePathStr = remotePath.toStdString();
+    const char* remoteFilePath = remotePathStr.c_str();
 
+    const char* hostname = "192.168.1.88";
+    const char* username = "update";
+    const char* password = "123456";
 
+    WSADATA wsadata;
+    if (WSAStartup(MAKEWORD(2, 2), &wsadata) != 0) {
+        std::cerr << "WSAStartup failed.\n";
+        return false;
+    }
+
+    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sock == INVALID_SOCKET) {
+        std::cerr << "Socket creation failed.\n";
+        WSACleanup();
+        return false;
+    }
+
+    sockaddr_in sin{};
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(22);  // SFTP默认端口
+
+    // Windows下用 InetPtonA 替代 inet_pton
+    if (InetPtonA(AF_INET, hostname, &sin.sin_addr) != 1) {
+        std::cerr << "InetPtonA failed.\n";
+        closesocket(sock);
+        WSACleanup();
+        return false;
+    }
+
+    // 用全局命名空间调用 connect，避免和 Qt connect 冲突
+    if (::connect(sock, (struct sockaddr*)&sin, sizeof(sin)) != 0) {
+        std::cerr << "Failed to connect.\n";
+        closesocket(sock);
+        WSACleanup();
+        return false;
+    }
+
+    LIBSSH2_SESSION* session = libssh2_session_init();
+    if (!session) {
+        std::cerr << "Failed to init SSH session.\n";
+        closesocket(sock);
+        WSACleanup();
+        return false;
+    }
+
+    if (libssh2_session_handshake(session, sock)) {
+        std::cerr << "SSH session handshake failed.\n";
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return false;
+    }
+
+    if (libssh2_userauth_password(session, username, password)) {
+        std::cerr << "Authentication failed.\n";
+        libssh2_session_disconnect(session, "Bye");
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return false;
+    }
+
+    LIBSSH2_SFTP* sftp_session = libssh2_sftp_init(session);
+    if (!sftp_session) {
+        std::cerr << "Unable to init SFTP session.\n";
+        libssh2_session_disconnect(session, "Bye");
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return false;
+    }
+
+    int rc = libssh2_sftp_unlink(sftp_session, remoteFilePath);
+    if (rc != 0) {
+        std::cerr << "Failed to delete file: " << remoteFilePath << "\n";
+        libssh2_sftp_shutdown(sftp_session);
+        libssh2_session_disconnect(session, "Bye");
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return false;
+    }
+
+    std::cout << "File deleted successfully: " << remoteFilePath << "\n";
+
+    libssh2_sftp_shutdown(sftp_session);
+    libssh2_session_disconnect(session, "Bye");
+    libssh2_session_free(session);
+    closesocket(sock);
+    WSACleanup();
+
+    return true;
+}

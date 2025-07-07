@@ -77,6 +77,7 @@ public:
 
     bool isSelectChange=true;
 
+    TargetPos currentTargetPos;  // 用于保存当前目标点
 private slots:
 
     void pbStartScanBtn();
@@ -209,7 +210,7 @@ private:
 
     int current_weld_row;
     int current_weld_id;
-    TargetPos currentTargetPos;  // 用于保存当前目标点
+
     QList<QString> GlobeUniquePoints;
 
     double traject_x0,traject_y0;

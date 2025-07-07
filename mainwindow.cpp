@@ -45,6 +45,7 @@
 #include <QFont>
 #include <QSqlDriver>
 #include <QSqlRecord>
+#include <QThread>
 
 ScanControlAbstract *MainWindow::scanDetectCtrl=0;
 
@@ -349,18 +350,27 @@ void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
     qreal scaledX = pos.x() * scaleFactor;
     qreal scaledY = pos.y() * scaleFactor;
 
+    float x0=model->data(model->index(0, 2), Qt::DisplayRole).toFloat();
+    float y0=model->data(model->index(0, 3), Qt::DisplayRole).toFloat();
+
+
+
+    QGraphicsEllipseItem* circleStart = new QGraphicsEllipseItem((x0 - 20)*scaleFactor, (y0 - 20)*scaleFactor, 40*scaleFactor, 40*scaleFactor); // 半径为20
+    circleStart->setBrush(QBrush(Qt::green));
+    scene->addItem(circleStart);
+
     // 创建新的圆圈，调整大小以考虑缩放
     QGraphicsEllipseItem* circle = new QGraphicsEllipseItem(scaledX - 5, scaledY - 5, 10, 10); // 半径为 5 的小圆圈
     circle->setBrush(QBrush(Qt::red));  // 红色
     scene->addItem(circle);
 
+    currentTargetPos.x=pos.x();
 
-    float x0=model->data(model->index(0, 2), Qt::DisplayRole).toFloat();
-    float y0=model->data(model->index(0, 3), Qt::DisplayRole).toFloat();
+    currentTargetPos.y=pos.y();
 
-    QGraphicsEllipseItem* circleStart = new QGraphicsEllipseItem((x0 - 20)*scaleFactor, (y0 - 20)*scaleFactor, 40*scaleFactor, 40*scaleFactor); // 半径为20
-    circleStart->setBrush(QBrush(Qt::green));
-    scene->addItem(circleStart);
+    currentTargetPos.z=cur_z;
+
+    currentTargetPos.r=cur_r;
 }
 
 
@@ -726,7 +736,9 @@ void MainWindow::pbStartScanBtn(){
         isSelectChange=false;
 
     }
+    //QThread::sleep(500);
     scanDetectCtrl->selectProcessType(ui->processType_cb->currentIndex());
+    //QThread::sleep(500);
     scanDetectCtrl->on_startScanBtn_clicked();
     ui->disMess_lab->setText(QString::fromLocal8Bit(" 已启动   "));
 
@@ -1962,11 +1974,11 @@ void MainWindow::CalculatingAngles(){
     bool ok;
     dbManager->db.transaction();
 
-//    QString type=model->data(model->index(0, 1), Qt::DisplayRole).toString();
-//    if(type=="arc"){
-//        QMessageBox::warning(this, "错误", "起点所在图元要为直线");
-//        return;
-//    }
+    //    QString type=model->data(model->index(0, 1), Qt::DisplayRole).toString();
+    //    if(type=="arc"){
+    //        QMessageBox::warning(this, "错误", "起点所在图元要为直线");
+    //        return;
+    //    }
 
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(nullptr, QString::fromLocal8Bit("提示"),
@@ -2432,10 +2444,19 @@ void MainWindow::PbMoveToPosition(){
 }
 void MainWindow::PbSetOrigin(){
 
-    QString Axit=ui->selectAxitO_cb->currentText();
-    scanDetectCtrl->on_setOriginBtn_clicked(Axit);
-    ui->disMess_lab->setText(QString::fromLocal8Bit(" 零点已设置   "));
+    bool reverseAll = QApplication::keyboardModifiers() & Qt::ControlModifier;
+    if (reverseAll) {
+        scanDetectCtrl->on_setOriginBtn_clicked("x");
+        scanDetectCtrl->on_setOriginBtn_clicked("y");
+        scanDetectCtrl->on_setOriginBtn_clicked("z");
+        scanDetectCtrl->on_setOriginBtn_clicked("r");
+        ui->disMess_lab->setText(QString::fromLocal8Bit(" 零点已设置   "));
 
+    }else{
+        QString Axit=ui->selectAxitO_cb->currentText();
+        scanDetectCtrl->on_setOriginBtn_clicked(Axit);
+        ui->disMess_lab->setText(QString::fromLocal8Bit(" 零点已设置   "));
+    }
 
 
 }
@@ -2464,12 +2485,12 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
         QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
                      model->data(model->index(nextRow, 11)).toFloat());
 
-//        qDebug() << "line prevRow:" << prevRow;
-//        qDebug() << "line prevRow:" << nextRow;
-//        qDebug() << "line start1:" << start1;
-//        qDebug() << "line end1:" << end1;
-//        qDebug() << "line start2:" << start2;
-//        qDebug() << "line end2:" << end2;
+        //        qDebug() << "line prevRow:" << prevRow;
+        //        qDebug() << "line prevRow:" << nextRow;
+        //        qDebug() << "line start1:" << start1;
+        //        qDebug() << "line end1:" << end1;
+        //        qDebug() << "line start2:" << start2;
+        //        qDebug() << "line end2:" << end2;
         if (!mathTool.computeSmoothArc(start1, end1, start2, end2, smoothFactor, result)) {
             QMessageBox::warning(this, "Error", QString::fromLocal8Bit("无法计算平滑圆弧，方向矢量可能无效"));
             return;
@@ -2488,7 +2509,7 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
                        model->data(model->index(nextRow, 3)).toFloat());
 
         QPointF tran2(model->data(model->index(nextRow, 6)).toFloat(),
-                     model->data(model->index(nextRow, 7)).toFloat());
+                      model->data(model->index(nextRow, 7)).toFloat());
 
         QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
                      model->data(model->index(nextRow, 11)).toFloat());
@@ -2519,7 +2540,7 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
         QPointF start2(model->data(model->index(prevRow, 2)).toFloat(),
                        model->data(model->index(prevRow, 3)).toFloat());
         QPointF tran2(model->data(model->index(prevRow, 6)).toFloat(),
-                     model->data(model->index(prevRow, 7)).toFloat());
+                      model->data(model->index(prevRow, 7)).toFloat());
         QPointF end2(model->data(model->index(prevRow, 10)).toFloat(),
                      model->data(model->index(prevRow, 11)).toFloat());
 
@@ -2540,14 +2561,14 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
         QPointF start1(model->data(model->index(prevRow, 2)).toFloat(),
                        model->data(model->index(prevRow, 3)).toFloat());
         QPointF tran1(model->data(model->index(prevRow, 6)).toFloat(),
-                     model->data(model->index(prevRow, 7)).toFloat());
+                      model->data(model->index(prevRow, 7)).toFloat());
         QPointF end1(model->data(model->index(prevRow, 10)).toFloat(),
                      model->data(model->index(prevRow, 11)).toFloat());
 
         QPointF start2(model->data(model->index(nextRow, 2)).toFloat(),
                        model->data(model->index(nextRow, 3)).toFloat());
         QPointF tran2(model->data(model->index(nextRow, 6)).toFloat(),
-                     model->data(model->index(nextRow, 7)).toFloat());
+                      model->data(model->index(nextRow, 7)).toFloat());
         QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
                      model->data(model->index(nextRow, 11)).toFloat());
 
@@ -2799,6 +2820,7 @@ void MainWindow::pbdeletePiece(){
 
     qDebug()<<"WorkpieceList:"<<WorkpieceList;
 
+    gcodeEidt->deleteRemoteFile(selectedText);
     saveSetting();
 
 }

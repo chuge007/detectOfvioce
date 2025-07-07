@@ -24,6 +24,7 @@ ascan::ascan(QWidget *parent) :
     connect(ui->pbstepCorrect, &QPushButton::clicked, this, &ascan::stepCorretionPath);
     connect(ui->pbstopCorrcet, &QPushButton::clicked, this, &ascan::stopCorretionPath);
 
+    checkTimer = new QTimer(this);
 
 }
 
@@ -31,6 +32,7 @@ ascan::~ascan()
 {
     delete ui;
     if (tcpSocket) {
+        tcpServer->close();
         tcpSocket->disconnectFromHost();  // 断开连接
     }
 }
@@ -38,13 +40,15 @@ ascan::~ascan()
 void ascan::startServer()
 {
     // 启动监听端口 56789
-    if (!tcpServer->listen(QHostAddress::Any, 34567)) {
+    if (!tcpServer->listen(QHostAddress::LocalHost, 34567)) {
         QMessageBox::critical(this, tr("Error"), tr("Unable to start the server: %1").arg(tcpServer->errorString()));
         return;
     }
 
     // 监听新连接
     connect(tcpServer, &QTcpServer::newConnection, this, &ascan::onNewConnection);
+
+
 
 }
 
@@ -55,9 +59,17 @@ void ascan::onNewConnection()
 
     // 连接接收数据的槽函数
     connect(tcpSocket, &QTcpSocket::readyRead, this, &ascan::onReadyRead);
+    ui->disPlayIformationLb->setText(QString::fromLocal8Bit("客户端连接成功"));  // 显示接收到的数据（假设你有一个 QTextEdit 来显示）
+
+    connect(tcpSocket, &QTcpSocket::disconnected, this, &ascan::disConnection);
+}
+
+
+
+void ascan::disConnection(){
 
     // 连接成功后，可以通过 tcpSocket 发送和接收数据
-    ui->disPlayIformationLb->setText(QString::fromLocal8Bit("客户端连接成功"));  // 显示接收到的数据（假设你有一个 QTextEdit 来显示）
+    ui->disPlayIformationLb->setText(QString::fromLocal8Bit("客户端未连接成功"));  // 显示接收到的数据（假设你有一个 QTextEdit 来显示）
 
 }
 
@@ -116,8 +128,6 @@ void ascan::autoCorretionPath(){
 
     mw->dbManager->db.transaction();
 
-
-    stopCorretion=false;
     qDebug()<<"autoCorretionPath";
 
     int row_count = mw->model->rowCount();
@@ -224,7 +234,6 @@ void ascan::autoCorretionPath(){
         mw->dbManager->db.rollback();
     }
 
-    stepCorretion=false;
 }
 
 
@@ -269,7 +278,7 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
         qDebug()<<"nx:"<<nx<<"  "<<"ny"<<ny;
 
         // 移动到邻居位置
-        mw->scanDetectCtrl->runTargetPosition(nx, ny, currentZ, currentR);  // 执行目标位置移动
+        moveAndWaitUntilReached(nx, ny, currentZ, currentR);  // 执行目标位置移动
         qDebug()<<"autoCorretionPathAlgrith-runTargetPosition";
 
 
@@ -295,8 +304,9 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
         }
 
         isSingUPdate=false;
-
-
+        qDebug() <<"targetSignal"<<targetSignal;
+        qDebug() <<"diff"<<diff;
+        qDebug() <<"bestSignalDiff"<<bestSignalDiff;
         qDebug() <<"neighbor"<<neighbor.first<<"  "<<neighbor.second;
     }
 
@@ -330,10 +340,111 @@ std::vector<std::pair<float, float>> ascan::getNeighbors(float x, float y, float
 void ascan::stepCorretionPath(){
 
 
-    stepCorretion=true;
     qDebug()<<"stepCorretionPath";
+    numStepCorretion=ui->stepCorretionNum_sB->value();
+    mw->dbManager->db.transaction();
+
+    int row_count = mw->model->rowCount();
+    float x0, y0, z0, r0, x1, y1, z1, r1, x2, y2, z2, r2;
+    QString name;
 
 
+
+    qDebug()<<"autoCorretionPath-stepCorretion";
+
+
+    name = mw->model->data(mw->model->index(numStepCorretion, 1), Qt::DisplayRole).toString();
+    x0 = mw->model->data(mw->model->index(numStepCorretion, 2), Qt::DisplayRole).toFloat();
+    y0 = mw->model->data(mw->model->index(numStepCorretion, 3), Qt::DisplayRole).toFloat();
+    z0 = mw->model->data(mw->model->index(numStepCorretion, 4), Qt::DisplayRole).toFloat();
+    r0 = mw->model->data(mw->model->index(numStepCorretion, 5), Qt::DisplayRole).toFloat();
+
+    x1 = mw->model->data(mw->model->index(numStepCorretion, 6), Qt::DisplayRole).toFloat();
+    y1 = mw->model->data(mw->model->index(numStepCorretion, 7), Qt::DisplayRole).toFloat();
+    z1 = mw->model->data(mw->model->index(numStepCorretion, 8), Qt::DisplayRole).toFloat();
+    r1 = mw->model->data(mw->model->index(numStepCorretion, 9), Qt::DisplayRole).toFloat();
+
+    x2 = mw->model->data(mw->model->index(numStepCorretion, 10), Qt::DisplayRole).toFloat();
+    y2 = mw->model->data(mw->model->index(numStepCorretion, 11), Qt::DisplayRole).toFloat();
+    z2 = mw->model->data(mw->model->index(numStepCorretion, 12), Qt::DisplayRole).toFloat();
+    r2 = mw->model->data(mw->model->index(numStepCorretion, 13), Qt::DisplayRole).toFloat();
+
+    if(numStepCorretion == 0){
+        autoCorretionPathAlgrith(numStepCorretion,x0,y0,z0,r0);
+        auto currentPoint = mw->pbGetCurrentlyPoint();
+        float xg = std::get<0>(currentPoint);
+        float yg = std::get<1>(currentPoint);
+        float zg = std::get<2>(currentPoint);
+        float rg = std::get<3>(currentPoint);
+
+        mw->model->setData(mw->model->index(numStepCorretion, 2), xg);
+        mw->model->setData(mw->model->index(numStepCorretion, 3), yg);
+        mw->model->setData(mw->model->index(numStepCorretion, 4), zg);
+        mw->model->setData(mw->model->index(numStepCorretion, 5), rg);
+    }
+
+    if(name == "arc"){
+
+        autoCorretionPathAlgrith(numStepCorretion,x1,y1,z1,r1);
+
+        auto currentPoint = mw->pbGetCurrentlyPoint();
+        float xg = std::get<0>(currentPoint);
+        float yg = std::get<1>(currentPoint);
+        float zg = std::get<2>(currentPoint);
+        float rg = std::get<3>(currentPoint);
+
+        mw->model->setData(mw->model->index(numStepCorretion, 6), xg);
+        mw->model->setData(mw->model->index(numStepCorretion, 7), yg);
+        mw->model->setData(mw->model->index(numStepCorretion, 8), zg);
+        mw->model->setData(mw->model->index(numStepCorretion, 9), rg);
+
+        autoCorretionPathAlgrith(numStepCorretion,x2,y2,z2,r2);
+
+        auto currentPoint2 = mw->pbGetCurrentlyPoint();
+        float x2g = std::get<0>(currentPoint2);
+        float y2g = std::get<1>(currentPoint2);
+        float z2g = std::get<2>(currentPoint2);
+        float r2g = std::get<3>(currentPoint2);
+
+        mw->model->setData(mw->model->index(numStepCorretion, 10), x2g);
+        mw->model->setData(mw->model->index(numStepCorretion, 11), y2g);
+        mw->model->setData(mw->model->index(numStepCorretion, 12), z2g);
+        mw->model->setData(mw->model->index(numStepCorretion, 13), r2g);
+    } else {
+
+
+        autoCorretionPathAlgrith(numStepCorretion,x2,y2,z2,r2);
+
+        auto currentPoint = mw->pbGetCurrentlyPoint();
+        float xg = std::get<0>(currentPoint);
+        float yg = std::get<1>(currentPoint);
+        float zg = std::get<2>(currentPoint);
+        float rg = std::get<3>(currentPoint);
+
+        mw->model->setData(mw->model->index(numStepCorretion, 6), xg);
+        mw->model->setData(mw->model->index(numStepCorretion, 7), yg);
+        mw->model->setData(mw->model->index(numStepCorretion, 8), zg);
+        mw->model->setData(mw->model->index(numStepCorretion, 9), rg);
+    }
+
+
+    if (!mw->model->submitAll()) {
+        qDebug() << "提交数据失败:" << mw->model->lastError().text();
+        mw->dbManager->db.rollback();
+        QMessageBox::critical(this, "Error", "提交数据失败: " + mw->model->lastError().text());
+        return;
+    }
+
+
+    if (!mw->dbManager->db.commit()) {
+        qDebug() << "Failed to commit transaction:" << mw->dbManager->db.lastError().text();
+        QMessageBox::critical(this, "Error", "事务提交失败:" + mw->dbManager->db.lastError().text());
+        mw->dbManager->db.rollback();
+    }
+
+    numStepCorretion++;
+
+    ui->stepCorretionNum_sB->setValue(numStepCorretion);
 }
 
 
@@ -343,4 +454,35 @@ void ascan::stopCorretionPath(){
     stopCorretion=true;
     qDebug()<<"stopCorretionPath";
 
+}
+
+
+void ascan::moveAndWaitUntilReached(double targetX, double targetY, double targetZ, double targetR) {
+    const double tolerance = 0.01;
+
+    // 启动移动
+    mw->scanDetectCtrl->runTargetPosition(targetX, targetY, targetZ, targetR);
+
+    // 防止重复连接信号
+    checkTimer->stop();
+    checkTimer->disconnect();
+
+    // 每次都重新连接，避免重复触发
+    connect(checkTimer, &QTimer::timeout, this, [=]() {
+        double currentX = mw->currentTargetPos.x;  // 替换成你自己的实时坐标获取函数
+        double currentY = mw->currentTargetPos.y;
+        double currentZ = mw->currentTargetPos.z;
+        double currentR = mw->currentTargetPos.r;
+
+        if (std::abs(currentX - targetX) <= tolerance &&
+            std::abs(currentY - targetY) <= tolerance &&
+            std::abs(currentZ - targetZ) <= tolerance &&
+            std::abs(currentR - targetR) <= tolerance) {
+
+            checkTimer->stop();  // 到达目标，停止检测
+\
+        }
+    });
+
+    checkTimer->start(100);  // 每100ms检测一次
 }

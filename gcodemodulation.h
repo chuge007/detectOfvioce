@@ -52,6 +52,8 @@ public:
     Point getPointAtDistance(float x0, float y0, float z0,
                              float x1, float y1, float z1,
                              float distance);
+
+    bool deleteRemoteFile(const QString& workPiece);
 private slots:
     void allInsertPaus();
     void allDeletePaus();

@@ -69,32 +69,46 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>搜索范围：</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDoubleSpinBox" name="searchRange_dSb">
-        <property name="minimum">
-         <double>9.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="3">
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>搜索步长：</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>搜索范围：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="searchRange_dSb">
+        <property name="minimum">
+         <double>9.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
        <widget class="QDoubleSpinBox" name="searchStep_dsb">
         <property name="value">
          <double>1.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>单步纠偏点：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="stepCorretionNum_sB">
+        <property name="maximum">
+         <number>999999999</number>
         </property>
        </widget>
       </item>
