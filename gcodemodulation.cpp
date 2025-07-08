@@ -775,8 +775,27 @@ void gCodeModulation::TransmissionFile(){
 }
 
 
+bool gCodeModulation::isHostOnline(const QString& host, quint16 port, int timeoutMs) {
+    QTcpSocket socket;
+    socket.connectToHost(host, port);
+
+    if (!socket.waitForConnected(timeoutMs)) {
+        QMessageBox::warning(nullptr, QString::fromLocal8Bit("提示"),
+                             QString::fromLocal8Bit("无法联系到客户端，请检查线路"));
+        return false;
+    }
+
+    return true;
+}
+
 int gCodeModulation::uploadFileWithSftp()
 {
+
+    if (!isHostOnline("192.168.1.88")) {
+        qDebug() << "目标主机不可达";
+        return false;
+    }
+
     // Upload progress dialog
     QProgressDialog progress("Uploading...", "Cancel", 0, 100, nullptr);
     progress.setWindowModality(Qt::WindowModal);
@@ -1004,6 +1023,13 @@ Point gCodeModulation::getPointAtDistance(float x0, float y0, float z0,
 
 
 bool gCodeModulation::deleteRemoteFile(const QString& workPiece) {
+
+
+    if (!isHostOnline("192.168.1.88")) {
+        qDebug() << "目标主机不可达";
+        return false;
+    }
+
     QString remotePath = "./PlcLogic/_cnc/" + workPiece + ".cnc";
     std::string remotePathStr = remotePath.toStdString();
     const char* remoteFilePath = remotePathStr.c_str();

@@ -26,6 +26,7 @@ ascan::ascan(QWidget *parent) :
 
     checkTimer = new QTimer(this);
 
+
 }
 
 ascan::~ascan()
@@ -121,6 +122,8 @@ void ascan::waitForSignal(int timeoutMs) {
 
     timeoutTimer.start(timeoutMs);
     loop.exec();  // 进入事件循环，阻塞直到 quit()
+
+    qDebug()<<"waitForSignal";
 }
 
 
@@ -242,7 +245,7 @@ void ascan::autoCorretionPath(){
 void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, float& r) {
 
     qDebug()<<"autoCorretionPathAlgrith";
-
+    if(stopCorretion){return;}
     // 设置目标信号值
     float targetSignal = stanPointSing;  // 从接收到的信号中获取目标信号
     isSingUPdate=false;
@@ -285,7 +288,7 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
         // 发送信号请求
         sendData("1");  // 发送请求信号，等待信号更新
 
-        waitForSignal();  // 阻塞直到接收到信号或超时
+        waitForSignal(3000);  // 阻塞直到接收到信号或超时
 
         // 计算当前邻域点的信号差值
         float diff = std::abs(PointSing - targetSignal);  // 使用接收到的信号与目标信号进行比较
@@ -310,7 +313,7 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
         qDebug() <<"neighbor"<<neighbor.first<<"  "<<neighbor.second;
     }
 
-    mw->scanDetectCtrl->runTargetPosition(currentX, currentY, currentZ, currentR);  // 执行目标位置移动
+    moveAndWaitUntilReached(currentX, currentY, currentZ, currentR);   // 执行目标位置移动
 
 
     qDebug() << "runTargetPosition  "
@@ -339,7 +342,9 @@ std::vector<std::pair<float, float>> ascan::getNeighbors(float x, float y, float
 
 void ascan::stepCorretionPath(){
 
-
+    if (!isStanPointSing){
+        stanPointSing=Rsettings->value("AscanStanPoint", 0).toDouble();
+    }
     qDebug()<<"stepCorretionPath";
     numStepCorretion=ui->stepCorretionNum_sB->value();
     mw->dbManager->db.transaction();
@@ -370,6 +375,7 @@ void ascan::stepCorretionPath(){
     r2 = mw->model->data(mw->model->index(numStepCorretion, 13), Qt::DisplayRole).toFloat();
 
     if(numStepCorretion == 0){
+        if(stopCorretion){return;}
         autoCorretionPathAlgrith(numStepCorretion,x0,y0,z0,r0);
         auto currentPoint = mw->pbGetCurrentlyPoint();
         float xg = std::get<0>(currentPoint);
@@ -384,7 +390,7 @@ void ascan::stepCorretionPath(){
     }
 
     if(name == "arc"){
-
+        if(stopCorretion){return;}
         autoCorretionPathAlgrith(numStepCorretion,x1,y1,z1,r1);
 
         auto currentPoint = mw->pbGetCurrentlyPoint();
@@ -412,7 +418,7 @@ void ascan::stepCorretionPath(){
         mw->model->setData(mw->model->index(numStepCorretion, 13), r2g);
     } else {
 
-
+        if(stopCorretion){return;}
         autoCorretionPathAlgrith(numStepCorretion,x2,y2,z2,r2);
 
         auto currentPoint = mw->pbGetCurrentlyPoint();
@@ -458,31 +464,83 @@ void ascan::stopCorretionPath(){
 
 
 void ascan::moveAndWaitUntilReached(double targetX, double targetY, double targetZ, double targetR) {
-    const double tolerance = 0.01;
+    const double tolerance = 0.1;
 
     // 启动移动
     mw->scanDetectCtrl->runTargetPosition(targetX, targetY, targetZ, targetR);
 
-    // 防止重复连接信号
+    // 停止旧定时器、断开旧连接
     checkTimer->stop();
     checkTimer->disconnect();
 
-    // 每次都重新连接，避免重复触发
-    connect(checkTimer, &QTimer::timeout, this, [=]() {
-        double currentX = mw->currentTargetPos.x;  // 替换成你自己的实时坐标获取函数
+    // 记录上一次的位置
+    QPointF lastPos(-9999, -9999);  // 用于 XY 变化判断
+    double lastZ = -9999, lastR = -9999;
+
+    connect(checkTimer, &QTimer::timeout, this, [=]() mutable {
+        double currentX = mw->currentTargetPos.x;
         double currentY = mw->currentTargetPos.y;
         double currentZ = mw->currentTargetPos.z;
         double currentR = mw->currentTargetPos.r;
 
-        if (std::abs(currentX - targetX) <= tolerance &&
+        bool isCloseToTarget =
+            std::abs(currentX - targetX) <= tolerance &&
             std::abs(currentY - targetY) <= tolerance &&
             std::abs(currentZ - targetZ) <= tolerance &&
-            std::abs(currentR - targetR) <= tolerance) {
+            std::abs(currentR - targetR) <= tolerance;
 
-            checkTimer->stop();  // 到达目标，停止检测
-\
+        bool noMovement =
+            std::abs(currentX - lastPos.x()) <= tolerance &&
+            std::abs(currentY - lastPos.y()) <= tolerance &&
+            std::abs(currentZ - lastZ) <= tolerance &&
+            std::abs(currentR - lastR) <= tolerance;
+
+        if ((isCloseToTarget && noMovement)||stopCorretion) {
+            checkTimer->stop();
+            qDebug() << "✅ 到达目标或位置不再变化，停止检测。";
         }
+
+        // 更新上一次的位置
+        lastPos.setX(currentX);
+        lastPos.setY(currentY);
+        lastZ = currentZ;
+        lastR = currentR;
+
+        qDebug() << "检测中：" << currentX << currentY << currentZ << currentR;
     });
 
-    checkTimer->start(100);  // 每100ms检测一次
+    checkTimer->start(1000);
 }
+
+
+//void ascan::moveAndWaitUntilReached(double targetX, double targetY, double targetZ, double targetR) {
+//    const double tolerance = 0.01;
+
+//    // 启动移动
+//    mw->scanDetectCtrl->runTargetPosition(targetX, targetY, targetZ, targetR);
+
+//    // 防止重复连接信号
+//    checkTimer->stop();
+//    checkTimer->disconnect();
+
+//    // 每次都重新连接，避免重复触发
+//    connect(checkTimer, &QTimer::timeout, this, [=]() {
+//        double currentX = mw->currentTargetPos.x;  // 替换成你自己的实时坐标获取函数
+//        double currentY = mw->currentTargetPos.y;
+//        double currentZ = mw->currentTargetPos.z;
+//        double currentR = mw->currentTargetPos.r;
+
+//        if (std::abs(currentX - targetX) <= tolerance &&
+//                std::abs(currentY - targetY) <= tolerance &&
+//                std::abs(currentZ - targetZ) <= tolerance &&
+//                std::abs(currentR - targetR) <= tolerance) {
+
+//            checkTimer->stop();  // 到达目标，停止检测
+//            qDebug()<<"checkTimer->stop()";
+//        }
+
+//        qDebug()<<"moveAndWaitUntilReached"<<currentX<<" "<<currentY<<" "<<currentZ<<" "<<currentR;
+//    });
+
+//    checkTimer->start(400);  // 每100ms检测一次
+//}

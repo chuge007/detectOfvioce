@@ -87,7 +87,10 @@
       <item row="0" column="1">
        <widget class="QDoubleSpinBox" name="searchRange_dSb">
         <property name="minimum">
-         <double>9.000000000000000</double>
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1.000000000000000</double>
         </property>
        </widget>
       </item>

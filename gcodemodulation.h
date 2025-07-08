@@ -54,6 +54,8 @@ public:
                              float distance);
 
     bool deleteRemoteFile(const QString& workPiece);
+
+    bool isHostOnline(const QString& host, quint16 port = 22, int timeoutMs = 3000);
 private slots:
     void allInsertPaus();
     void allDeletePaus();

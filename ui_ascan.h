@@ -106,7 +106,8 @@ public:
 
         searchRange_dSb = new QDoubleSpinBox(frame);
         searchRange_dSb->setObjectName(QString::fromUtf8("searchRange_dSb"));
-        searchRange_dSb->setMinimum(9.000000000000000);
+        searchRange_dSb->setMinimum(1.000000000000000);
+        searchRange_dSb->setValue(1.000000000000000);
 
         gridLayout_4->addWidget(searchRange_dSb, 0, 1, 1, 1);
 

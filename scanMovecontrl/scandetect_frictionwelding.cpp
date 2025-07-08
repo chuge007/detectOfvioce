@@ -285,7 +285,7 @@ bool scanDetect_frictionWelding::sendPulseCommand(QModbusClient *modbusClient, Q
 
     // Step 2: 延时 100ms 后写入 0（使用 QTimer 延迟，不阻塞主线程事件循环）
     QEventLoop delayLoop;
-    QTimer::singleShot(350, &delayLoop, &QEventLoop::quit);
+    QTimer::singleShot(450, &delayLoop, &QEventLoop::quit);
     delayLoop.exec();
 
     updateCurPos=false;
