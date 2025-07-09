@@ -104,14 +104,24 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>单步纠偏点：</string>
+         <string>单步纠偏点行和列：</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QSpinBox" name="stepCorretionNum_sB">
+       <widget class="QSpinBox" name="stepCorretionNumRow_sB">
         <property name="maximum">
          <number>999999999</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QSpinBox" name="stepCorretionNumCol_sB">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>3</number>
         </property>
        </widget>
       </item>

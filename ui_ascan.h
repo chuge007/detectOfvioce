@@ -38,7 +38,8 @@ public:
     QDoubleSpinBox *searchRange_dSb;
     QDoubleSpinBox *searchStep_dsb;
     QLabel *label_4;
-    QSpinBox *stepCorretionNum_sB;
+    QSpinBox *stepCorretionNumRow_sB;
+    QSpinBox *stepCorretionNumCol_sB;
     QFrame *frame_2;
     QGridLayout *gridLayout;
     QPushButton *pbstepCorrect;
@@ -122,11 +123,18 @@ public:
 
         gridLayout_4->addWidget(label_4, 1, 0, 1, 1);
 
-        stepCorretionNum_sB = new QSpinBox(frame);
-        stepCorretionNum_sB->setObjectName(QString::fromUtf8("stepCorretionNum_sB"));
-        stepCorretionNum_sB->setMaximum(999999999);
+        stepCorretionNumRow_sB = new QSpinBox(frame);
+        stepCorretionNumRow_sB->setObjectName(QString::fromUtf8("stepCorretionNumRow_sB"));
+        stepCorretionNumRow_sB->setMaximum(999999999);
 
-        gridLayout_4->addWidget(stepCorretionNum_sB, 1, 1, 1, 1);
+        gridLayout_4->addWidget(stepCorretionNumRow_sB, 1, 1, 1, 1);
+
+        stepCorretionNumCol_sB = new QSpinBox(frame);
+        stepCorretionNumCol_sB->setObjectName(QString::fromUtf8("stepCorretionNumCol_sB"));
+        stepCorretionNumCol_sB->setMinimum(1);
+        stepCorretionNumCol_sB->setMaximum(3);
+
+        gridLayout_4->addWidget(stepCorretionNumCol_sB, 1, 3, 1, 1);
 
 
         gridLayout_3->addWidget(frame, 2, 1, 1, 1);
@@ -173,7 +181,7 @@ public:
         disPlayIformationLb->setText(QString());
         label_3->setText(QCoreApplication::translate("ascan", "\346\220\234\347\264\242\346\255\245\351\225\277\357\274\232", nullptr));
         label_2->setText(QCoreApplication::translate("ascan", "\346\220\234\347\264\242\350\214\203\345\233\264\357\274\232", nullptr));
-        label_4->setText(QCoreApplication::translate("ascan", "\345\215\225\346\255\245\347\272\240\345\201\217\347\202\271\357\274\232", nullptr));
+        label_4->setText(QCoreApplication::translate("ascan", "\345\215\225\346\255\245\347\272\240\345\201\217\347\202\271\350\241\214\345\222\214\345\210\227\357\274\232", nullptr));
         pbstepCorrect->setText(QCoreApplication::translate("ascan", "\345\215\225\346\255\245\347\272\240\345\201\217", nullptr));
         autoCorrection_but->setText(QCoreApplication::translate("ascan", "\350\207\252\345\212\250\347\272\240\345\201\217", nullptr));
         saveScanStan_but->setText(QCoreApplication::translate("ascan", "\344\277\235\345\255\230\346\240\207\345\207\206\347\202\271", nullptr));

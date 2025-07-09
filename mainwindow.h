@@ -76,7 +76,7 @@ public:
     std::tuple<double, double, double, double> pbGetCurrentlyPoint();
 
     bool isSelectChange=true;
-
+    bool isNewPiece;
     TargetPos currentTargetPos;  // 用于保存当前目标点
 private slots:
 

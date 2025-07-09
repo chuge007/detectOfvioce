@@ -309,13 +309,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+
     // 这里做必要的保存、释放动作（如果不是都放在析构里）
 
-    qApp->quit();  // 请求退出事件循环，程序退出
+//    qApp->quit();  // 请求退出事件循环，程序退出
 
-    event->accept();
+//    event->accept();
 
-    forceExit();
+//    forceExit();
 }
 
 
@@ -355,7 +356,7 @@ void MainWindow::updatePosition(QPointF pos,float cur_r,float cur_z)
 
 
 
-    QGraphicsEllipseItem* circleStart = new QGraphicsEllipseItem((x0 - 20)*scaleFactor, (y0 - 20)*scaleFactor, 40*scaleFactor, 40*scaleFactor); // 半径为20
+    QGraphicsEllipseItem* circleStart = new QGraphicsEllipseItem((x0*scaleFactor - 5), (y0*scaleFactor - 5), 10, 10); // 半径为20
     circleStart->setBrush(QBrush(Qt::green));
     scene->addItem(circleStart);
 
@@ -385,8 +386,9 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
 
 
         if (curRow<=0){
-            curStartPos_list = {ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),
-                                ui->zCurPos_lab->text(),ui->rCurPos_lab->text()};
+            curStartPos_list = startPoint;
+
+
         }else{
             QString x0=QString::number(model->data(model->index(curRow-1, 10), Qt::DisplayRole).toFloat(), 'f', 3);
             QString y0=QString::number(model->data(model->index(curRow-1, 11), Qt::DisplayRole).toFloat(), 'f', 3);
@@ -530,13 +532,11 @@ void MainWindow::pbAddArcPos()
         QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
         return;
     }
-    int route_rowNum;
-    route_rowNum= ui->tableView->currentIndex().row();
-    if(route_rowNum<0){
-        route_rowNum=model->rowCount();
-    }else{
+    int route_rowNum= model->rowCount();
 
-        route_rowNum+=1;
+    if(route_rowNum<=0){
+        route_rowNum=0;
+         startPoint={ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text()};
     }
 
     addRoute->update_Ui(1,ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text(),NULL,NULL,NULL,NULL);
@@ -553,14 +553,11 @@ void MainWindow::pbAddLinePos()
         QMessageBox::warning(nullptr, "error",QString::fromLocal8Bit( " 通讯未连接   "));
         return;
     }
-    int route_rowNum;
+    int route_rowNum= model->rowCount();
 
-    route_rowNum= ui->tableView->currentIndex().row();
-    if(route_rowNum<0){
-        route_rowNum=model->rowCount();
-    }else{
-
-        route_rowNum+=1;
+    if(route_rowNum<=0){
+        route_rowNum=0;
+         startPoint={ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text()};
     }
 
     addRoute->update_Ui(0,ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text(),NULL,NULL,NULL,NULL);
@@ -1489,9 +1486,6 @@ void MainWindow::sortModelLine()
     } else {
         qDebug() << "排序及更新完成，事务提交成功！";
     }
-
-    QStringList quePoints = GlobeUniquePoints;          // QList<QString> → QStringList
-    settings->setValue("startPoint", quePoints);
     updateSence();
 }
 
@@ -2726,7 +2720,7 @@ void MainWindow::PbsmoothCurve(){
 //_______________________________________________________________________________
 void MainWindow::selectWorkpiece(){
 
-
+    if(isNewPiece){return;}
     // 切换逻辑
     if (WorkpieceList.count()!=1) {
         QString newCurrent = ui->cBworkpiece->currentText();
@@ -2769,17 +2763,23 @@ void MainWindow::pbnewPiece(){
         createOrSwitchTable(text, false);  // 切换到新表
         return;}
 
-
+    isNewPiece=true;
     if (ok && !text.isEmpty()) {
 
         createOrSwitchTable(text,true);
 
 
 
-        // 添加新工件名称到 QComboBox
-        ui->cBworkpiece->addItem(text);
-        // 设置新添加的工件为当前选中项
-        ui->cBworkpiece->setCurrentText(text);
+        // 如果 text 在已有项中不存在，才添加
+        if (ui->cBworkpiece->findText(text) == -1) {
+            ui->cBworkpiece->addItem(text);
+        }
+
+        // 设置当前选中项为该 text（无论是否是新添加的）
+        int index = ui->cBworkpiece->findText(text);
+        if (index != -1) {
+            ui->cBworkpiece->setCurrentIndex(index);
+        }
 
         WorkpieceList.push_back(text);
 
@@ -2792,7 +2792,7 @@ void MainWindow::pbnewPiece(){
     // 如果用户点击了“取消”，不执行任何操作
 
     saveSetting();
-
+    isNewPiece=false;
 }
 
 void MainWindow::pbdeletePiece(){
@@ -2821,7 +2821,16 @@ void MainWindow::pbdeletePiece(){
     qDebug()<<"WorkpieceList:"<<WorkpieceList;
 
     gcodeEidt->deleteRemoteFile(selectedText);
+    createOrSwitchTable(ui->cBworkpiece->currentText(),false);
+
+
+    settings->beginGroup(selectedText);
+    settings->remove(""); // 删除该 group 下的所有键值
+    settings->endGroup();
+    settings->sync(); // 强制写入磁盘
+
     saveSetting();
+
 
 }
 
@@ -3236,7 +3245,6 @@ void MainWindow::createOrSwitchTable(const QString &tableName, bool isCreate)
         qDebug() << "排序及更新完成，事务提交成功！";
     }
 
-    //saveSetting();
     updateSence();
 }
 
@@ -3252,7 +3260,7 @@ void MainWindow::saveSetting() {
     settings->setValue("traject_r0", ui->traject_r0->text());
 
     // Update workpiece list
-    QStringList pieces = settings->value("WorkpieceList", QStringList()).toStringList();
+    QStringList pieces;
 
 
     for (int i = 0; i < ui->cBworkpiece->count(); ++i) {
