@@ -33,15 +33,14 @@ public:
     MainWindow *mw;
 
     std::vector<std::pair<float, float>> getNeighbors(float x, float y, float z, float r, float searchRange, float stepSize);
-    void autoCorretionPathAlgrith(int index, float& x, float& y, float& z, float& r);
-    void moveAndWaitUntilReached(double targetX, double targetY, double targetZ, double targetR);
+    bool autoCorretionPathAlgrith(int index, float& x, float& y, float& z, float& r);
+    bool moveAndWaitUntilReached(double targetX, double targetY, double targetZ, double targetR);
     void waitForSignal(int timeoutMs=3000);
 
     QStringList dynamicMessages;
     const int maxDynamicLines = 5;  // 最大显示10行（不含第一行）
     QString fixedLine;
 
-    void appendLabelMessage(const QString &msg);
 
 private slots:
     void onNewConnection();  // 处理新连接
@@ -53,10 +52,12 @@ private slots:
 
     void stopCorretionPath();
 
+    void appendLabelMessage(const QString &msg);
+
 
 signals:
     void signalUpdated();
-
+    void statusMessage(QString text);
 private:
     Ui::ascan *ui;
     QTcpServer *tcpServer;  // TCP 服务器对象

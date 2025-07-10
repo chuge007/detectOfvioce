@@ -767,7 +767,7 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
         double posy = parts[1].toDouble();
 
         // 在新位置绘制红色小圆圈
-        QGraphicsEllipseItem* circle = new QGraphicsEllipseItem((posx - 20)*factor, (posy - 20)*factor, 40*factor, 40*factor); // 半径为20
+        QGraphicsEllipseItem* circle = new QGraphicsEllipseItem((posx - 5)*factor, (posy - 5)*factor, 10*factor, 10*factor); // 半径为20
         circle->setBrush(QBrush(Qt::yellow));  // 红色
         //circle->setFlag(QGraphicsItem::ItemIgnoresTransformations);
         scene->addItem(circle);
@@ -833,7 +833,7 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
         }
 
         if(i==0){
-            QGraphicsEllipseItem* circle = new QGraphicsEllipseItem((x0 - 20)*factor, (y0 - 20)*factor, 40*factor, 40*factor); // 半径为20
+            QGraphicsEllipseItem* circle = new QGraphicsEllipseItem((x0 - 5)*factor, (y0 - 5)*factor, 10*factor, 10*factor); // 半径为20
             circle->setBrush(QBrush(Qt::green));
             scene->addItem(circle);
         }

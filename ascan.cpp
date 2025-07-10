@@ -3,6 +3,8 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QMessageBox>
+#include <QElapsedTimer>
+
 #include "mainwindow.h"
 
 
@@ -23,6 +25,7 @@ ascan::ascan(QWidget *parent) :
     connect(ui->autoCorrection_but, &QPushButton::clicked, this, &ascan::autoCorretionPath);
     connect(ui->pbstepCorrect, &QPushButton::clicked, this, &ascan::stepCorretionPath);
     connect(ui->pbstopCorrcet, &QPushButton::clicked, this, &ascan::stopCorretionPath);
+    connect(this, &ascan::statusMessage, this, &ascan::appendLabelMessage);
 
     checkTimer = new QTimer(this);
 
@@ -83,7 +86,7 @@ void ascan::onReadyRead()
 
     appendLabelMessage(QString::fromLocal8Bit("此点信号值为：%1").arg(message));
     PointSing=message.toDouble();
-    isSingUPdate=true;
+
     emit signalUpdated();
 
     if(isStanPointSing){
@@ -245,13 +248,13 @@ void ascan::autoCorretionPath(){
 
 
 
-void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, float& r) {
+bool ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, float& r) {
 
     qDebug()<<"autoCorretionPathAlgrith";
-    if(stopCorretion){return;}
+    if(stopCorretion){return false;}
     // 设置目标信号值
-    float targetSignal = stanPointSing;  // 从接收到的信号中获取目标信号
-    isSingUPdate=false;
+
+
 
 
     // 设置爬山算法的初始点
@@ -264,7 +267,7 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
     float searchRange = ui->searchRange_dSb->value();  // 搜索范围（单位）
     float stepSize = ui->searchStep_dsb->value();     // 步长（单位）
     float bestSignalDiff;
-
+    bool isCorret;
     qDebug()<<"searchRange:"<<searchRange;
 
     qDebug()<<"stepSize:"<<stepSize;
@@ -284,17 +287,18 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
         qDebug()<<"nx:"<<nx<<"  "<<"ny"<<ny;
 
         // 移动到邻居位置
-        moveAndWaitUntilReached(nx, ny, currentZ, currentR);  // 执行目标位置移动
+        isCorret=moveAndWaitUntilReached(nx, ny, currentZ, currentR);  // 执行目标位置移动
         qDebug()<<"autoCorretionPathAlgrith-runTargetPosition";
 
 
+        if(!isCorret)return isCorret;
         // 发送信号请求
         sendData("1");  // 发送请求信号，等待信号更新
 
         waitForSignal(3000);  // 阻塞直到接收到信号或超时
 
         // 计算当前邻域点的信号差值
-        float diff = std::abs(PointSing - targetSignal);  // 使用接收到的信号与目标信号进行比较
+        float diff = std::abs(PointSing - stanPointSing);  // 使用接收到的信号与目标信号进行比较
 
 
         if (isFirst) {
@@ -310,14 +314,14 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
         }
         appendLabelMessage(QString::fromLocal8Bit("此点信号差值为：%1").arg(diff));
         appendLabelMessage(QString::fromLocal8Bit("目前最低信号差值为：%1").arg(bestSignalDiff));
-        isSingUPdate=false;
-        qDebug() <<"targetSignal"<<targetSignal;
+
+        qDebug() <<"stanPointSing"<<stanPointSing;
         qDebug() <<"diff"<<diff;
         qDebug() <<"bestSignalDiff"<<bestSignalDiff;
         qDebug() <<"neighbor"<<neighbor.first<<"  "<<neighbor.second;
     }
 
-    moveAndWaitUntilReached(currentX, currentY, currentZ, currentR);   // 执行目标位置移动
+    isCorret=moveAndWaitUntilReached(currentX, currentY, currentZ, currentR);   // 执行目标位置移动
 
     appendLabelMessage(QString::fromLocal8Bit("纠偏更新的点为：x:%1  y:%2  z:%3  r:%4").arg(currentX).arg(currentY).arg(currentZ).arg(currentR));
     qDebug() << "runTargetPosition  "
@@ -325,6 +329,13 @@ void ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
              << "Y:" << currentY
              << "Z:" << currentZ
              << "R:" << currentR;
+
+
+    if(!isCorret){
+        return isCorret;
+    }else{
+        return true;
+    }
 }
 
 
@@ -473,7 +484,7 @@ void ascan::stepCorretionPath(){
     numStepCorretionRow=ui->stepCorretionNumRow_sB->value();
     numStepCorretionCol=ui->stepCorretionNumCol_sB->value();
     mw->dbManager->db.transaction();
-
+    bool isCorret;
     int row_count = mw->model->rowCount();
     float x0, y0, z0, r0, x1, y1, z1, r1, x2, y2, z2, r2;
     QString name;
@@ -502,14 +513,16 @@ void ascan::stepCorretionPath(){
         if(stopCorretion){return;}
 
         if(numStepCorretionCol==1){
-            autoCorretionPathAlgrith(numStepCorretionRow,x0,y0,z0,r0);}
+            isCorret=autoCorretionPathAlgrith(numStepCorretionRow,x0,y0,z0,r0);}
         else if(numStepCorretionCol==2){
-            autoCorretionPathAlgrith(numStepCorretionRow,x1,y1,z1,r1);
+            isCorret=autoCorretionPathAlgrith(numStepCorretionRow,x1,y1,z1,r1);
         }
         else if(numStepCorretionCol==3){
-            autoCorretionPathAlgrith(numStepCorretionRow,x2,y2,z2,r2);
+            isCorret=autoCorretionPathAlgrith(numStepCorretionRow,x2,y2,z2,r2);
 
         }
+        if(!isCorret)return;
+
         auto currentPoint = mw->pbGetCurrentlyPoint();
         float xg = std::get<0>(currentPoint);
         float yg = std::get<1>(currentPoint);
@@ -559,7 +572,7 @@ void ascan::stopCorretionPath(){
 }
 
 
-void ascan::moveAndWaitUntilReached(double targetX, double targetY, double targetZ, double targetR) {
+bool ascan::moveAndWaitUntilReached(double targetX, double targetY, double targetZ, double targetR) {
     const double tolerance = 0.1;
 
     // 启动移动
@@ -569,11 +582,14 @@ void ascan::moveAndWaitUntilReached(double targetX, double targetY, double targe
     checkTimer->stop();
     checkTimer->disconnect();
 
+    QElapsedTimer elapsed;
+    elapsed.start();
+    int timeoutMs = 5;
     // 记录上一次的位置
     QPointF lastPos(-9999, -9999);  // 用于 XY 变化判断
     double lastZ = -9999, lastR = -9999;
-
-    connect(checkTimer, &QTimer::timeout, this, [=]() mutable {
+    QEventLoop loop;
+    connect(checkTimer, &QTimer::timeout, this, [=,&loop]() mutable {
         double currentX = mw->currentTargetPos.x;
         double currentY = mw->currentTargetPos.y;
         double currentZ = mw->currentTargetPos.z;
@@ -594,7 +610,17 @@ void ascan::moveAndWaitUntilReached(double targetX, double targetY, double targe
         if ((isCloseToTarget && noMovement)||stopCorretion) {
             checkTimer->stop();
             qDebug() << QString::fromLocal8Bit("✅ 到达目标或位置不再变化，停止检测。");
-            appendLabelMessage(QString::fromLocal8Bit("已达到目标"));
+            //appendLabelMessage(QString::fromLocal8Bit("已达到目标"));
+            emit statusMessage(QString::fromLocal8Bit("已达到目标"));
+            loop.quit();
+        }
+
+        if (elapsed.elapsed() > timeoutMs) {
+            checkTimer->stop();
+            qDebug() << "⏰ 超时未到达目标，停止检测。";
+            emit statusMessage("移动超时，未能到达目标");
+            loop.quit();
+            return false;
         }
 
         // 更新上一次的位置
@@ -615,6 +641,8 @@ void ascan::moveAndWaitUntilReached(double targetX, double targetY, double targe
     });
 
     checkTimer->start(1000);
+    loop.exec();
+    return true;
 }
 
 
