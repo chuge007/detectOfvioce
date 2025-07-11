@@ -29,7 +29,7 @@ addRoute_dialog::addRoute_dialog(QWidget *parent) :
     connect(ui->RzSub_Btn, &QPushButton::released, this, &addRoute_dialog::subBut_z_released);
     connect(ui->setCurposToEnd_but, &QPushButton::pressed, this, &addRoute_dialog::pbSetCurposToEndPos);
     connect(ui->setCursPosToTrans_but, &QPushButton::pressed, this, &addRoute_dialog::pbSetCurposToTransPos);
-
+    connect(ui->setCurposToStart_but, &QPushButton::pressed, this, &addRoute_dialog::pbSetCurposToStartPos);
     connect(ui->pb_accept, &QPushButton::clicked, this, &addRoute_dialog::pB_accept);
     connect(ui->pb_reject, &QPushButton::clicked, this, &addRoute_dialog::pB_reject);
 
@@ -76,10 +76,10 @@ void addRoute_dialog::pB_reject()
 
 QList <QString> addRoute_dialog::getStartPos()
 {
-    QString cur_xEnd=ui->xCurPos_lab->text();
-    QString cur_yEnd=ui->yCurPos_lab->text();
-    QString cur_zEnd=ui->zCurPos_lab->text();
-    QString cur_rEnd=ui->rCurPos_lab->text();
+    QString cur_xEnd=ui->xStart_lin->text();
+    QString cur_yEnd=ui->yStart_lin->text();
+    QString cur_zEnd=ui->zStart_lin->text();
+    QString cur_rEnd=ui->rStart_lin->text();
     QList<QString> Pos_list; // 创建一个存储字符串;
     Pos_list.append(cur_xEnd);
     Pos_list.append(cur_yEnd);
@@ -127,6 +127,14 @@ void addRoute_dialog::pbSetCurposToEndPos()
     ui->rEnd_lin->setText(ui->rCurPos_lab->text());
 }
 
+void addRoute_dialog::pbSetCurposToStartPos()
+{
+    ui->xStart_lin->setText(ui->xCurPos_lab->text());
+    ui->yStart_lin->setText(ui->yCurPos_lab->text());
+    ui->zStart_lin->setText(ui->zCurPos_lab->text());
+    ui->rStart_lin->setText(ui->rCurPos_lab->text());
+}
+
 void addRoute_dialog::set_Xcurpos(QString curX)
 {
     ui->xCurPos_lab->setText(curX);
@@ -155,6 +163,14 @@ void addRoute_dialog::pbSetCurposToTransPos()
     ui->yTrans_lin->setText(ui->yCurPos_lab->text());
     ui->zTrans_lin->setText(ui->zCurPos_lab->text());
     ui->rTrans_lin->setText(ui->rCurPos_lab->text());
+}
+
+void addRoute_dialog::pbSetStartPos(QString x,QString y,QString z,QString r)
+{
+    ui->xStart_lin->setText(x);
+    ui->yStart_lin->setText(y);
+    ui->zStart_lin->setText(z);
+    ui->rStart_lin->setText(r);
 }
 
 void addRoute_dialog::update_Ui(int state,QString xEnd,QString yEnd,QString zEnd,QString rEnd,QString xTrans_lin,QString yTrans_lin,QString zTrans_lin,QString rTrans_lin)

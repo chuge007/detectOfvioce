@@ -245,7 +245,7 @@ static const uint qt_meta_data_ScanControlAbstract[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Double, QMetaType::Double, QMetaType::Double, QMetaType::Double,    8,    9,   61,   62,
+    QMetaType::Bool, QMetaType::Double, QMetaType::Double, QMetaType::Double, QMetaType::Double,    8,    9,   61,   62,
     QMetaType::Bool,
     QMetaType::Void, QMetaType::Int,   65,
 
@@ -303,7 +303,8 @@ void ScanControlAbstract::qt_static_metacall(QObject *_o, QMetaObject::Call _c, 
         case 42: _t->on_alarmResetBtn_clicked(); break;
         case 43: _t->on_setLimitBtn_clicked(); break;
         case 44: _t->on_setMachineBtn_clicked(); break;
-        case 45: _t->runTargetPosition((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< double(*)>(_a[3])),(*reinterpret_cast< double(*)>(_a[4]))); break;
+        case 45: { bool _r = _t->runTargetPosition((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< double(*)>(_a[3])),(*reinterpret_cast< double(*)>(_a[4])));
+            if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
         case 46: { bool _r = _t->modbusState();
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
         case 47: _t->selectProcessType((*reinterpret_cast< int(*)>(_a[1]))); break;

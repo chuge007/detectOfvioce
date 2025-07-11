@@ -907,15 +907,15 @@ void scanDetect_frictionWelding::selectProcessType(int type){
     qDebug()<<"select process"<<type;
 }
 
-void scanDetect_frictionWelding::runTargetPosition(double x, double y ,double z, double r)
+bool scanDetect_frictionWelding::runTargetPosition(double x, double y ,double z, double r)
 {
 
     updateCurPos=true;
     if(modbusClient->state() != QModbusDevice::ConnectedState){
         QMessageBox::information(nullptr," warning ",QString::fromLocal8Bit(" 通讯未连接 "));
-        return;
+        return false;
     }
-    if( isEndScan || isAxisStop || isJogDone) return;
+    if( isEndScan || isAxisStop || isJogDone) return false;
 
     if(!isRunTarget){
         updateCurPos = false;

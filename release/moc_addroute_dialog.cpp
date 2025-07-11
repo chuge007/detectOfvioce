@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_addRoute_dialog_t {
-    QByteArrayData data[30];
-    char stringdata0[427];
+    QByteArrayData data[31];
+    char stringdata0[449];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -54,14 +54,15 @@ QT_MOC_LITERAL(18, 297, 9), // "pB_accept"
 QT_MOC_LITERAL(19, 307, 9), // "pB_reject"
 QT_MOC_LITERAL(20, 317, 19), // "pbSetCurposToEndPos"
 QT_MOC_LITERAL(21, 337, 21), // "pbSetCurposToTransPos"
-QT_MOC_LITERAL(22, 359, 11), // "set_Xcurpos"
-QT_MOC_LITERAL(23, 371, 4), // "curX"
-QT_MOC_LITERAL(24, 376, 11), // "set_Ycurpos"
-QT_MOC_LITERAL(25, 388, 4), // "curY"
-QT_MOC_LITERAL(26, 393, 11), // "set_Zcurpos"
-QT_MOC_LITERAL(27, 405, 4), // "curZ"
-QT_MOC_LITERAL(28, 410, 11), // "set_Rcurpos"
-QT_MOC_LITERAL(29, 422, 4) // "curR"
+QT_MOC_LITERAL(22, 359, 21), // "pbSetCurposToStartPos"
+QT_MOC_LITERAL(23, 381, 11), // "set_Xcurpos"
+QT_MOC_LITERAL(24, 393, 4), // "curX"
+QT_MOC_LITERAL(25, 398, 11), // "set_Ycurpos"
+QT_MOC_LITERAL(26, 410, 4), // "curY"
+QT_MOC_LITERAL(27, 415, 11), // "set_Zcurpos"
+QT_MOC_LITERAL(28, 427, 4), // "curZ"
+QT_MOC_LITERAL(29, 432, 11), // "set_Rcurpos"
+QT_MOC_LITERAL(30, 444, 4) // "curR"
 
     },
     "addRoute_dialog\0addBut_x_pressed\0\0"
@@ -74,8 +75,9 @@ QT_MOC_LITERAL(29, 422, 4) // "curR"
     "subBut_r_released\0subBut_z_released\0"
     "addBut_z_released\0pB_accept\0pB_reject\0"
     "pbSetCurposToEndPos\0pbSetCurposToTransPos\0"
-    "set_Xcurpos\0curX\0set_Ycurpos\0curY\0"
-    "set_Zcurpos\0curZ\0set_Rcurpos\0curR"
+    "pbSetCurposToStartPos\0set_Xcurpos\0"
+    "curX\0set_Ycurpos\0curY\0set_Zcurpos\0"
+    "curZ\0set_Rcurpos\0curR"
 };
 #undef QT_MOC_LITERAL
 
@@ -85,7 +87,7 @@ static const uint qt_meta_data_addRoute_dialog[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      24,   14, // methods
+      25,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -93,32 +95,33 @@ static const uint qt_meta_data_addRoute_dialog[] = {
       16,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,  134,    2, 0x06 /* Public */,
-       3,    0,  135,    2, 0x06 /* Public */,
-       4,    0,  136,    2, 0x06 /* Public */,
-       5,    0,  137,    2, 0x06 /* Public */,
-       6,    0,  138,    2, 0x06 /* Public */,
-       7,    0,  139,    2, 0x06 /* Public */,
-       8,    0,  140,    2, 0x06 /* Public */,
-       9,    0,  141,    2, 0x06 /* Public */,
-      10,    0,  142,    2, 0x06 /* Public */,
-      11,    0,  143,    2, 0x06 /* Public */,
-      12,    0,  144,    2, 0x06 /* Public */,
-      13,    0,  145,    2, 0x06 /* Public */,
-      14,    0,  146,    2, 0x06 /* Public */,
-      15,    0,  147,    2, 0x06 /* Public */,
-      16,    0,  148,    2, 0x06 /* Public */,
-      17,    0,  149,    2, 0x06 /* Public */,
+       1,    0,  139,    2, 0x06 /* Public */,
+       3,    0,  140,    2, 0x06 /* Public */,
+       4,    0,  141,    2, 0x06 /* Public */,
+       5,    0,  142,    2, 0x06 /* Public */,
+       6,    0,  143,    2, 0x06 /* Public */,
+       7,    0,  144,    2, 0x06 /* Public */,
+       8,    0,  145,    2, 0x06 /* Public */,
+       9,    0,  146,    2, 0x06 /* Public */,
+      10,    0,  147,    2, 0x06 /* Public */,
+      11,    0,  148,    2, 0x06 /* Public */,
+      12,    0,  149,    2, 0x06 /* Public */,
+      13,    0,  150,    2, 0x06 /* Public */,
+      14,    0,  151,    2, 0x06 /* Public */,
+      15,    0,  152,    2, 0x06 /* Public */,
+      16,    0,  153,    2, 0x06 /* Public */,
+      17,    0,  154,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      18,    0,  150,    2, 0x08 /* Private */,
-      19,    0,  151,    2, 0x08 /* Private */,
-      20,    0,  152,    2, 0x08 /* Private */,
-      21,    0,  153,    2, 0x08 /* Private */,
-      22,    1,  154,    2, 0x0a /* Public */,
-      24,    1,  157,    2, 0x0a /* Public */,
-      26,    1,  160,    2, 0x0a /* Public */,
-      28,    1,  163,    2, 0x0a /* Public */,
+      18,    0,  155,    2, 0x08 /* Private */,
+      19,    0,  156,    2, 0x08 /* Private */,
+      20,    0,  157,    2, 0x08 /* Private */,
+      21,    0,  158,    2, 0x08 /* Private */,
+      22,    0,  159,    2, 0x08 /* Private */,
+      23,    1,  160,    2, 0x0a /* Public */,
+      25,    1,  163,    2, 0x0a /* Public */,
+      27,    1,  166,    2, 0x0a /* Public */,
+      29,    1,  169,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -143,10 +146,11 @@ static const uint qt_meta_data_addRoute_dialog[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   23,
-    QMetaType::Void, QMetaType::QString,   25,
-    QMetaType::Void, QMetaType::QString,   27,
-    QMetaType::Void, QMetaType::QString,   29,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   24,
+    QMetaType::Void, QMetaType::QString,   26,
+    QMetaType::Void, QMetaType::QString,   28,
+    QMetaType::Void, QMetaType::QString,   30,
 
        0        // eod
 };
@@ -177,10 +181,11 @@ void addRoute_dialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 17: _t->pB_reject(); break;
         case 18: _t->pbSetCurposToEndPos(); break;
         case 19: _t->pbSetCurposToTransPos(); break;
-        case 20: _t->set_Xcurpos((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 21: _t->set_Ycurpos((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 22: _t->set_Zcurpos((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 23: _t->set_Rcurpos((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 20: _t->pbSetCurposToStartPos(); break;
+        case 21: _t->set_Xcurpos((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 22: _t->set_Ycurpos((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 23: _t->set_Zcurpos((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 24: _t->set_Rcurpos((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -329,13 +334,13 @@ int addRoute_dialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 24)
+        if (_id < 25)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 24;
+        _id -= 25;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 24)
+        if (_id < 25)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 24;
+        _id -= 25;
     }
     return _id;
 }

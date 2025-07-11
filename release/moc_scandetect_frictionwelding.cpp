@@ -221,7 +221,7 @@ static const uint qt_meta_data_scanDetect_frictionWelding[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Double, QMetaType::Double, QMetaType::Double, QMetaType::Double,   39,   40,   41,   42,
+    QMetaType::Bool, QMetaType::Double, QMetaType::Double, QMetaType::Double, QMetaType::Double,   39,   40,   41,   42,
     QMetaType::Bool,
     QMetaType::Void,
     QMetaType::Void,
@@ -276,7 +276,8 @@ void scanDetect_frictionWelding::qt_static_metacall(QObject *_o, QMetaObject::Ca
         case 31: _t->on_rSubBtn_released(); break;
         case 32: _t->on_alarmResetBtn_clicked(); break;
         case 33: _t->onBackOriginBtn_clicked(); break;
-        case 34: _t->runTargetPosition((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< double(*)>(_a[3])),(*reinterpret_cast< double(*)>(_a[4]))); break;
+        case 34: { bool _r = _t->runTargetPosition((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< double(*)>(_a[3])),(*reinterpret_cast< double(*)>(_a[4])));
+            if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
         case 35: { bool _r = _t->modbusState();
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
         case 36: _t->performTasks(); break;

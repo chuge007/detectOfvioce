@@ -70,7 +70,7 @@ public slots:
 
     void on_alarmResetBtn_clicked();    //报警复位
     void onBackOriginBtn_clicked();
-    void runTargetPosition(double x, double y,double z, double r);
+    bool runTargetPosition(double x, double y,double z, double r);
 
 
 

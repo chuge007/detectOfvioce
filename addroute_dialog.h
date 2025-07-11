@@ -24,6 +24,8 @@ public:
     void closeEvent(QCloseEvent *event) override;
 
     bool isOpen=false;
+
+    void pbSetStartPos(QString x,QString y,QString z,QString r);
 private slots:
     void pB_accept();
 
@@ -32,6 +34,8 @@ private slots:
     void pbSetCurposToEndPos();
 
     void pbSetCurposToTransPos();
+
+    void pbSetCurposToStartPos();
 
 public slots:
     void set_Xcurpos(QString curX);

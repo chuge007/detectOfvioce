@@ -268,6 +268,7 @@ bool ascan::autoCorretionPathAlgrith(int index, float& x, float& y, float& z, fl
     float stepSize = ui->searchStep_dsb->value();     // 步长（单位）
     float bestSignalDiff;
     bool isCorret;
+
     qDebug()<<"searchRange:"<<searchRange;
 
     qDebug()<<"stepSize:"<<stepSize;
@@ -480,7 +481,7 @@ void ascan::stepCorretionPath(){
         fixedLine=QString::fromLocal8Bit("设定的标准点信号值为：%1").arg(stanPointSing);
         appendLabelMessage(fixedLine);
     }
-    qDebug()<<"stepCorretionPath";
+
     numStepCorretionRow=ui->stepCorretionNumRow_sB->value();
     numStepCorretionCol=ui->stepCorretionNumCol_sB->value();
     mw->dbManager->db.transaction();
@@ -491,7 +492,7 @@ void ascan::stepCorretionPath(){
 
 
 
-    qDebug()<<"autoCorretionPath-stepCorretion";
+    qDebug()<<"autoCorretionPath-stepCorretion"<<numStepCorretionRow<<"    "<<numStepCorretionCol;
 
 
     name = mw->model->data(mw->model->index(numStepCorretionRow, 1), Qt::DisplayRole).toString();
@@ -510,31 +511,66 @@ void ascan::stepCorretionPath(){
     z2 = mw->model->data(mw->model->index(numStepCorretionRow, 12), Qt::DisplayRole).toFloat();
     r2 = mw->model->data(mw->model->index(numStepCorretionRow, 13), Qt::DisplayRole).toFloat();
 
-        if(stopCorretion){return;}
+        if(stopCorretion){
+            qDebug()<<QString::fromLocal8Bit("纠偏已停止");
+            return;}
 
         if(numStepCorretionCol==1){
-            isCorret=autoCorretionPathAlgrith(numStepCorretionRow,x0,y0,z0,r0);}
+            isCorret=autoCorretionPathAlgrith(numStepCorretionRow,x0,y0,z0,r0);
+            if(!isCorret)
+                qDebug()<<QString::fromLocal8Bit("算法计算已停止");
+                return;
+
+            auto currentPoint = mw->pbGetCurrentlyPoint();
+            float xg = std::get<0>(currentPoint);
+            float yg = std::get<1>(currentPoint);
+            float zg = std::get<2>(currentPoint);
+            float rg = std::get<3>(currentPoint);
+
+            mw->model->setData(mw->model->index(numStepCorretionRow, 2), xg);
+            mw->model->setData(mw->model->index(numStepCorretionRow, 3), yg);
+            mw->model->setData(mw->model->index(numStepCorretionRow, 4), zg);
+            mw->model->setData(mw->model->index(numStepCorretionRow, 5), rg);
+        }
         else if(numStepCorretionCol==2){
+            if(name=="line"){
+                qDebug()<<QString::fromLocal8Bit("直线无过渡点");
+                return;
+            }
+
             isCorret=autoCorretionPathAlgrith(numStepCorretionRow,x1,y1,z1,r1);
+            if(!isCorret)
+                qDebug()<<QString::fromLocal8Bit("算法计算已停止");
+                return;
+
+            auto currentPoint = mw->pbGetCurrentlyPoint();
+            float xg = std::get<0>(currentPoint);
+            float yg = std::get<1>(currentPoint);
+            float zg = std::get<2>(currentPoint);
+            float rg = std::get<3>(currentPoint);
+
+            mw->model->setData(mw->model->index(numStepCorretionRow, 6), xg);
+            mw->model->setData(mw->model->index(numStepCorretionRow, 7), yg);
+            mw->model->setData(mw->model->index(numStepCorretionRow, 8), zg);
+            mw->model->setData(mw->model->index(numStepCorretionRow, 9), rg);
         }
         else if(numStepCorretionCol==3){
             isCorret=autoCorretionPathAlgrith(numStepCorretionRow,x2,y2,z2,r2);
+            if(!isCorret)
+                qDebug()<<QString::fromLocal8Bit("算法计算已停止");
+                return;
 
+            auto currentPoint = mw->pbGetCurrentlyPoint();
+            float xg = std::get<0>(currentPoint);
+            float yg = std::get<1>(currentPoint);
+            float zg = std::get<2>(currentPoint);
+            float rg = std::get<3>(currentPoint);
+
+            mw->model->setData(mw->model->index(numStepCorretionRow, 10), xg);
+            mw->model->setData(mw->model->index(numStepCorretionRow, 11), yg);
+            mw->model->setData(mw->model->index(numStepCorretionRow, 12), zg);
+            mw->model->setData(mw->model->index(numStepCorretionRow, 13), rg);
         }
-        if(!isCorret)return;
-
-        auto currentPoint = mw->pbGetCurrentlyPoint();
-        float xg = std::get<0>(currentPoint);
-        float yg = std::get<1>(currentPoint);
-        float zg = std::get<2>(currentPoint);
-        float rg = std::get<3>(currentPoint);
-
-        mw->model->setData(mw->model->index(numStepCorretionRow, 2), xg);
-        mw->model->setData(mw->model->index(numStepCorretionRow, 3), yg);
-        mw->model->setData(mw->model->index(numStepCorretionRow, 4), zg);
-        mw->model->setData(mw->model->index(numStepCorretionRow, 5), rg);
-
-
 
 
     if (!mw->model->submitAll()) {
@@ -551,7 +587,11 @@ void ascan::stepCorretionPath(){
         mw->dbManager->db.rollback();
     }
 
-    numStepCorretionCol++;
+    if(name=="line"){
+        numStepCorretionCol+=2;
+    }else{
+        numStepCorretionCol++;
+    }
     if(numStepCorretionCol>3){
         numStepCorretionCol=1;
         numStepCorretionRow++;
@@ -576,7 +616,7 @@ bool ascan::moveAndWaitUntilReached(double targetX, double targetY, double targe
     const double tolerance = 0.1;
 
     // 启动移动
-    mw->scanDetectCtrl->runTargetPosition(targetX, targetY, targetZ, targetR);
+    if(!mw->scanDetectCtrl->runTargetPosition(targetX, targetY, targetZ, targetR)){return  false;}
 
     // 停止旧定时器、断开旧连接
     checkTimer->stop();
@@ -584,7 +624,7 @@ bool ascan::moveAndWaitUntilReached(double targetX, double targetY, double targe
 
     QElapsedTimer elapsed;
     elapsed.start();
-    int timeoutMs = 5;
+    int timeoutMs = 5000;
     // 记录上一次的位置
     QPointF lastPos(-9999, -9999);  // 用于 XY 变化判断
     double lastZ = -9999, lastR = -9999;
@@ -607,27 +647,13 @@ bool ascan::moveAndWaitUntilReached(double targetX, double targetY, double targe
             std::abs(currentZ - lastZ) <= tolerance &&
             std::abs(currentR - lastR) <= tolerance;
 
-        if ((isCloseToTarget && noMovement)||stopCorretion) {
-            checkTimer->stop();
-            qDebug() << QString::fromLocal8Bit("✅ 到达目标或位置不再变化，停止检测。");
-            //appendLabelMessage(QString::fromLocal8Bit("已达到目标"));
-            emit statusMessage(QString::fromLocal8Bit("已达到目标"));
-            loop.quit();
-        }
-
-        if (elapsed.elapsed() > timeoutMs) {
-            checkTimer->stop();
-            qDebug() << "⏰ 超时未到达目标，停止检测。";
-            emit statusMessage("移动超时，未能到达目标");
-            loop.quit();
-            return false;
-        }
-
         // 更新上一次的位置
         lastPos.setX(currentX);
         lastPos.setY(currentY);
         lastZ = currentZ;
         lastR = currentR;
+
+
         qDebug() << QString::fromLocal8Bit("noMovement:") <<noMovement<<"  "<<QString::fromLocal8Bit("isCloseToTarget:") <<isCloseToTarget;
         qDebug() << QString::fromLocal8Bit("等待移动中：") << currentX << currentY << currentZ << currentR;
         qDebug() << QString::fromLocal8Bit("🎯 目标位置：") << targetX << targetY << targetZ << targetR;
@@ -638,9 +664,26 @@ bool ascan::moveAndWaitUntilReached(double targetX, double targetY, double targe
                  << fabs(currentZ - targetZ)
                  << fabs(currentR - targetR);
 
+
+        if ((isCloseToTarget && noMovement)||stopCorretion) {
+            checkTimer->stop();
+            qDebug() << QString::fromLocal8Bit("✅ 到达目标或位置不再变化，停止检测。");
+            //appendLabelMessage(QString::fromLocal8Bit("已达到目标"));
+            emit statusMessage(QString::fromLocal8Bit("已达到目标"));
+            loop.quit();
+        }
+
+        if (elapsed.elapsed() > timeoutMs) {
+            checkTimer->stop();
+            qDebug() <<QString::fromLocal8Bit( "⏰ 超时未到达目标，停止检测。");
+            emit statusMessage(QString::fromLocal8Bit("移动超时，未能到达目标"));
+            loop.quit();
+            return false;
+        }
+
     });
 
-    checkTimer->start(1000);
+    checkTimer->start(500);
     loop.exec();
     return true;
 }

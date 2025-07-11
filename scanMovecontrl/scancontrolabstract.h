@@ -313,7 +313,7 @@ public slots:
     virtual void on_setLimitBtn_clicked() = 0;      //设置机械极限位
     virtual void on_setMachineBtn_clicked() = 0;    //设置机械极原点
 
-    virtual void runTargetPosition(double x, double y,double z, double r) = 0; //运动到目标位置
+    virtual bool runTargetPosition(double x, double y,double z, double r) = 0; //运动到目标位置
     virtual  bool modbusState()=0;
     virtual  void selectProcessType(int type)=0;
 

@@ -312,11 +312,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     // 这里做必要的保存、释放动作（如果不是都放在析构里）
 
-//    qApp->quit();  // 请求退出事件循环，程序退出
+    //    qApp->quit();  // 请求退出事件循环，程序退出
 
-//    event->accept();
+    //    event->accept();
 
-//    forceExit();
+    //    forceExit();
 }
 
 
@@ -381,34 +381,50 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
     qDebug()<<"updateAddRoute";
     dbManager->db.transaction();
     QList<QString> curStartPos_list;
-    if (addRoute->exec()) {
 
 
-
-        if (curRow<=0){
-            curStartPos_list = startPoint;
-
-
-        }else{
-            QString x0=QString::number(model->data(model->index(curRow-1, 10), Qt::DisplayRole).toFloat(), 'f', 3);
-            QString y0=QString::number(model->data(model->index(curRow-1, 11), Qt::DisplayRole).toFloat(), 'f', 3);
-            QString z0=QString::number(model->data(model->index(curRow-1, 12), Qt::DisplayRole).toFloat(), 'f', 3);
-            QString r0=QString::number(model->data(model->index(curRow-1, 13), Qt::DisplayRole).toFloat(), 'f', 3);
-            curStartPos_list={x0,y0,z0,r0};
-        }
+    if (curRow<=0){
 
         if(edit==0){
-
-
-            // 插入新行
             if (!model->insertRow(curRow)) {
                 qDebug() << "Failed to insert row at" << curRow;
                 dbManager->db.rollback();
                 QMessageBox::critical(this, "Error", QString::fromLocal8Bit(" 插入新行失败 "));
                 return;
             }
+            curStartPos_list = startPoint;
 
+            addRoute->pbSetStartPos(curStartPos_list[0],curStartPos_list[1],curStartPos_list[2],curStartPos_list[3]);
+        }else {
+            QString x0=QString::number(model->data(model->index(0, 2), Qt::DisplayRole).toFloat(), 'f', 3);
+            QString y0=QString::number(model->data(model->index(0, 3), Qt::DisplayRole).toFloat(), 'f', 3);
+            QString z0=QString::number(model->data(model->index(0, 4), Qt::DisplayRole).toFloat(), 'f', 3);
+            QString r0=QString::number(model->data(model->index(0, 5), Qt::DisplayRole).toFloat(), 'f', 3);
+            curStartPos_list={x0,y0,z0,r0};
+            addRoute->pbSetStartPos(curStartPos_list[0],curStartPos_list[1],curStartPos_list[2],curStartPos_list[3]);
         }
+
+    }else{
+        if(edit==0){
+            if (!model->insertRow(curRow)) {
+                qDebug() << "Failed to insert row at" << curRow;
+                dbManager->db.rollback();
+                QMessageBox::critical(this, "Error", QString::fromLocal8Bit(" 插入新行失败 "));
+                return;
+            }
+        }
+        QString x0=QString::number(model->data(model->index(curRow-1, 10), Qt::DisplayRole).toFloat(), 'f', 3);
+        QString y0=QString::number(model->data(model->index(curRow-1, 11), Qt::DisplayRole).toFloat(), 'f', 3);
+        QString z0=QString::number(model->data(model->index(curRow-1, 12), Qt::DisplayRole).toFloat(), 'f', 3);
+        QString r0=QString::number(model->data(model->index(curRow-1, 13), Qt::DisplayRole).toFloat(), 'f', 3);
+        curStartPos_list={x0,y0,z0,r0};
+        addRoute->pbSetStartPos(curStartPos_list[0],curStartPos_list[1],curStartPos_list[2],curStartPos_list[3]);
+    }
+
+    if (addRoute->exec()) {
+
+        curStartPos_list=addRoute->getStartPos();
+
 
         QList<QString> curTransPos_list = addRoute->getTransPos();
         QList<QString> curEndPos_list = addRoute->getEndPos();
@@ -536,7 +552,7 @@ void MainWindow::pbAddArcPos()
 
     if(route_rowNum<=0){
         route_rowNum=0;
-         startPoint={ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text()};
+        startPoint={ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text()};
     }
 
     addRoute->update_Ui(1,ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text(),NULL,NULL,NULL,NULL);
@@ -557,7 +573,7 @@ void MainWindow::pbAddLinePos()
 
     if(route_rowNum<=0){
         route_rowNum=0;
-         startPoint={ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text()};
+        startPoint={ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text()};
     }
 
     addRoute->update_Ui(0,ui->xCurPos_lab->text(),ui->yCurPos_lab->text(),ui->zCurPos_lab->text(),ui->rCurPos_lab->text(),NULL,NULL,NULL,NULL);
