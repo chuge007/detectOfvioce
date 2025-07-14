@@ -5,6 +5,7 @@
 #include <QProgressDialog>
 #include <QDebug>
 #include <QModbusDataUnit>
+#include <QMutex>
 
 
 class scanDetect_frictionWelding : public ScanControlAbstract  // 修改继承关系
@@ -141,7 +142,7 @@ private:
     AxisJog lastAxisJog = AxisJog::NotAxisJog;
     float curZ,curR;
 
-
+    QMutex mutex;
  //-----------------------------------------------
 
 
