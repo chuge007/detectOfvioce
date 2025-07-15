@@ -446,6 +446,7 @@ bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
     double newR;
     QLineF lineC;
     double circleR = std::hypot(circleCenter.x() - start2.x(), circleCenter.y() - start2.y());
+
     if (circleR < 0) return false;
     if(angle<90){
 
@@ -501,3 +502,246 @@ bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
     qDebug()<<"t2  "<<t2;
     return true;
 }
+//____________________________________________________________________________________________________________________________
+
+
+mathTool::CircleInfo mathTool::findCircleFromThreePoints(const PointF& p1, const PointF& p2, const PointF& p3) {
+    double x1 = p1.x, y1 = p1.y;
+    double x2 = p2.x, y2 = p2.y;
+    double x3 = p3.x, y3 = p3.y;
+
+    // 使用叉积（三角形面积的两倍）检查共线性
+    double collinearity_check = (x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1);
+    if (std::abs(collinearity_check) < EPSILON) { // 点共线
+        return CircleInfo{PointF(), 0.0, false};
+    }
+
+    // 线性方程组的系数，用于求解 2g 和 2f
+    // Eq A: 2g(x1 - x2) + 2f(y1 - y2) = (x2^2 + y2^2) - (x1^2 + y1^2)
+    double A_coeff1 = 2 * (x1 - x2);
+    double B_coeff1 = 2 * (y1 - y2);
+    double C_const1 = (x2*x2 + y2*y2) - (x1*x1 + y1*y1);
+
+    // Eq B: 2g(x2 - x3) + 2f(y2 - y3) = (x3^2 + y3^2) - (x2^2 + y2^2)
+    double A_coeff2 = 2 * (x2 - x3);
+    double B_coeff2 = 2 * (y2 - y3);
+    double C_const2 = (x3*x3 + y3*y3) - (x2*x2 + y2*y2);
+
+    // 使用克莱默法则求解 2x2 线性系统
+    double det = A_coeff1 * B_coeff2 - A_coeff2 * B_coeff1;
+    if (std::abs(det) < EPSILON) { // 鲁棒性检查，应已被共线性检查捕获
+        return CircleInfo{PointF(), 0.0, false};
+    }
+
+    double _2g = (B_coeff1 * C_const2 - B_coeff2 * C_const1) / det;
+    double _2f = (A_coeff2 * C_const1 - A_coeff1 * C_const2) / det;
+
+    double center_x = -_2g / 2.0;
+    double center_y = -_2f / 2.0;
+
+    // 从一般圆方程 x^2 + y^2 + 2gx + 2fy + c = 0 找到 c
+    // c = -(x1^2 + y1^2 + 2gx1 + 2fy1)
+    double c = -(x1*x1 + y1*y1 + _2g * x1 + _2f * y1);
+
+    // 半径平方 = g^2 + f^2 - c
+    double radius_sq = (center_x*center_x + center_y*center_y) - c;
+
+    if (radius_sq < -EPSILON) { // 允许浮点精度导致的微小负值
+        return CircleInfo{PointF(), 0.0, false}; // 没有实际的圆
+    }
+
+    double radius = std::sqrt(std::max(0.0, radius_sq)); // 确保非负值以进行平方根运算
+    return CircleInfo{PointF(center_x, center_y), radius, true};
+}
+
+
+
+std::vector<mathTool::TangentArcSolution> mathTool::calculateTangentArcCSolutions(
+    const PointF& line_start, const PointF& line_end,
+    const PointF& arc_b_p1, const PointF& arc_b_p2, const PointF& arc_b_p3,
+    double R_c) {
+
+
+    std::vector<TangentArcSolution> solutions;
+
+    // 1. 确定直线 'a' 的方程 (Ax + By + C = 0)
+    // A = y2 - y1
+    // B = x1 - x2
+    // C = -A*x1 - B*y1
+    double A_line = line_end.y - line_start.y;
+    double B_line = line_start.x - line_end.x;
+    double C_line = -A_line * line_start.x - B_line * line_start.y;
+
+    // 归一化直线 'a' 的系数
+    double K = std::hypot(A_line, B_line);
+    if (K < EPSILON) { // 直线是点，输入无效
+        return solutions;
+    }
+    double A_u = A_line / K;
+    double B_u = B_line / K;
+    double C_u = C_line / K;
+
+    // 2. 确定圆弧 'b' 的圆心和半径
+    CircleInfo arc_b_info = findCircleFromThreePoints(arc_b_p1, arc_b_p2, arc_b_p3);
+    if (!arc_b_info.isValid) { // 圆弧 'b' 的点共线或无效
+        return solutions;
+    }
+    PointF C_b = arc_b_info.center;
+    double R_b = arc_b_info.radius;
+
+    // 3. 计算 C_b 到直线 'a' 的有符号距离
+    double S_val_b = A_u * C_b.x + B_u * C_b.y + C_u;
+
+    // 确定偏移直线的配置 (圆弧 'c' 的圆心将位于其上)
+    // 使用 std::copysign 确保即使 S_val_b 接近零也能得到正确的符号
+    // 如果 S_val_b 接近零，默认使用正向偏移，这在几何上通常意味着选择一个任意侧
+    double sign_S_val_b = (std::abs(S_val_b) > EPSILON)? std::copysign(1.0, S_val_b) : 1.0;
+
+    std::vector<std::pair<double, std::string>> offset_line_configs;
+    // 选项 A：同侧相切
+    offset_line_configs.push_back({C_u - sign_S_val_b * R_c, "与圆弧b同侧"});
+    // 选项 B：异侧相切
+    offset_line_configs.push_back({C_u + sign_S_val_b * R_c, "与圆弧b异侧"});
+
+    // 确定相切圆弧 'c' 与圆弧 'b' 的相切类型
+    std::vector<std::pair<double, std::string>> arc_tangency_configs;
+    // 选项 A：外切
+    arc_tangency_configs.push_back({R_b + R_c, "外切"});
+    // 选项 B：内切
+    arc_tangency_configs.push_back({std::abs(R_b - R_c), "内切"});
+
+    // 遍历所有 4 种组合 (偏移直线类型 x 相切类型)
+    for (const auto& line_config : offset_line_configs) {
+        double C_offset = line_config.first;
+        std::string line_offset_side = line_config.second;
+
+        for (const auto& arc_config : arc_tangency_configs) {
+            double R_b_prime = arc_config.first;
+            std::string arc_tangency_type = arc_config.second;
+
+            // 特殊情况：内切且 R_b == R_c，此时 R_b_prime 为 0，C_c 必须与 C_b 重合
+            if (arc_tangency_type == "内切" && std::abs(R_b_prime) < EPSILON) {
+                // 检查 C_b 是否位于偏移直线上
+                if (std::abs(A_u * C_b.x + B_u * C_b.y + C_offset) < EPSILON) {
+                    PointF C_c = C_b; // 圆心 C_c 与 C_b 重合
+
+                    // 计算相切点和控制点
+                    // 切点与直线 'a' (作为圆弧 'c' 的起点)
+                    double d_cc_to_line_a = A_u * C_c.x + B_u * C_c.y + C_u;
+                    PointF tangent_point_line(C_c.x - d_cc_to_line_a * A_u,
+                                                  C_c.y - d_cc_to_line_a * B_u);
+
+                    // 切点与圆弧 'b' (作为圆弧 'c' 的终点)
+                    // 当 R_b = R_c 且内切时，圆弧 c 与圆弧 b 完全重合。
+                    // 此时切点可以认为是圆弧 b 上的任意一点。
+                    // 为了与输入保持一致，我们使用 arc_b_p1 投影到圆弧 b 的圆周上作为切点。
+                    PointF tangent_point_arc = C_b + (arc_b_p1 - C_b).normalized() * R_b;
+
+                    // 控制点 for arc c (作为圆弧 'c' 的控制点)
+                    // 如果圆弧 c 与圆弧 b 重合，则可以使用圆弧 b 的控制点 arc_b_p2
+                    PointF control_point_arc_c = arc_b_p2;
+
+                    solutions.push_back({C_c, R_c, line_offset_side, arc_tangency_type,
+                                        tangent_point_line, tangent_point_arc, control_point_arc_c});
+                }
+                continue;
+            }
+
+            std::vector<PointF> current_C_c_candidates;
+
+            if (std::abs(B_u) > EPSILON) { // 直线不是垂直的，以 x 为变量求解
+                double a_quad = 1.0;
+                double b_quad = -2 * C_b.x * B_u*B_u + 2 * A_u * (C_offset + B_u * C_b.y);
+                double c_quad = C_b.x*C_b.x * B_u*B_u + (C_offset + B_u * C_b.y)*(C_offset + B_u * C_b.y) - R_b_prime*R_b_prime * B_u*B_u;
+
+                double discriminant = b_quad*b_quad - 4 * a_quad * c_quad;
+
+                if (discriminant >= -EPSILON) {
+                    if (discriminant < 0) discriminant = 0;
+
+                    double sqrt_discriminant = std::sqrt(discriminant);
+
+                    double x_sol1 = (-b_quad + sqrt_discriminant) / (2 * a_quad);
+                    double y_sol1 = (-A_u * x_sol1 - C_offset) / B_u;
+                    current_C_c_candidates.push_back(PointF(x_sol1, y_sol1));
+
+                    if (discriminant > EPSILON) {
+                        double x_sol2 = (-b_quad - sqrt_discriminant) / (2 * a_quad);
+                        double y_sol2 = (-A_u * x_sol2 - C_offset) / B_u;
+                        current_C_c_candidates.push_back(PointF(x_sol2, y_sol2));
+                    }
+                }
+            } else if (std::abs(A_u) > EPSILON) { // 直线是垂直的，以 y 为变量求解 (x = -C_offset / A_u)
+                double x_fixed = -C_offset / A_u;
+
+                double rhs_sq = R_b_prime*R_b_prime - (x_fixed - C_b.x)*(x_fixed - C_b.x);
+
+                if (rhs_sq >= -EPSILON) {
+                    if (rhs_sq < 0) rhs_sq = 0;
+
+                    double sqrt_rhs = std::sqrt(rhs_sq);
+
+                    double y_sol1 = C_b.y + sqrt_rhs;
+                    current_C_c_candidates.push_back(PointF(x_fixed, y_sol1));
+
+                    if (rhs_sq > EPSILON) {
+                        double y_sol2 = C_b.y - sqrt_rhs;
+                        current_C_c_candidates.push_back(PointF(x_fixed, y_sol2));
+                    }
+                }
+            } else { // A_u 和 B_u 都为零，直线无效
+                continue;
+            }
+
+            for (const auto& C_c : current_C_c_candidates) {
+                // 计算相切圆弧 'c' 与直线 'a' 的切点 (tangent_point_line)
+                // 切点是圆心 C_c 到直线 'a' 的投影点
+                double d_cc_to_line_a = A_u * C_c.x + B_u * C_c.y + C_u;
+                PointF tangent_point_line_val(C_c.x - d_cc_to_line_a * A_u,
+                                              C_c.y - d_cc_to_line_a * B_u);
+
+                // 计算相切圆弧 'c' 与圆弧 'b' 的切点 (tangent_point_arc)
+                PointF tangent_point_arc_val;
+                PointF vec_Cb_to_Cc = C_c - C_b;
+                double dist_Cb_Cc = vec_Cb_to_Cc.length();
+
+                if (dist_Cb_Cc < EPSILON) { // C_c 和 C_b 重合，通常发生在 R_b_prime = 0 的特殊情况，但这里是通用处理
+                    // 理论上不应该进入这里，因为 R_b_prime=0 的情况已在前面处理
+                    // 如果进入，表示 R_b_prime!= 0 但 C_c == C_b，这是矛盾的
+                    // 此时切点不明确，可以返回错误或选择一个默认点
+                    tangent_point_arc_val = C_b; // 默认值，表示异常情况
+                } else {
+                    // 切点 P_b 位于 C_b 和 C_c 连线上，距离 C_b 为 R_b
+                    tangent_point_arc_val = C_b + vec_Cb_to_Cc.normalized() * R_b;
+                }
+
+                // 计算相切圆弧 'c' 的控制点 (control_point_arc_c)
+                // 假设控制点是切点 tangent_point_line 和 tangent_point_arc 之间的圆弧中点
+                PointF control_point_arc_c_val;
+                PointF vec_Cc_to_Pa = tangent_point_line_val - C_c;
+                PointF vec_Cc_to_Pb = tangent_point_arc_val - C_c;
+
+                double angle_Pa = std::atan2(vec_Cc_to_Pa.y, vec_Cc_to_Pa.x);
+                double angle_Pb = std::atan2(vec_Cc_to_Pb.y, vec_Cc_to_Pb.x);
+
+                // 调整角度，确保选择的是劣弧（角度差最小的弧）的中点
+                double angle_diff = angle_Pb - angle_Pa;
+                // Normalize angle_diff to be in (-PI, PI]
+                while (angle_diff <= -M_PI) angle_diff += 2 * M_PI;
+                while (angle_diff > M_PI) angle_diff -= 2 * M_PI;
+
+                double mid_angle = angle_Pa + angle_diff / 2.0;
+
+                control_point_arc_c_val.x = C_c.x + R_c * std::cos(mid_angle);
+                control_point_arc_c_val.y = C_c.y + R_c * std::sin(mid_angle);
+
+                solutions.push_back({C_c, R_c, line_offset_side, arc_tangency_type,
+                                    tangent_point_line_val, tangent_point_arc_val, control_point_arc_c_val});
+            }
+        }
+        return solutions;
+    }
+}
+
+
+

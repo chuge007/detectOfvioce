@@ -1647,6 +1647,7 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
             if (fabs(area) < 1e-9) {
                 //throw std::runtime_error("三点共线，无法构成圆弧");
                 qDebug()<<"Three points are not collinear";
+                QMessageBox::warning(this, "错误", "有图元三点共线，无法构成圆弧");
             }
             //计算中点和垂直方向向量
             QPointF M1((A.x() + B.x()) / 2, (A.y() + B.y()) / 2);
@@ -1660,6 +1661,7 @@ QString MainWindow::generateGCode(/*const QVector<TrackSegment>& segments*/)
             if (fabs(det) < 1e-9) {
                 //throw std::runtime_error("计算中垂线交点失败");
                 qDebug()<<"Failed to calculate the intersection point of the perpendicular line in the middle";
+                QMessageBox::warning(this, "错误", "有图元过小，无法计算");
             }
 
             float t = ((M2.x() - M1.x()) * d2.y() - (M2.y() - M1.y()) * d2.x()) / det;
@@ -2507,66 +2509,116 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
         }
     }else if(prevRowTy=="line"&&nextRowTy=="arc"){
 
-        qDebug()<<"____________________line-arc_________________";
+//        qDebug()<<"____________________line-arc_________________";
 
-        QPointF start1(model->data(model->index(prevRow, 2)).toFloat(),
-                       model->data(model->index(prevRow, 3)).toFloat());
+//        QPointF start1(model->data(model->index(prevRow, 2)).toFloat(),
+//                       model->data(model->index(prevRow, 3)).toFloat());
 
-        QPointF end1(model->data(model->index(prevRow, 10)).toFloat(),
-                     model->data(model->index(prevRow, 11)).toFloat());
+//        QPointF end1(model->data(model->index(prevRow, 10)).toFloat(),
+//                     model->data(model->index(prevRow, 11)).toFloat());
 
-        QPointF start2(model->data(model->index(nextRow, 2)).toFloat(),
-                       model->data(model->index(nextRow, 3)).toFloat());
+//        QPointF start2(model->data(model->index(nextRow, 2)).toFloat(),
+//                       model->data(model->index(nextRow, 3)).toFloat());
 
-        QPointF tran2(model->data(model->index(nextRow, 6)).toFloat(),
-                      model->data(model->index(nextRow, 7)).toFloat());
+//        QPointF tran2(model->data(model->index(nextRow, 6)).toFloat(),
+//                      model->data(model->index(nextRow, 7)).toFloat());
 
-        QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
-                     model->data(model->index(nextRow, 11)).toFloat());
+//        QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
+//                     model->data(model->index(nextRow, 11)).toFloat());
 
-        qDebug() << "start1:" << start1;
-        qDebug() << "end1:" << end1;
-        qDebug() << "start2:" << start2;
-        qDebug() << "tran2:" << tran2;
-        qDebug() << "end2:" << end2;
+//        qDebug() << "start1:" << start1;
+//        qDebug() << "end1:" << end1;
+//        qDebug() << "start2:" << start2;
+//        qDebug() << "tran2:" << tran2;
+//        qDebug() << "end2:" << end2;
 
 
-        QPointF t1, control, t2;
-        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2);
+//        QPointF t1, control, t2;
+//        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2);
 
-        result.q0=t1;
-        result.Transition=control;
-        result.q2=t2;
+//        result.q0=t1;
+//        result.Transition=control;
+//        result.q2=t2;
 
-        qDebug()<<"____________________line-arc_________________";
+//        qDebug()<<"____________________line-arc_________________";
+
+
+        mathTool::PointF start1(model->data(model->index(nextRow, 2)).toFloat(),
+                                model->data(model->index(nextRow, 3)).toFloat());
+        mathTool::PointF end1(model->data(model->index(nextRow, 10)).toFloat(),
+                              model->data(model->index(nextRow, 11)).toFloat());
+
+        mathTool::PointF start2(model->data(model->index(prevRow, 2)).toFloat(),
+                                model->data(model->index(prevRow, 3)).toFloat());
+        mathTool::PointF tran2(model->data(model->index(prevRow, 6)).toFloat(),
+                               model->data(model->index(prevRow, 7)).toFloat());
+        mathTool::PointF end2(model->data(model->index(prevRow, 10)).toFloat(),
+                              model->data(model->index(prevRow, 11)).toFloat());
+
+
+        std::vector<mathTool::TangentArcSolution> possible_arcs =
+                mathTool.calculateTangentArcCSolutions(start1, end1, start2, tran2, end2, smoothFactor);
+
+        // 打印所有找到的解
+        if (!possible_arcs.empty()) {
+            std::cout << std::fixed;
+        }
+
+
+        result.q0={possible_arcs[0].tangent_point_arc.x,possible_arcs[0].tangent_point_arc.y};
+        result.Transition={possible_arcs[0].control_point_arc_c.x,possible_arcs[0].control_point_arc_c.y};
+        result.q2={possible_arcs[0].tangent_point_line.x,possible_arcs[0].tangent_point_line.y};
+
     }else if(prevRowTy=="arc"&&nextRowTy=="line"){
 
         qDebug()<<"____________________arc-line_________________";
-        QPointF start1(model->data(model->index(nextRow, 2)).toFloat(),
-                       model->data(model->index(nextRow, 3)).toFloat());
-        QPointF end1(model->data(model->index(nextRow, 10)).toFloat(),
-                     model->data(model->index(nextRow, 11)).toFloat());
+        //        QPointF start1(model->data(model->index(nextRow, 2)).toFloat(),
+        //                       model->data(model->index(nextRow, 3)).toFloat());
+        //        QPointF end1(model->data(model->index(nextRow, 10)).toFloat(),
+        //                     model->data(model->index(nextRow, 11)).toFloat());
 
-        QPointF start2(model->data(model->index(prevRow, 2)).toFloat(),
-                       model->data(model->index(prevRow, 3)).toFloat());
-        QPointF tran2(model->data(model->index(prevRow, 6)).toFloat(),
-                      model->data(model->index(prevRow, 7)).toFloat());
-        QPointF end2(model->data(model->index(prevRow, 10)).toFloat(),
-                     model->data(model->index(prevRow, 11)).toFloat());
+        //        QPointF start2(model->data(model->index(prevRow, 2)).toFloat(),
+        //                       model->data(model->index(prevRow, 3)).toFloat());
+        //        QPointF tran2(model->data(model->index(prevRow, 6)).toFloat(),
+        //                      model->data(model->index(prevRow, 7)).toFloat());
+        //        QPointF end2(model->data(model->index(prevRow, 10)).toFloat(),
+        //                     model->data(model->index(prevRow, 11)).toFloat());
 
-        qDebug() << "start1:" << start1;
-        qDebug() << "end1:" << end1;
-        qDebug() << "start2:" << start2;
-        qDebug() << "tran2:" << tran2;
-        qDebug() << "end2:" << end2;
+        //mathTool::PointF t1, control, t2;
 
-        QPointF t1, control, t2;
-        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, 5.0, t1, control, t2);
-        result.q0=t1;
-        result.Transition=control;
-        result.q2=t2;
+        //bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, 5.0, t1, control, t2);
 
+//        result.q0=t1;
+//        result.Transition=control;
+//        result.q2=t2;
         qDebug()<<"____________________arc-line_________________";
+
+
+        mathTool::PointF start1(model->data(model->index(nextRow, 2)).toFloat(),
+                                model->data(model->index(nextRow, 3)).toFloat());
+        mathTool::PointF end1(model->data(model->index(nextRow, 10)).toFloat(),
+                              model->data(model->index(nextRow, 11)).toFloat());
+
+        mathTool::PointF start2(model->data(model->index(prevRow, 2)).toFloat(),
+                                model->data(model->index(prevRow, 3)).toFloat());
+        mathTool::PointF tran2(model->data(model->index(prevRow, 6)).toFloat(),
+                               model->data(model->index(prevRow, 7)).toFloat());
+        mathTool::PointF end2(model->data(model->index(prevRow, 10)).toFloat(),
+                              model->data(model->index(prevRow, 11)).toFloat());
+
+
+        std::vector<mathTool::TangentArcSolution> possible_arcs =
+                mathTool.calculateTangentArcCSolutions(start1, end1, start2, tran2, end2, smoothFactor);
+
+        // 打印所有找到的解
+        if (!possible_arcs.empty()) {
+            std::cout << std::fixed;
+        }
+
+        result.q0={possible_arcs[0].tangent_point_line.x,possible_arcs[0].tangent_point_line.y};
+        result.Transition={possible_arcs[0].control_point_arc_c.x,possible_arcs[0].control_point_arc_c.y};
+        result.q2={possible_arcs[0].tangent_point_arc.x,possible_arcs[0].tangent_point_arc.y};
+
     }else{
         QPointF start1(model->data(model->index(prevRow, 2)).toFloat(),
                        model->data(model->index(prevRow, 3)).toFloat());
