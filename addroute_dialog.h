@@ -24,7 +24,7 @@ public:
     void closeEvent(QCloseEvent *event) override;
 
     bool isOpen=false;
-
+    bool isReject=false;
     void pbSetStartPos(QString x,QString y,QString z,QString r);
 private slots:
     void pB_accept();

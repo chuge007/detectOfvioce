@@ -139,6 +139,43 @@ MainWindow::MainWindow(QWidget *parent)
     init();
 
 
+    QList<QWidget *> widgets = this->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly);
+
+    qDebug() << "==== 主窗口自身 ====";
+    qDebug() << "Widget:" << this->metaObject()->className()
+             << ", objectName:" << this->objectName()
+             << ", size:" << this->size()
+             << ", minSize:" << this->minimumSize()
+             << ", maxSize:" << this->maximumSize()
+             << ", sizePolicy:" << this->sizePolicy().horizontalPolicy()
+             << "," << this->sizePolicy().verticalPolicy();
+
+    qDebug() << "==== 子控件 ====";
+    for (QWidget *w : widgets) {
+        qDebug() << "Widget:" << w->metaObject()->className()
+                 << ", objectName:" << w->objectName()
+                 << ", size:" << w->size()
+                 << ", minSize:" << w->minimumSize()
+                 << ", maxSize:" << w->maximumSize()
+                 << ", sizePolicy:" << w->sizePolicy().horizontalPolicy()
+                 << "," << w->sizePolicy().verticalPolicy();
+
+        QList<QWidget *> subWidgets = w->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly);
+        for (QWidget *sw : subWidgets) {
+            qDebug() << "  └─ SubWidget:" << sw->metaObject()->className()
+                     << ", objectName:" << sw->objectName()
+                     << ", size:" << sw->size()
+                     << ", minSize:" << sw->minimumSize()
+                     << ", maxSize:" << sw->maximumSize()
+                     << ", sizePolicy:" << sw->sizePolicy().horizontalPolicy()
+                     << "," << sw->sizePolicy().verticalPolicy();
+        }
+    }
+
+
+
+
+
     scanDetectCtrl = new scanDetect_frictionWelding();
     scanDetectCtrl->Rsettings=settings;
 
@@ -502,9 +539,24 @@ void MainWindow::updateAddRoute(int arc,int edit,int curRow)
             return;
         }
     } else {
+        if(addRoute->isReject){
+            if(edit==0){
+                model->removeRow(curRow);
+                if (!model->submitAll()) {
+                    qDebug() << "提交数据失败:" << model->lastError().text();
+                    dbManager->db.rollback();
+                    QMessageBox::critical(this, "Error", "提交数据失败: " + model->lastError().text());
+                    return;
+                }
+            }
+            addRoute->isReject=false;
+        }
+
         dbManager->db.rollback();
         return;
     }
+
+
 
 
     if (!dbManager->db.commit()) {
@@ -544,10 +596,10 @@ void MainWindow::pbAddElliptical()
 
 void MainWindow::pbAddArcPos()
 {
-    if(!scanDetectCtrl->modbusState()){
-        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
-        return;
-    }
+    //    if(!scanDetectCtrl->modbusState()){
+    //        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 通讯未连接   "));
+    //        return;
+    //    }
     int route_rowNum= model->rowCount();
 
     if(route_rowNum<=0){
@@ -565,10 +617,10 @@ void MainWindow::pbAddArcPos()
 
 void MainWindow::pbAddLinePos()
 {
-    if(!scanDetectCtrl->modbusState()){
-        QMessageBox::warning(nullptr, "error",QString::fromLocal8Bit( " 通讯未连接   "));
-        return;
-    }
+    //    if(!scanDetectCtrl->modbusState()){
+    //        QMessageBox::warning(nullptr, "error",QString::fromLocal8Bit( " 通讯未连接   "));
+    //        return;
+    //    }
     int route_rowNum= model->rowCount();
 
     if(route_rowNum<=0){
@@ -2231,18 +2283,24 @@ void MainWindow::PbCreatGcode()
 
 void MainWindow::cleanTable(){
 
-    dbManager->db.transaction();
-    GlobeUniquePoints.clear();
-    model->removeRows(0, model->rowCount());
-    model->submitAll();
-    model->select();
-    scene->clear();
-    if (!dbManager->db.commit()) {
-        qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
-        QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
-        dbManager->db.rollback();
-    }
+    bool reverseAll = QApplication::keyboardModifiers() & Qt::ControlModifier;
+    if (reverseAll) {
+        GlobeUniquePoints={};
+        updateSence();
 
+    }else{
+        dbManager->db.transaction();
+        GlobeUniquePoints.clear();
+        model->removeRows(0, model->rowCount());
+        model->submitAll();
+        model->select();
+        scene->clear();
+        if (!dbManager->db.commit()) {
+            qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
+            QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
+            dbManager->db.rollback();
+        }
+    }
 }
 
 void MainWindow::PbAxleVelocity_lin(){
@@ -2509,38 +2567,38 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
         }
     }else if(prevRowTy=="line"&&nextRowTy=="arc"){
 
-//        qDebug()<<"____________________line-arc_________________";
+        //        qDebug()<<"____________________line-arc_________________";
 
-//        QPointF start1(model->data(model->index(prevRow, 2)).toFloat(),
-//                       model->data(model->index(prevRow, 3)).toFloat());
+        //        QPointF start1(model->data(model->index(prevRow, 2)).toFloat(),
+        //                       model->data(model->index(prevRow, 3)).toFloat());
 
-//        QPointF end1(model->data(model->index(prevRow, 10)).toFloat(),
-//                     model->data(model->index(prevRow, 11)).toFloat());
+        //        QPointF end1(model->data(model->index(prevRow, 10)).toFloat(),
+        //                     model->data(model->index(prevRow, 11)).toFloat());
 
-//        QPointF start2(model->data(model->index(nextRow, 2)).toFloat(),
-//                       model->data(model->index(nextRow, 3)).toFloat());
+        //        QPointF start2(model->data(model->index(nextRow, 2)).toFloat(),
+        //                       model->data(model->index(nextRow, 3)).toFloat());
 
-//        QPointF tran2(model->data(model->index(nextRow, 6)).toFloat(),
-//                      model->data(model->index(nextRow, 7)).toFloat());
+        //        QPointF tran2(model->data(model->index(nextRow, 6)).toFloat(),
+        //                      model->data(model->index(nextRow, 7)).toFloat());
 
-//        QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
-//                     model->data(model->index(nextRow, 11)).toFloat());
+        //        QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
+        //                     model->data(model->index(nextRow, 11)).toFloat());
 
-//        qDebug() << "start1:" << start1;
-//        qDebug() << "end1:" << end1;
-//        qDebug() << "start2:" << start2;
-//        qDebug() << "tran2:" << tran2;
-//        qDebug() << "end2:" << end2;
+        //        qDebug() << "start1:" << start1;
+        //        qDebug() << "end1:" << end1;
+        //        qDebug() << "start2:" << start2;
+        //        qDebug() << "tran2:" << tran2;
+        //        qDebug() << "end2:" << end2;
 
 
-//        QPointF t1, control, t2;
-//        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2);
+        //        QPointF t1, control, t2;
+        //        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2);
 
-//        result.q0=t1;
-//        result.Transition=control;
-//        result.q2=t2;
+        //        result.q0=t1;
+        //        result.Transition=control;
+        //        result.q2=t2;
 
-//        qDebug()<<"____________________line-arc_________________";
+        //        qDebug()<<"____________________line-arc_________________";
 
 
         mathTool::PointF start1(model->data(model->index(nextRow, 2)).toFloat(),
@@ -2588,9 +2646,9 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
 
         //bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, 5.0, t1, control, t2);
 
-//        result.q0=t1;
-//        result.Transition=control;
-//        result.q2=t2;
+        //        result.q0=t1;
+        //        result.Transition=control;
+        //        result.q2=t2;
         qDebug()<<"____________________arc-line_________________";
 
 

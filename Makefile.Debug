@@ -2378,6 +2378,7 @@ debug\moc_scandetect_frictionwelding.cpp: scanMovecontrl\scandetect_frictionweld
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\qvector2d.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\qtouchdevice.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QDebug \
+		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QMutex \
 		debug\moc_predefs.h \
 		D:\qt5.14\5.14.2\msvc2017_64\bin\moc.exe
 	D:\qt5.14\5.14.2\msvc2017_64\bin\moc.exe $(DEFINES) --compiler-flavor=msvc --include D:/dev/plc_connect/version/28/plc_connet/debug/moc_predefs.h -ID:/qt5.14/5.14.2/msvc2017_64/mkspecs/win32-msvc -ID:/dev/plc_connect/version/28/plc_connet -ID:/dev/plc_connect/version/28/UtSDKAppLibs-win64/include -ID:/dev/plc_connect/version/28/plc_connet/PublicModules -ID:/dev/plc_connect/version/28/plc_connet/widgetDefin -ID:/dev/plc_connect/version/28/plc_connet/scanMovecontrl -ID:/dev/plc_connect/version/28/plc_connet/dxflib -ID:/dev/plc_connect/version/28/plc_connet/libssh2_1.11.0_x64 -ID:/dev/plc_connect/version/28/plc_connet/libssh2_1.11.0_x64 -IC:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include -ID:/qt5.14/5.14.2/msvc2017_64/include -ID:/qt5.14/5.14.2/msvc2017_64/include/QtSvg -ID:/qt5.14/5.14.2/msvc2017_64/include/ActiveQt -ID:/qt5.14/5.14.2/msvc2017_64/include/QtCharts -ID:/qt5.14/5.14.2/msvc2017_64/include/QtOpenGL -ID:/qt5.14/5.14.2/msvc2017_64/include/QtPrintSupport -ID:/qt5.14/5.14.2/msvc2017_64/include/QtWidgets -ID:/qt5.14/5.14.2/msvc2017_64/include/QtGui/5.14.2 -ID:/qt5.14/5.14.2/msvc2017_64/include/QtGui/5.14.2/QtGui -ID:/qt5.14/5.14.2/msvc2017_64/include/QtGui -ID:/qt5.14/5.14.2/msvc2017_64/include/QtANGLE -ID:/qt5.14/5.14.2/msvc2017_64/include/QtSerialBus -ID:/qt5.14/5.14.2/msvc2017_64/include/QtNetwork -ID:/qt5.14/5.14.2/msvc2017_64/include/QtSql -ID:/qt5.14/5.14.2/msvc2017_64/include/QtXml -ID:/qt5.14/5.14.2/msvc2017_64/include/QtCore/5.14.2 -ID:/qt5.14/5.14.2/msvc2017_64/include/QtCore/5.14.2/QtCore -ID:/qt5.14/5.14.2/msvc2017_64/include/QtConcurrent -ID:/qt5.14/5.14.2/msvc2017_64/include/QtSerialPort -ID:/qt5.14/5.14.2/msvc2017_64/include/QtCore -I"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Tools\MSVC\14.16.27023\ATLMFC\include" -I"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Tools\MSVC\14.16.27023\include" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt" scanMovecontrl\scandetect_frictionwelding.h -o debug\moc_scandetect_frictionwelding.cpp
@@ -3653,7 +3654,9 @@ debug\ascan.obj: ascan.cpp ascan.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QMargins \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\qsurface.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\qsurfaceformat.h \
-		ui_ascan.h
+		ui_ascan.h \
+		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QElapsedTimer \
+		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\qelapsedtimer.h
 
 debug\dl_dxf.obj: dxflib\dl_dxf.cpp dxflib\dl_dxf.h \
 		dxflib\dl_global.h \
@@ -5670,6 +5673,7 @@ debug\mainwindow.obj: mainwindow.cpp mainwindow.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\QVector3D \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\qvector3d.h \
 		scanMovecontrl\scandetect_frictionwelding.h \
+		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QMutex \
 		ascan.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtNetwork\QTcpServer \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtNetwork\qtcpserver.h \
@@ -5712,7 +5716,9 @@ debug\mainwindow.obj: mainwindow.cpp mainwindow.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtSql\QSqlDriver \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtSql\qsqldriver.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtSql\QSqlRecord \
-		D:\qt5.14\5.14.2\msvc2017_64\include\QtSql\qsqlrecord.h
+		D:\qt5.14\5.14.2\msvc2017_64\include\QtSql\qsqlrecord.h \
+		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QThread \
+		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\qthread.h
 
 debug\mathtool.obj: mathtool.cpp mathtool.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QPointF \
@@ -6053,6 +6059,7 @@ debug\scandetect_frictionwelding.obj: scanMovecontrl\scandetect_frictionwelding.
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\qvector2d.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\qtouchdevice.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QDebug \
+		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QMutex \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtWidgets\QMessageBox \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtWidgets\qmessagebox.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QCoreApplication \

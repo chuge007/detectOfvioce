@@ -59,7 +59,7 @@ void addRoute_dialog::closeEvent(QCloseEvent *event)
     // …… 根据需要重置其它控件
 
     // 不真正关闭，而是隐藏对话框
-
+    isReject=true;
     isOpen=false;
     event->ignore();
     hide();
@@ -68,6 +68,7 @@ void addRoute_dialog::closeEvent(QCloseEvent *event)
 void addRoute_dialog::pB_reject()
 {
     qDebug()<<"reject";
+    isReject=true;
     reject();
 }
 
