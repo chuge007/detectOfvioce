@@ -5255,12 +5255,7 @@ debug\main.obj: main.cpp mainwindow.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\qeventloop.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtWidgets\qdesktopwidget.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\qguiapplication.h \
-		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\qinputmethod.h \
-		D:\qt5.14\5.14.2\msvc2017_64\include\QtNetwork\QNetworkProxy \
-		D:\qt5.14\5.14.2\msvc2017_64\include\QtNetwork\qnetworkproxy.h \
-		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\QTextCodec \
-		D:\qt5.14\5.14.2\msvc2017_64\include\QtCore\qtextcodec.h \
-		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\QGuiApplication
+		D:\qt5.14\5.14.2\msvc2017_64\include\QtGui\qinputmethod.h
 
 debug\mainwindow.obj: mainwindow.cpp mainwindow.h \
 		D:\qt5.14\5.14.2\msvc2017_64\include\QtWidgets\QMainWindow \

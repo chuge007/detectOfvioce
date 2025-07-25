@@ -1250,6 +1250,9 @@ void MainWindow::pbDXFimportBut()
                 qDebug()<<"***arc:*****start_arc="<<start_arc<<"trans_arc="<<trans_arc<<"end_arc="<<end_arc<<" i "<<i;
                 arc_item *itme =new arc_item(start_arc,trans_arc,end_arc,i,scene);
                 scene->addItem(itme);
+                qDebug() << "Arc item added. Its scene position is:" << itme->scenePos(); // 通常这里会是 (0,0) 如果没有设置pos()
+                qDebug() << "Arc item bounding rect (initial):" << itme->boundingRect();
+                qDebug() << "Arc item shape rect (initial):" << itme->shape().boundingRect(); // 打印shape的包围盒
             }
 
         }
@@ -2882,7 +2885,23 @@ void MainWindow::pbnewPiece(){
             return;
         }
 
+        // 检查是否包含中文字符
+        bool hasChinese = false;
+        for (int i = 0; i < text.length(); ++i) {
+            QChar ch = text.at(i);
+            if (ch.unicode() >= 0x4e00 && ch.unicode() <= 0x9fa5) {
+                hasChinese = true;
+                break;
+            }
+        }
+
+        if (hasChinese) {
+            QMessageBox::warning(this, QString::fromLocal8Bit("无效输入"),
+                                 QString::fromLocal8Bit("工件名称不能包含中文字符，请重新输入。"));
+            return;
+        }
     }
+
 
     if(WorkpieceList.contains(text)){
         ui->cBworkpiece->setCurrentText(text);

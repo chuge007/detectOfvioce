@@ -54,8 +54,8 @@ int main(int argc, char *argv[])
         QRect availableGeometry = screen->availableGeometry();
 
         // 计算新窗口的尺寸：屏幕可用宽度的2/3，高度的2/3
-        int newWidth = availableGeometry.width() * 4 / 5;
-        int newHeight = availableGeometry.height() * 4 / 5;
+        int newWidth = availableGeometry.width() * 5 / 6;
+        int newHeight = availableGeometry.height() * 5 / 6;
 
         // 设置主窗口的尺寸
         mainWindow.resize(newWidth, newHeight);
