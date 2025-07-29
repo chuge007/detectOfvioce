@@ -63,13 +63,16 @@ public:
     bool isSegmentIntersectCircle(const QPointF& A, const QPointF& B, const QPointF& center, double R);
 
     // 将线段向法线方向偏移指定半径
-    QLineF offsetLineSegment(const QPointF& A, const QPointF& B, const QPointF& circleCenter, double offsetR, bool towardCenter);
+    QLineF mathTool::offsetLineSegment(const QPointF& A, const QPointF& B, double offsetR, bool rotateLeft);
 
     // 求直线与圆的交点（取较近或精度内匹配的交点）
     bool intersectLineCircle(const QLineF& line, const QPointF& center, double radius, QPointF& result);
 
     // 点到线段的投影（垂足）
     QPointF projectToLine(const QPointF& P, const QPointF& A, const QPointF& B);
+
+
+    QPointF arcMidPoint(const QPointF& circleCenter, const QPointF& t1, const QPointF& t2);
 
     // 主函数：计算三点圆弧过渡
     bool computeTransitionArc(const QPointF& start1, const QPointF& end1,
@@ -79,47 +82,22 @@ public:
 
 
 
-
-    struct PointF {
-        double x, y;
-        PointF(double x_val = 0.0, double y_val = 0.0) : x(x_val), y(y_val) {}
-
-        PointF operator+(const PointF& other) const { return PointF(x + other.x, y + other.y); }
-        PointF operator-(const PointF& other) const { return PointF(x - other.x, y - other.y); }
-        PointF operator*(double scalar) const { return PointF(x * scalar, y * scalar); }
-        double length() const { return std::hypot(x, y); }
-        PointF normalized() const {
-            double len = length();
-            return (len > EPSILON) ? PointF(x / len, y / len) : PointF(0.0, 0.0);
-        }
-    };
+    //    // 用于存储相切圆弧的解决方案
+    //    struct TangentArcSolution {
+    //        QPointF center;
+    //        double radius;
+    //        QPointF tangent_point_line;       // 相切圆弧 'c' 与直线 'a' 的切点 (作为圆弧 'c' 的起点)
+    //        QPointF tangent_point_arc;        // 相切圆弧 'c' 与圆弧 'b' 的切点 (作为圆弧 'c' 的终点)
+    //        QPointF control_point_arc_c;      // 相切圆弧 'c' 的控制点 (例如，圆弧中点)
+    //    };
 
 
-    // 用于存储圆的信息`
-    struct CircleInfo {
-        PointF center;
-        double radius;
-        bool isValid; // 指示是否找到有效圆
-    };
-
-    // 用于存储相切圆弧的解决方案
-    struct TangentArcSolution {
-        PointF center;
-        double radius;
-        std::string line_offset_side;    // 例如 "与圆弧b同侧" 或 "与圆弧b异侧"
-        std::string arc_tangency_type;   // 例如 "外切" 或 "内切"
-        PointF tangent_point_line;       // 相切圆弧 'c' 与直线 'a' 的切点 (作为圆弧 'c' 的起点)
-        PointF tangent_point_arc;        // 相切圆弧 'c' 与圆弧 'b' 的切点 (作为圆弧 'c' 的终点)
-        PointF control_point_arc_c;      // 相切圆弧 'c' 的控制点 (例如，圆弧中点)
-    };
+    //    TangentArcSolution calculateTangentArcCSolutions(
+    //        const QPointF& line_start, const QPointF& line_end,
+    //        const QPointF& arc_b_p1, const QPointF& arc_b_p2, const QPointF& arc_b_p3,
+    //        double R_c);
 
 
-    CircleInfo findCircleFromThreePoints(const PointF& p1, const PointF& p2, const PointF& p3);
-
-    std::vector<mathTool::TangentArcSolution> calculateTangentArcCSolutions(
-        const PointF& line_start, const PointF& line_end,
-        const PointF& arc_b_p1, const PointF& arc_b_p2, const PointF& arc_b_p3,
-        double R_c);
 };
 
 

@@ -578,7 +578,7 @@ void TGraphicsViewRefactor::mouseMoveEvent(QMouseEvent *event)
         setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
         centerOn(C_Movepos - offsetPos);
 
-        qDebug()<<"IsMoveView"<<IsMoveView;
+        //qDebug()<<"IsMoveView"<<IsMoveView;
     }
     QGraphicsView::mouseMoveEvent(event);
 }

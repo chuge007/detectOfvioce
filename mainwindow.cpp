@@ -2558,127 +2558,89 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
         QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
                      model->data(model->index(nextRow, 11)).toFloat());
 
-        //        qDebug() << "line prevRow:" << prevRow;
-        //        qDebug() << "line prevRow:" << nextRow;
-        //        qDebug() << "line start1:" << start1;
-        //        qDebug() << "line end1:" << end1;
-        //        qDebug() << "line start2:" << start2;
-        //        qDebug() << "line end2:" << end2;
         if (!mathTool.computeSmoothArc(start1, end1, start2, end2, smoothFactor, result)) {
             QMessageBox::warning(this, "Error", QString::fromLocal8Bit("无法计算平滑圆弧，方向矢量可能无效"));
             return;
         }
     }else if(prevRowTy=="line"&&nextRowTy=="arc"){
 
-        //        qDebug()<<"____________________line-arc_________________";
+        qDebug()<<"____________________line-arc_________________";
 
-        //        QPointF start1(model->data(model->index(prevRow, 2)).toFloat(),
-        //                       model->data(model->index(prevRow, 3)).toFloat());
+        QPointF start1(model->data(model->index(prevRow, 2)).toFloat(),
+                       model->data(model->index(prevRow, 3)).toFloat());
 
-        //        QPointF end1(model->data(model->index(prevRow, 10)).toFloat(),
-        //                     model->data(model->index(prevRow, 11)).toFloat());
+        QPointF end1(model->data(model->index(prevRow, 10)).toFloat(),
+                     model->data(model->index(prevRow, 11)).toFloat());
 
-        //        QPointF start2(model->data(model->index(nextRow, 2)).toFloat(),
-        //                       model->data(model->index(nextRow, 3)).toFloat());
+        QPointF start2(model->data(model->index(nextRow, 2)).toFloat(),
+                       model->data(model->index(nextRow, 3)).toFloat());
 
-        //        QPointF tran2(model->data(model->index(nextRow, 6)).toFloat(),
-        //                      model->data(model->index(nextRow, 7)).toFloat());
+        QPointF tran2(model->data(model->index(nextRow, 6)).toFloat(),
+                      model->data(model->index(nextRow, 7)).toFloat());
 
-        //        QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
-        //                     model->data(model->index(nextRow, 11)).toFloat());
-
-        //        qDebug() << "start1:" << start1;
-        //        qDebug() << "end1:" << end1;
-        //        qDebug() << "start2:" << start2;
-        //        qDebug() << "tran2:" << tran2;
-        //        qDebug() << "end2:" << end2;
+        QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
+                     model->data(model->index(nextRow, 11)).toFloat());
 
 
-        //        QPointF t1, control, t2;
-        //        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2);
+        QPointF t1, control, t2;
+        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2);
 
-        //        result.q0=t1;
-        //        result.Transition=control;
-        //        result.q2=t2;
-
-        //        qDebug()<<"____________________line-arc_________________";
+        result.q0=t1;
+        result.Transition=control;
+        result.q2=t2;
 
 
-        mathTool::PointF start1(model->data(model->index(nextRow, 2)).toFloat(),
-                                model->data(model->index(nextRow, 3)).toFloat());
-        mathTool::PointF end1(model->data(model->index(nextRow, 10)).toFloat(),
-                              model->data(model->index(nextRow, 11)).toFloat());
+        qDebug() << "start1:" << start1;
+        qDebug() << "end1:" << end1;
+        qDebug() << "start2:" << start2;
+        qDebug() << "tran2:" << tran2;
+        qDebug() << "end2:" << end2;
+        qDebug() << "smoothFactor:" << smoothFactor;
 
-        mathTool::PointF start2(model->data(model->index(prevRow, 2)).toFloat(),
-                                model->data(model->index(prevRow, 3)).toFloat());
-        mathTool::PointF tran2(model->data(model->index(prevRow, 6)).toFloat(),
-                               model->data(model->index(prevRow, 7)).toFloat());
-        mathTool::PointF end2(model->data(model->index(prevRow, 10)).toFloat(),
-                              model->data(model->index(prevRow, 11)).toFloat());
+        std::cout<<"内切圆弧："
+                << ", 起点: (" << result.q0.x() << ", " << result.q0.y() << ")"
+                << ", 控制点: (" << result.Transition.x() << ", " << result.Transition.y() << ")"
+                << ", 终点: (" << result.q2.x() << ", " << result.q2.y() << ")"
+                << std::endl;
 
+        qDebug()<<"____________________line-arc_________________";
 
-        std::vector<mathTool::TangentArcSolution> possible_arcs =
-                mathTool.calculateTangentArcCSolutions(start1, end1, start2, tran2, end2, smoothFactor);
-
-        // 打印所有找到的解
-        if (!possible_arcs.empty()) {
-            std::cout << std::fixed;
-        }
-
-
-        result.q0={possible_arcs[0].tangent_point_arc.x,possible_arcs[0].tangent_point_arc.y};
-        result.Transition={possible_arcs[0].control_point_arc_c.x,possible_arcs[0].control_point_arc_c.y};
-        result.q2={possible_arcs[0].tangent_point_line.x,possible_arcs[0].tangent_point_line.y};
 
     }else if(prevRowTy=="arc"&&nextRowTy=="line"){
 
         qDebug()<<"____________________arc-line_________________";
-        //        QPointF start1(model->data(model->index(nextRow, 2)).toFloat(),
-        //                       model->data(model->index(nextRow, 3)).toFloat());
-        //        QPointF end1(model->data(model->index(nextRow, 10)).toFloat(),
-        //                     model->data(model->index(nextRow, 11)).toFloat());
+        QPointF start1(model->data(model->index(nextRow, 2)).toFloat(),
+                       model->data(model->index(nextRow, 3)).toFloat());
+        QPointF end1(model->data(model->index(nextRow, 10)).toFloat(),
+                     model->data(model->index(nextRow, 11)).toFloat());
 
-        //        QPointF start2(model->data(model->index(prevRow, 2)).toFloat(),
-        //                       model->data(model->index(prevRow, 3)).toFloat());
-        //        QPointF tran2(model->data(model->index(prevRow, 6)).toFloat(),
-        //                      model->data(model->index(prevRow, 7)).toFloat());
-        //        QPointF end2(model->data(model->index(prevRow, 10)).toFloat(),
-        //                     model->data(model->index(prevRow, 11)).toFloat());
+        QPointF start2(model->data(model->index(prevRow, 2)).toFloat(),
+                       model->data(model->index(prevRow, 3)).toFloat());
+        QPointF tran2(model->data(model->index(prevRow, 6)).toFloat(),
+                      model->data(model->index(prevRow, 7)).toFloat());
+        QPointF end2(model->data(model->index(prevRow, 10)).toFloat(),
+                     model->data(model->index(prevRow, 11)).toFloat());
 
-        //mathTool::PointF t1, control, t2;
+        QPointF t1, control, t2;
 
-        //bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, 5.0, t1, control, t2);
+        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2);
 
-        //        result.q0=t1;
-        //        result.Transition=control;
-        //        result.q2=t2;
+        result.q0=t2;
+        result.Transition=control;
+        result.q2=t1;
+
+
+
+
+        std::cout<<"内切圆弧："
+                << ", 起点: (" << result.q0.x() << ", " << result.q0.y() << ")"
+                << ", 控制点: (" << result.Transition.x() << ", " << result.Transition.y() << ")"
+                << ", 终点: (" << result.q2.x() << ", " << result.q2.y() << ")"
+                << std::endl;
+
+
         qDebug()<<"____________________arc-line_________________";
 
-
-        mathTool::PointF start1(model->data(model->index(nextRow, 2)).toFloat(),
-                                model->data(model->index(nextRow, 3)).toFloat());
-        mathTool::PointF end1(model->data(model->index(nextRow, 10)).toFloat(),
-                              model->data(model->index(nextRow, 11)).toFloat());
-
-        mathTool::PointF start2(model->data(model->index(prevRow, 2)).toFloat(),
-                                model->data(model->index(prevRow, 3)).toFloat());
-        mathTool::PointF tran2(model->data(model->index(prevRow, 6)).toFloat(),
-                               model->data(model->index(prevRow, 7)).toFloat());
-        mathTool::PointF end2(model->data(model->index(prevRow, 10)).toFloat(),
-                              model->data(model->index(prevRow, 11)).toFloat());
-
-
-        std::vector<mathTool::TangentArcSolution> possible_arcs =
-                mathTool.calculateTangentArcCSolutions(start1, end1, start2, tran2, end2, smoothFactor);
-
-        // 打印所有找到的解
-        if (!possible_arcs.empty()) {
-            std::cout << std::fixed;
-        }
-
-        result.q0={possible_arcs[0].tangent_point_line.x,possible_arcs[0].tangent_point_line.y};
-        result.Transition={possible_arcs[0].control_point_arc_c.x,possible_arcs[0].control_point_arc_c.y};
-        result.q2={possible_arcs[0].tangent_point_arc.x,possible_arcs[0].tangent_point_arc.y};
 
     }else{
         QPointF start1(model->data(model->index(prevRow, 2)).toFloat(),
@@ -2697,48 +2659,48 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
 
     }
 
-    //if(true){return;}
-    // 修改前图元终点为 q0
-    model->setData(model->index(prevRow, 10), result.q0.x());
-    model->setData(model->index(prevRow, 11), result.q0.y());
+    //   if(true){return;}
+    //    // 修改前图元终点为 q0
+        model->setData(model->index(prevRow, 10), result.q0.x());
+        model->setData(model->index(prevRow, 11), result.q0.y());
 
-    // 修改后图元起点为 q2
-    model->setData(model->index(nextRow, 2), result.q2.x());
-    model->setData(model->index(nextRow, 3), result.q2.y());
+        // 修改后图元起点为 q2
+        model->setData(model->index(nextRow, 2), result.q2.x());
+        model->setData(model->index(nextRow, 3), result.q2.y());
 
-    // 插入新行
-    int insertRow = id;
-    model->insertRow(id);
+        // 插入新行
+        int insertRow = id;
+        model->insertRow(id);
 
-    model->setData(model->index(insertRow, 0), insertRow);  // id
-    model->setData(model->index(insertRow, 1), "arc");
+        model->setData(model->index(insertRow, 0), insertRow);  // id
+        model->setData(model->index(insertRow, 1), "arc");
 
-    model->setData(model->index(insertRow, 2), result.q0.x());
-    model->setData(model->index(insertRow, 3), result.q0.y());
-    model->setData(model->index(insertRow, 4), 0.0);  // z
-    model->setData(model->index(insertRow, 5), 0.0);  // r
+        model->setData(model->index(insertRow, 2), result.q0.x());
+        model->setData(model->index(insertRow, 3), result.q0.y());
+        model->setData(model->index(insertRow, 4), 0.0);  // z
+        model->setData(model->index(insertRow, 5), 0.0);  // r
 
-    model->setData(model->index(insertRow, 6), result.Transition.x());
-    model->setData(model->index(insertRow, 7), result.Transition.y());
-    model->setData(model->index(insertRow, 8), 0.0);
-    model->setData(model->index(insertRow, 9), 0.0);
+        model->setData(model->index(insertRow, 6), result.Transition.x());
+        model->setData(model->index(insertRow, 7), result.Transition.y());
+        model->setData(model->index(insertRow, 8), 0.0);
+        model->setData(model->index(insertRow, 9), 0.0);
 
-    model->setData(model->index(insertRow, 10), result.q2.x());
-    model->setData(model->index(insertRow, 11), result.q2.y());
-    model->setData(model->index(insertRow, 12), 0.0);
-    model->setData(model->index(insertRow, 13), 0.0);
+        model->setData(model->index(insertRow, 10), result.q2.x());
+        model->setData(model->index(insertRow, 11), result.q2.y());
+        model->setData(model->index(insertRow, 12), 0.0);
+        model->setData(model->index(insertRow, 13), 0.0);
 
 
-    model->submitAll();
-    model->select();
+        model->submitAll();
+        model->select();
 
-    if (!dbManager->db.commit()) {
-        qDebug() << "事务提交失败:" << dbManager->db.lastError().text();
-        QMessageBox::critical(this, "错误", "事务提交失败:" + dbManager->db.lastError().text());
-        dbManager->db.rollback();
-    } else {
-        qDebug() << "排序及更新完成，事务提交成功！";
-    }
+        if (!dbManager->db.commit()) {
+            qDebug() << "事务提交失败:" << dbManager->db.lastError().text();
+            QMessageBox::critical(this, "错误", "事务提交失败:" + dbManager->db.lastError().text());
+            dbManager->db.rollback();
+        } else {
+            qDebug() << "排序及更新完成，事务提交成功！";
+        }
 
 }
 
