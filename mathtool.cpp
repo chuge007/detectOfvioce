@@ -542,6 +542,19 @@ QPointF mathTool::projectToLine(const QPointF& P, const QPointF& A, const QPoint
 //    return true;
 //}
 //____________________________________________________________________________________________________________________________
+bool mathTool::isPointOnLeftSide(const QPointF& A, const QPointF& B, const QPointF& C)
+{
+    QPointF AB = B - A;
+    QPointF AC = C - A;
+
+    // 计算二维叉积：AB × AC
+    double cross = AB.x() * AC.y() - AB.y() * AC.x();
+
+    if (cross > 0)
+        return true;  // 点 C 在向量 AB 的左边
+    else
+        return false; // 点 C 在向量 AB 的右边或共线
+}
 
 bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
                                     const QPointF& start2, const QPointF& tran2, const QPointF& end2,
@@ -550,33 +563,37 @@ bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
     // ⭐ 保证线段方向统一为从圆弧方向切出
     QPointF s1 = start1;
     QPointF e1 = end1;
+
+    bool rotateLeft=false;
     if (start1 == end2) {
         s1 = end1;
         e1 = start1;
     }
 
     QPointF circleCenter = getCircleCenterFrom3Points(start2, tran2, end2);
-    double angle = mathTool::angleBetweenVectors(circleCenter, start2, e1, s1);
+    double angle = mathTool::angleBetweenVectors(e1, circleCenter, e1, s1);
 
-    qDebug() << "angle" << angle;
+    qDebug() << "angle*************************************************" << angle;
     double newR;
     QLineF lineC;
     double circleR = std::hypot(circleCenter.x() - start2.x(), circleCenter.y() - start2.y());
     if (circleR < 0) return false;
 
-    bool intersect = isSegmentIntersectCircle(s1, e1, circleCenter, circleR);
-    newR = intersect ? (circleR - r) : (circleR + r);
-    if (newR <= 0) return false;
+    //bool intersect = isSegmentIntersectCircle(s1, e1, circleCenter, circleR);
+
 
     if (angle < 90) {
 
-        lineC = offsetLineSegment(s1, e1, r, /*rotateLeft=*/false);  // 向左偏移
-
+        lineC = offsetLineSegment(s1, e1, r, isPointOnLeftSide(s1,e1,circleCenter));  // 向左偏移
+        newR = (circleR - r);
     } else {
 
-        lineC = offsetLineSegment(s1, e1, r, /*rotateLeft=*/true);  // 向左偏移
-
+        lineC = offsetLineSegment(s1, e1, r, isPointOnLeftSide(s1,e1,circleCenter));
+        newR = (circleR + r);
     }
+
+    if (newR <= 0) return false;
+
     // 求圆心
     QPointF smoothCircleCenter;
     if (!intersectLineCircle(lineC, circleCenter, newR, smoothCircleCenter))

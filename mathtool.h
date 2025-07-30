@@ -74,6 +74,7 @@ public:
 
     QPointF arcMidPoint(const QPointF& circleCenter, const QPointF& t1, const QPointF& t2);
 
+    bool isPointOnLeftSide(const QPointF& A, const QPointF& B, const QPointF& C);
     // 主函数：计算三点圆弧过渡
     bool computeTransitionArc(const QPointF& start1, const QPointF& end1,
                               const QPointF& start2, const QPointF& tran2, const QPointF& end2,
