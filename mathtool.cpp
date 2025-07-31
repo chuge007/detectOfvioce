@@ -624,3 +624,239 @@ bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
 
     return true;
 }
+
+//_____________________________________________________________________________
+
+#include <QPointF>
+#include <cmath>
+
+enum ArcContainment {
+    CONTAIN_NONE,
+    CONTAIN_1_IN_2,
+    CONTAIN_2_IN_1,
+    CONTAIN_EQUAL
+};
+
+QPointF getCircleCenter(const QPointF& A, const QPointF& B, const QPointF& C) {
+    double a1 = B.x() - A.x();
+    double b1 = B.y() - A.y();
+    double c1 = (a1 * (A.x() + B.x()) + b1 * (A.y() + B.y())) / 2.0;
+
+    double a2 = C.x() - B.x();
+    double b2 = C.y() - B.y();
+    double c2 = (a2 * (B.x() + C.x()) + b2 * (B.y() + C.y())) / 2.0;
+
+    double d = a1 * b2 - a2 * b1;
+    if (std::abs(d) < 1e-6) {
+        return QPointF(0, 0); // 三点共线，不构成圆
+    }
+
+    double x = (c1 * b2 - c2 * b1) / d;
+    double y = (a1 * c2 - a2 * c1) / d;
+    return QPointF(x, y);
+}
+
+double distance(const QPointF& p1, const QPointF& p2) {
+    return std::hypot(p1.x() - p2.x(), p1.y() - p2.y());
+}
+
+bool isPointInsideCircle(const QPointF& point, const QPointF& center, double radius, double epsilon = 1e-6) {
+    return distance(point, center) <= radius + epsilon;
+}
+
+bool areAllPointsInsideCircle(const QPointF& p1, const QPointF& p2, const QPointF& p3,
+                              const QPointF& circleCenter, double radius) {
+    return isPointInsideCircle(p1, circleCenter, radius) &&
+            isPointInsideCircle(p2, circleCenter, radius) &&
+            isPointInsideCircle(p3, circleCenter, radius);
+}
+
+ArcContainment checkArcContainment(const QPointF& start1, const QPointF& tran1, const QPointF& end1,
+                                   const QPointF& start2, const QPointF& tran2, const QPointF& end2,
+                                   double r, QPointF& t1, QPointF& control, QPointF& t2) {
+    Q_UNUSED(t1)
+    Q_UNUSED(control)
+    Q_UNUSED(t2)
+
+    QPointF center1 = getCircleCenter(start1, tran1, end1);
+    QPointF center2 = getCircleCenter(start2, tran2, end2);
+
+    double radius1 = distance(center1, start1);
+    double radius2 = distance(center2, start2);
+
+    bool all1in2 = areAllPointsInsideCircle(start1, tran1, end1, center2, radius2);
+    bool all2in1 = areAllPointsInsideCircle(start2, tran2, end2, center1, radius1);
+
+    if (all1in2 && all2in1) {
+        return CONTAIN_EQUAL;
+    } else if (all1in2) {
+        return CONTAIN_1_IN_2;
+    } else if (all2in1) {
+        return CONTAIN_2_IN_1;
+    } else {
+        return CONTAIN_NONE;
+    }
+}
+
+bool getTangentPoint(const QPointF& center1, double r1,
+                     const QPointF& center2, double r2,
+                     QPointF& tangentPoint,
+                     double epsilon = 1e-6) {
+    double dx = center2.x() - center1.x();
+    double dy = center2.y() - center1.y();
+    double d = std::hypot(dx, dy);
+
+    if (d < epsilon) {
+        // 圆心重合，不存在唯一切点
+        return false;
+    }
+
+    if (std::abs(d - (r1 + r2)) < epsilon) {
+        double t = r1 / (r1 + r2);
+        tangentPoint = QPointF(center1.x() + t * dx, center1.y() + t * dy);
+        return true;
+    }
+
+    if (std::abs(d - std::abs(r1 - r2)) < epsilon) {
+        double t = r1 / (r1 - r2);
+        tangentPoint = QPointF(center1.x() + t * dx, center1.y() + t * dy);
+        return true;
+    }
+
+    // 不相切
+    return false;
+}
+
+bool getCircleIntersections(const QPointF& center1, double r1,
+                            const QPointF& center2, double r2,
+                            QPointF& inter1, QPointF& inter2) {
+    double dx = center2.x() - center1.x();
+    double dy = center2.y() - center1.y();
+    double d = std::hypot(dx, dy);
+
+    // 圆心重合或无交点
+    if (d < 1e-6 || d > r1 + r2 || d < std::abs(r1 - r2)) {
+        return false;
+    }
+
+    // 中间点到两个圆心的距离 a
+    double a = (r1*r1 - r2*r2 + d*d) / (2*d);
+    double h = std::sqrt(std::max(0.0, r1*r1 - a*a));
+
+    // 点 P2 是两圆连线上的交点基准
+    double x2 = center1.x() + a * (dx / d);
+    double y2 = center1.y() + a * (dy / d);
+
+    // 正交方向向量
+    double rx = -dy * (h / d);
+    double ry =  dx * (h / d);
+
+    // 两个交点
+    inter1 = QPointF(x2 + rx, y2 + ry);
+    inter2 = QPointF(x2 - rx, y2 - ry);
+
+    return true;
+}
+
+bool mathTool::computeTransitionArcArc(const QPointF& start1,const QPointF& tran1, const QPointF& end1,
+                                       const QPointF& start2, const QPointF& tran2, const QPointF& end2,
+                                       double r, QPointF& t1, QPointF& control, QPointF& t2){
+
+    QPointF center1 = getCircleCenter(start1, tran1, end1);
+    QPointF center2 = getCircleCenter(start2, tran2, end2);
+    QPointF center3;
+
+    double radius1 = distance(center1, start1);
+    double radius2 = distance(center2, start2);
+    std::cout<< "radius1 "<<radius1<<"\n";
+    std::cout<< "radius2 "<<radius2<<"\n";
+    std::cout<< "r "<<r<<"\n";
+    ArcContainment result = checkArcContainment(start1, tran1, end1, start2, tran2, end2, r, t1, control, t2);
+
+    switch (result) {
+    case CONTAIN_EQUAL: {
+        std::cout<< "两个圆弧对应的完整圆相同";
+        radius1-=r;
+        radius2-=r;
+        QPointF p1, p2;
+
+        getCircleIntersections(center1, radius1, center2, radius2, p1, p2);
+
+        double d1 = std::hypot(p1.x() - end1.x(), p1.y() - end1.y());
+        double d2 = std::hypot(p2.x() - end1.x(), p2.y() - end1.y());
+
+        center3 = (d1 < d2) ? p1 : p2;
+        getTangentPoint(center3, r, center1, radius1, t1);
+        getTangentPoint(center3, r, center2, radius2, t2);
+
+        control=arcMidPoint(center3,t1,t2);
+
+    }
+        break;
+
+    case CONTAIN_1_IN_2:{
+        std::cout << "圆弧1的三个点在圆弧2的完整圆范围内";
+        radius1+=r;
+        radius2-=r;
+        QPointF p1, p2;
+
+        getCircleIntersections(center1, radius1, center2, radius2, p1, p2);
+
+        double d1 = std::hypot(p1.x() - end1.x(), p1.y() - end1.y());
+        double d2 = std::hypot(p2.x() - end1.x(), p2.y() - end1.y());
+
+        center3 = (d1 < d2) ? p1 : p2;
+        getTangentPoint(center3, r, center1, radius1, t1);
+        getTangentPoint(center3, r, center2, radius2, t2);
+
+        control=arcMidPoint(center3,t1,t2);
+
+        break;
+    }
+
+    case CONTAIN_2_IN_1:{
+        std::cout << "圆弧2的三个点在圆弧1的完整圆范围内";
+        radius1-=r;
+        radius2+=r;
+        QPointF p1, p2;
+
+        getCircleIntersections(center1, radius1, center2, radius2, p1, p2);
+
+        double d1 = std::hypot(p1.x() - end1.x(), p1.y() - end1.y());
+        double d2 = std::hypot(p2.x() - end1.x(), p2.y() - end1.y());
+
+        center3 = (d1 < d2) ? p1 : p2;
+        getTangentPoint(center3, r, center1, radius1, t1);
+        getTangentPoint(center3, r, center2, radius2, t2);
+
+        control=arcMidPoint(center3,t1,t2);
+
+        break;
+    }
+
+
+    case CONTAIN_NONE:
+        std::cout << "两个圆弧的三点不在对方圆范围内";
+        radius1+=r;
+        radius2+=r;
+        QPointF p1, p2;
+
+        getCircleIntersections(center1, radius1, center2, radius2, p1, p2);
+
+        double d1 = std::hypot(p1.x() - end1.x(), p1.y() - end1.y());
+        double d2 = std::hypot(p2.x() - end1.x(), p2.y() - end1.y());
+
+        center3 = (d1 < d2) ? p1 : p2;
+        getTangentPoint(center3, r, center1, radius1, t1);
+        getTangentPoint(center3, r, center2, radius2, t2);
+
+        control=arcMidPoint(center3,t1,t2);
+
+        qDebug() << "t1 =" << t1;
+        qDebug() << "control =" << control;
+        qDebug() << "t2 =" << t2;
+        break;
+    }
+
+    return  true;
+}

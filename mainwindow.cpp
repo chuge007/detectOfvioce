@@ -2657,6 +2657,12 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
         QPointF end2(model->data(model->index(nextRow, 10)).toFloat(),
                      model->data(model->index(nextRow, 11)).toFloat());
 
+        QPointF t1, control, t2;
+        mathTool.computeTransitionArcArc(start1,tran1, end1, start2, tran2, end2, smoothFactor, t1, control, t2);
+
+        result.q0=t1;
+        result.Transition=control;
+        result.q2=t2;
     }
 
     //   if(true){return;}
@@ -2785,13 +2791,7 @@ void MainWindow::PbsmoothCurve(){
             smooth = mathTool.isDirectionSmooth(lineDir, arcTangent, Zsmooth);
 
         } else if (typeA == "arc" && typeB == "arc") {
-            QPointF centerA = mathTool.getCircleCenterFrom3Points(A_start, A_tran, A_end);
-            QPointF centerB = mathTool.getCircleCenterFrom3Points(B_start, B_tran, B_end);
-
-            QPointF tangentA = mathTool.getArcTangentAtPoint(centerA, A_end);
-            QPointF tangentB = mathTool.getArcTangentAtPoint(centerB, B_start);
-
-            smooth = mathTool.isDirectionSmooth(tangentA, tangentB, Zsmooth);
+            smooth=false;
         }
 
         if (!smooth) {

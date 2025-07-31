@@ -79,6 +79,11 @@ public:
     bool computeTransitionArc(const QPointF& start1, const QPointF& end1,
                               const QPointF& start2, const QPointF& tran2, const QPointF& end2,
                               double r, QPointF& t1, QPointF& control, QPointF& t2);
+
+
+    bool computeTransitionArcArc(const QPointF& start1,const QPointF& tran1, const QPointF& end1,
+                            const QPointF& start2, const QPointF& tran2, const QPointF& end2,
+                            double r, QPointF& t1, QPointF& control, QPointF& t2);
     //___________________________________________________________________________
 
 
