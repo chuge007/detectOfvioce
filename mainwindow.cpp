@@ -3104,6 +3104,7 @@ void MainWindow::pbMoveDirectionNot(){
 
     // 是否按下 Ctrl？
     bool reverseAll = QApplication::keyboardModifiers() & Qt::ControlModifier;
+    bool reverseArc = QApplication::keyboardModifiers() & Qt::AltModifier;
 
     dbManager->db.transaction();
     if (reverseAll) {
@@ -3137,7 +3138,37 @@ void MainWindow::pbMoveDirectionNot(){
         }
 
 
-    } else{
+    } else if(reverseArc){
+
+        qDebug() << "reverseArc*************";
+        QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedIndexes();
+        if (selectedIndexes.isEmpty()) {
+            qDebug() << "没有选中行";
+            return;
+        }
+        int row = selectedIndexes.first().row();
+         QString type = model->data(model->index(row, 1)).toString().toLower();
+         qDebug() << "reverseArc***********row**"<<row;
+
+         if(type!="arc")return;
+
+         QPointF A_start(model->data(model->index(row, 2)).toFloat(),
+                         model->data(model->index(row, 3)).toFloat());
+         QPointF A_tran(model->data(model->index(row, 6)).toFloat(),
+                        model->data(model->index(row, 7)).toFloat());
+         QPointF A_end(model->data(model->index(row, 10)).toFloat(),
+                       model->data(model->index(row, 11)).toFloat());
+
+         mathTool mathTool;
+         QPointF A_tran_rev = mathTool.getReverseControlPoint(A_start, A_tran, A_end);
+         model->setData(model->index(row, 6), A_tran_rev.x());
+         model->setData(model->index(row, 7), A_tran_rev.y());
+         qDebug() << "reverseArc***********A_start**"<<A_start;
+         qDebug() << "reverseArc***********A_end**"<<A_end;
+         qDebug() << "reverseArc***********A_tran**"<<A_tran;
+         qDebug() << "reverseArc***********A_tran_rev**"<<A_tran_rev;
+
+    }else{
         // 获取当前选中的行
         QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedIndexes();
         if (selectedIndexes.isEmpty()) {

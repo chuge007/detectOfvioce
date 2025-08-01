@@ -86,7 +86,7 @@ public:
                             double r, QPointF& t1, QPointF& control, QPointF& t2);
     //___________________________________________________________________________
 
-
+    QPointF getReverseControlPoint(const QPointF& A_start, const QPointF& A_tran, const QPointF& A_end);
 
     //    // 用于存储相切圆弧的解决方案
     //    struct TangentArcSolution {

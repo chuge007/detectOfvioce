@@ -303,43 +303,6 @@ bool mathTool::intersectInfiniteLinesByPoints(const QPointF& p1, const QPointF& 
     return true;
 }
 
-//QPointF mathTool::computeControlPoint(const QPointF& t2, const QPointF& f, const QPointF& circleCenter,
-//                                      const QLineF& lineC, double weir)
-//{
-//    // 方向向量 dir = t2 - circleCenter
-//    QPointF dir = t2 - circleCenter;
-//    qDebug() << "dir (t2 - circleCenter):" << dir;
-
-//    // 法线向量 normal，垂直于 dir，左旋90度
-//    QPointF normal(-dir.y(), dir.x());
-//    qDebug() << "normal (perpendicular to dir):" << normal;
-
-//    // lineC 两端点
-//    QPointF p1 = lineC.p1();
-//    QPointF p2 = lineC.p2();
-//    qDebug() << "lineC points p1:" << p1 << "p2:" << p2;
-
-//    // perpLine 两点，起点 t2，终点 t2 + normal * 任意大值，比如 1e6 使其成为长直线
-//    QPointF p3 = t2;
-//    QPointF p4 = t2 + normal * 1e6;
-//    qDebug() << "perpLine points p3:" << p3 << "p4:" << p4;
-
-//    // 计算交点
-//    QPointF P;
-//    if (!intersectInfiniteLinesByPoints(p1, p2, p3, p4, P)) {
-//        qDebug() << "No intersection found between lineC and perpLine";
-//        return QPointF(std::numeric_limits<double>::quiet_NaN(),
-//                       std::numeric_limits<double>::quiet_NaN());
-//    }
-
-//    qDebug()<<"intersectInfiniteLines p "<<P;
-//    QPointF fP = P - f;
-//    double lengthFP = std::hypot(fP.x(), fP.y());
-//    if (qFuzzyIsNull(lengthFP)) return QPointF();
-
-//    double t = weir / lengthFP;
-//    return f + fP * t;
-//}
 
 QPointF mathTool::arcMidPoint(const QPointF& circleCenter, const QPointF& t1, const QPointF& t2)
 {
@@ -472,75 +435,7 @@ QPointF mathTool::projectToLine(const QPointF& P, const QPointF& A, const QPoint
     return A + AB * t;
 }
 
-//// ---------- 主函数：返回三点构成圆弧 ---------------
-//bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
-//                                    const QPointF& start2, const QPointF& tran2, const QPointF& end2,
-//                                    double r, QPointF& t1, QPointF& control, QPointF& t2)
-//{
 
-//    QPointF circleCenter =getCircleCenterFrom3Points(start2, tran2, end2);
-//    double angle = mathTool::angleBetweenVectors(end1, circleCenter, end1, start1);
-
-//    qDebug()<<"angle"<<angle;
-//    double newR;
-//    QLineF lineC;
-//    double circleR = std::hypot(circleCenter.x() - start2.x(), circleCenter.y() - start2.y());
-
-//    if (circleR < 0) return false;
-//    if(angle<90){
-
-//        bool intersect = isSegmentIntersectCircle(start1, end1, circleCenter, circleR);
-//        newR = intersect ? (circleR - r) : (circleR + r);
-//        if (newR <= 0) return false;
-
-//        lineC = offsetLineSegment(start1, end1, circleCenter, r,true);
-
-//    }else {
-//        bool intersect = isSegmentIntersectCircle(start1, end1, circleCenter, circleR);
-//        newR = intersect ? (circleR + r) : (circleR - r);
-//        if (newR <= 0) return false;
-
-//        lineC = offsetLineSegment(start1, end1, circleCenter, r,false);
-//    }
-
-
-//    // 求交点
-//    QPointF smoothCircleCenter;
-//    if (!intersectLineCircle(lineC, circleCenter, newR, smoothCircleCenter))
-//        return false;
-
-
-//    // 得到 t1: f 到线段a 的垂足
-//    t1 = projectToLine(smoothCircleCenter, start1, end1);
-
-//    // 得到 t2: f → 圆心方向 与圆b的交点
-//    QPointF dir = smoothCircleCenter-circleCenter;
-
-
-//    QLineF lineToCircle(circleCenter,  dir * 1e8);
-//    if (!intersectLineCircle(lineToCircle, circleCenter, circleR, t2))
-//        return false;
-
-//    // 控制点为圆心方向外凸点（中间）
-//    QLineF lineS=extendLineFromPoint(start1, start2, 1e6);
-
-//    control = computeControlPoint(t2, smoothCircleCenter, circleCenter, lineS, r);
-
-//   qDebug()<<"smoothCircleCenter-circleCenter  "<<dir;
-
-//    qDebug()<<"lineC  "<<lineC;
-
-//    qDebug()<<"circleCenter  "<<circleCenter;
-
-//    qDebug()<<"intersectLineCircle  "<<smoothCircleCenter;
-
-//    qDebug()<<"t1  "<<t1;
-
-//    qDebug()<<"control  "<<control;
-
-//    qDebug()<<"t2  "<<t2;
-//    return true;
-//}
 //____________________________________________________________________________________________________________________________
 bool mathTool::isPointOnLeftSide(const QPointF& A, const QPointF& B, const QPointF& C)
 {
@@ -627,8 +522,6 @@ bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
 
 //_____________________________________________________________________________
 
-#include <QPointF>
-#include <cmath>
 
 enum ArcContainment {
     CONTAIN_NONE,
@@ -660,16 +553,91 @@ double distance(const QPointF& p1, const QPointF& p2) {
     return std::hypot(p1.x() - p2.x(), p1.y() - p2.y());
 }
 
-bool isPointInsideCircle(const QPointF& point, const QPointF& center, double radius, double epsilon = 1e-6) {
-    return distance(point, center) <= radius + epsilon;
+double normalizeAngle(double angle) {
+    while (angle < 0) angle += 2 * M_PI;
+    while (angle >= 2 * M_PI) angle -= 2 * M_PI;
+    return angle;
 }
 
-bool areAllPointsInsideCircle(const QPointF& p1, const QPointF& p2, const QPointF& p3,
-                              const QPointF& circleCenter, double radius) {
-    return isPointInsideCircle(p1, circleCenter, radius) &&
-            isPointInsideCircle(p2, circleCenter, radius) &&
-            isPointInsideCircle(p3, circleCenter, radius);
+static bool isAngleOnArc(double theta, double start, double end) {
+    theta = normalizeAngle(theta);
+    start = normalizeAngle(start);
+    end = normalizeAngle(end);
+    if (start <= end)
+        return (theta >= start && theta <= end);
+    else
+        return (theta >= start || theta <= end);
 }
+
+bool areAnyPointsOnArc1InsideArc2(const QPointF& start1, const QPointF& tran1, const QPointF& end1,
+                                  double radius1,
+                                  const QPointF& center2, double radius2) {
+    if (radius1 <= 0 || radius2 <= 0) {
+        qDebug() << "无效半径，返回 false";
+        return false;
+    }
+
+    // 计算圆心
+    QPointF center1 = getCircleCenter(start1, tran1, end1);
+    qDebug() << "arc1 center:" << center1 << "radius:" << radius1;
+    qDebug() << "arc1 start1:" << start1 << "  tran1:" << tran1 << " end1" << end1;
+    qDebug() << "arc2 center:" << center2 << "radius2:" << radius2;
+
+    // 起止角度
+    QPointF vStart1 = start1 - center1;
+    QPointF vEnd1   = end1   - center1;
+    double thetaStart1 = normalizeAngle(std::atan2(vStart1.y(), vStart1.x()));
+    double thetaEnd1   = normalizeAngle(std::atan2(vEnd1.y(), vEnd1.x()));
+    double cross = vStart1.x() * vEnd1.y() - vStart1.y() * vEnd1.x();
+    if (cross < 0) std::swap(thetaStart1, thetaEnd1);
+    if (thetaEnd1 <= thetaStart1) thetaEnd1 += 2 * M_PI;
+
+    // 判断控制点是否在当前弧段上
+    QPointF vTran1 = tran1 - center1;
+    double thetaT = normalizeAngle(std::atan2(vTran1.y(), vTran1.x()));
+    double thetaS = thetaStart1;
+    double thetaE = thetaEnd1;
+    if (!(thetaT > thetaS && thetaT < thetaE)) {
+        // 控制点不在当前采样弧段上，说明我们取错方向了，自动修正
+        qDebug() << QString::fromLocal8Bit("⚠️ 控制点不在弧段上，自动反转采样方向");
+        std::swap(thetaStart1, thetaEnd1);
+        thetaStart1 = normalizeAngle(thetaStart1);
+        thetaEnd1   = normalizeAngle(thetaEnd1);
+        if (thetaEnd1 <= thetaStart1) thetaEnd1 += 2 * M_PI;
+    }
+
+    qDebug() << "arc1 angles: thetaStart1 =" << thetaStart1
+             << ", thetaEnd1 =" << thetaEnd1 << ", cross =" << cross;
+
+    // 采样
+    // 根据圆弧长度动态采样
+    double arcLength = radius1 * (thetaEnd1 - thetaStart1); // 弧长 = r × Δθ
+    double sampleSpacing = 5.0; // 每隔 5 单位长度采一个点（可调）
+    int steps = std::max(3, static_cast<int>(arcLength / sampleSpacing));
+    qDebug() << QString::fromLocal8Bit("自动采样点数 steps = %1").arg(steps);
+
+    for (int i = 1; i < steps; ++i) {
+        double theta = thetaStart1 + (thetaEnd1 - thetaStart1) * i / steps;
+        QPointF pt(center1.x() + radius1 * std::cos(theta),
+                   center1.y() + radius1 * std::sin(theta));
+
+        double dist = QLineF(pt, center2).length();
+
+        qDebug() << QString::fromLocal8Bit("采样点 %1: pt=(%2, %3), dist(center2)=%4")
+                    .arg(i).arg(pt.x()).arg(pt.y()).arg(dist);
+
+        if (dist <= radius2 + 1e-4) {
+            qDebug() << QString::fromLocal8Bit("✅ 采样点在圆2内，返回 true");
+            return true;
+        }
+    }
+
+    qDebug() << QString::fromLocal8Bit("❌ 没有采样点落入圆2内，返回 false");
+    return false;
+}
+
+
+
 
 ArcContainment checkArcContainment(const QPointF& start1, const QPointF& tran1, const QPointF& end1,
                                    const QPointF& start2, const QPointF& tran2, const QPointF& end2,
@@ -684,8 +652,8 @@ ArcContainment checkArcContainment(const QPointF& start1, const QPointF& tran1, 
     double radius1 = distance(center1, start1);
     double radius2 = distance(center2, start2);
 
-    bool all1in2 = areAllPointsInsideCircle(start1, tran1, end1, center2, radius2);
-    bool all2in1 = areAllPointsInsideCircle(start2, tran2, end2, center1, radius1);
+    bool all1in2 = areAnyPointsOnArc1InsideArc2(start1, tran1, end1, radius1,center2,radius2);
+    bool all2in1 = areAnyPointsOnArc1InsideArc2(start2, tran2, end2, radius2,center1,radius1);
 
     if (all1in2 && all2in1) {
         return CONTAIN_EQUAL;
@@ -701,29 +669,53 @@ ArcContainment checkArcContainment(const QPointF& start1, const QPointF& tran1, 
 bool getTangentPoint(const QPointF& center1, double r1,
                      const QPointF& center2, double r2,
                      QPointF& tangentPoint,
-                     double epsilon = 1e-6) {
+                     double epsilon = 1e-1) {
     double dx = center2.x() - center1.x();
     double dy = center2.y() - center1.y();
-    double d = std::hypot(dx, dy);
+    double d = std::hypot(dx, dy);  // 计算两圆圆心距离
+
+    qDebug() << QString::fromLocal8Bit("👉 圆1圆心：") << center1 << " r1 =" << r1;
+    qDebug() << QString::fromLocal8Bit("👉 圆2圆心：") << center2 << " r2 =" << r2;
+    qDebug() << QString::fromLocal8Bit("👉 向量 dx =") << dx << ", dy =" << dy;
+    qDebug() << QString::fromLocal8Bit("👉 圆心距离 d =") << d;
 
     if (d < epsilon) {
-        // 圆心重合，不存在唯一切点
+        qDebug() << QString::fromLocal8Bit("❌ 圆心距离太近（认为重合），不存在唯一切点");
         return false;
     }
 
+    // 外部相切：距离等于 r1 + r2
     if (std::abs(d - (r1 + r2)) < epsilon) {
+        qDebug() << QString::fromLocal8Bit("✅ 外部相切：两圆外部接触，存在一个切点");
         double t = r1 / (r1 + r2);
         tangentPoint = QPointF(center1.x() + t * dx, center1.y() + t * dy);
+        qDebug() << QString::fromLocal8Bit("📍 切点比例 t =") << t;
+        qDebug() << QString::fromLocal8Bit("📍 切点坐标 =") << tangentPoint;
         return true;
     }
 
+    // 内部相切：距离等于 |r1 - r2|
     if (std::abs(d - std::abs(r1 - r2)) < epsilon) {
+        qDebug() << QString::fromLocal8Bit("✅ 内部相切：一圆在另一圆内部边缘接触，存在一个切点");
+        if (std::abs(r1 - r2) < epsilon) {
+            qDebug() << QString::fromLocal8Bit("⚠️ 半径相等，可能重合或分母为零，跳过计算");
+            return false;
+        }
+
         double t = r1 / (r1 - r2);
         tangentPoint = QPointF(center1.x() + t * dx, center1.y() + t * dy);
+        qDebug() << QString::fromLocal8Bit("📍 切点比例 t =") << t;
+        qDebug() << QString::fromLocal8Bit("📍 切点坐标 =") << tangentPoint;
         return true;
     }
 
-    // 不相切
+    qDebug() << QString::fromLocal8Bit("r1 + r2 =") << r1 + r2
+             << QString::fromLocal8Bit(" |r1 - r2| =") << std::abs(r1 - r2);
+    qDebug() << QString::fromLocal8Bit("差值 |d - (r1 + r2)| =") << std::abs(d - (r1 + r2));
+    qDebug() << QString::fromLocal8Bit("差值 |d - |r1 - r2|| =") << std::abs(d - std::abs(r1 - r2));
+
+
+    qDebug() << QString::fromLocal8Bit("❌ 两圆既不外切也不内切，无唯一切点（可能相交或分离）");
     return false;
 }
 
@@ -775,7 +767,7 @@ bool mathTool::computeTransitionArcArc(const QPointF& start1,const QPointF& tran
 
     switch (result) {
     case CONTAIN_EQUAL: {
-        std::cout<< "两个圆弧对应的完整圆相同";
+        std::cout<< "两个圆弧互相包含\n";
         radius1-=r;
         radius2-=r;
         QPointF p1, p2;
@@ -786,16 +778,16 @@ bool mathTool::computeTransitionArcArc(const QPointF& start1,const QPointF& tran
         double d2 = std::hypot(p2.x() - end1.x(), p2.y() - end1.y());
 
         center3 = (d1 < d2) ? p1 : p2;
-        getTangentPoint(center3, r, center1, radius1, t1);
-        getTangentPoint(center3, r, center2, radius2, t2);
+        getTangentPoint(center3, r, center1, radius1+=r, t1);
+        getTangentPoint(center3, r, center2, radius2+=r, t2);
 
         control=arcMidPoint(center3,t1,t2);
-
-    }
         break;
+    }
+
 
     case CONTAIN_1_IN_2:{
-        std::cout << "圆弧1的三个点在圆弧2的完整圆范围内";
+        std::cout << "圆弧1的三个点在圆弧2的完整圆范围内\n";
         radius1+=r;
         radius2-=r;
         QPointF p1, p2;
@@ -806,16 +798,16 @@ bool mathTool::computeTransitionArcArc(const QPointF& start1,const QPointF& tran
         double d2 = std::hypot(p2.x() - end1.x(), p2.y() - end1.y());
 
         center3 = (d1 < d2) ? p1 : p2;
-        getTangentPoint(center3, r, center1, radius1, t1);
-        getTangentPoint(center3, r, center2, radius2, t2);
+        getTangentPoint(center3, r, center1, radius1-=r, t1);
+        getTangentPoint(center3, r, center2, radius2+=r, t2);
 
-        control=arcMidPoint(center3,t1,t2);
+        control=arcMidPoint(center3,t2,t1);
 
         break;
     }
 
     case CONTAIN_2_IN_1:{
-        std::cout << "圆弧2的三个点在圆弧1的完整圆范围内";
+        std::cout << "圆弧2的三个点在圆弧1的完整圆范围内\n";
         radius1-=r;
         radius2+=r;
         QPointF p1, p2;
@@ -826,17 +818,17 @@ bool mathTool::computeTransitionArcArc(const QPointF& start1,const QPointF& tran
         double d2 = std::hypot(p2.x() - end1.x(), p2.y() - end1.y());
 
         center3 = (d1 < d2) ? p1 : p2;
-        getTangentPoint(center3, r, center1, radius1, t1);
-        getTangentPoint(center3, r, center2, radius2, t2);
+        getTangentPoint(center3, r, center1, radius1+=r, t1);
+        getTangentPoint(center3, r, center2, radius2-=r, t2);
 
-        control=arcMidPoint(center3,t1,t2);
+        control=arcMidPoint(center3,t2,t1);
 
         break;
     }
 
 
     case CONTAIN_NONE:
-        std::cout << "两个圆弧的三点不在对方圆范围内";
+        std::cout << "两个圆弧的三点不在对方圆范围内\n";
         radius1+=r;
         radius2+=r;
         QPointF p1, p2;
@@ -847,16 +839,62 @@ bool mathTool::computeTransitionArcArc(const QPointF& start1,const QPointF& tran
         double d2 = std::hypot(p2.x() - end1.x(), p2.y() - end1.y());
 
         center3 = (d1 < d2) ? p1 : p2;
-        getTangentPoint(center3, r, center1, radius1, t1);
-        getTangentPoint(center3, r, center2, radius2, t2);
+        getTangentPoint(center3, r, center1, radius1-=r, t1);
+        getTangentPoint(center3, r, center2, radius2-=r, t2);
 
-        control=arcMidPoint(center3,t1,t2);
+        control=arcMidPoint(center3,t2,t1);
 
-        qDebug() << "t1 =" << t1;
-        qDebug() << "control =" << control;
-        qDebug() << "t2 =" << t2;
         break;
     }
 
     return  true;
+}
+//________________________________________________________________________________
+
+
+
+// 判断角度a是否在角度区间[start, end)内，区间可跨0点
+bool angleInRange(double a, double start, double end) {
+    a = normalizeAngle(a);
+    start = normalizeAngle(start);
+    end = normalizeAngle(end);
+
+    if (start < end)
+        return a >= start && a < end;
+    else  // 跨0点区间
+        return a >= start || a < end;
+}
+
+
+
+QPointF getPointOnCircle(const QPointF& center, double radius, double angle) {
+    return QPointF(center.x() + radius * qCos(angle),
+                   center.y() + radius * qSin(angle));
+}
+
+QPointF mathTool::getReverseControlPoint(const QPointF& A_start, const QPointF& A_tran, const QPointF& A_end) {
+    QPointF C = getCircleCenter(A_start, A_tran, A_end);
+    if (C.isNull()) {
+        qWarning() << "圆心计算失败";
+        return QPointF();
+    }
+
+    double radius = std::hypot(A_start.x() - C.x(), A_start.y() - C.y());
+
+    double angle_start = normalizeAngle(std::atan2(A_start.y() - C.y(), A_start.x() - C.x()));
+    double angle_end = normalizeAngle(std::atan2(A_end.y() - C.y(), A_end.x() - C.x()));
+
+    // 当前圆弧是从 angle_start 到 angle_end 方向（按你的程序方向，假设逆时针）
+    // 另一段弧是补集区间
+
+    // 计算当前弧的中点角度
+    double arc_mid = angle_start + (angle_end - angle_start) / 2;
+    arc_mid = normalizeAngle(arc_mid);
+
+    // 计算补集区间的中点角度
+    double complement_mid = normalizeAngle(arc_mid + M_PI); // +180°
+
+    QPointF A_tran_rev = getPointOnCircle(C, radius, complement_mid);
+
+    return A_tran_rev;
 }
