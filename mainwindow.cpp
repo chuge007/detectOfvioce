@@ -2583,7 +2583,7 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
 
 
         QPointF t1, control, t2;
-        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2);
+        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2,true);
 
         result.q0=t1;
         result.Transition=control;
@@ -2623,7 +2623,7 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
 
         QPointF t1, control, t2;
 
-        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2);
+        bool ok = mathTool.computeTransitionArc(start1, end1, start2, tran2, end2, smoothFactor, t1, control, t2,false);
 
         result.q0=t2;
         result.Transition=control;
@@ -2719,7 +2719,7 @@ void MainWindow::PbsmoothCurve(){
 
     mathTool mathTool;
 
-    double Zsmooth=10.0;
+    double Zsmooth=1.0;
 
     QString text=ui->cBworkpiece->currentText();
 

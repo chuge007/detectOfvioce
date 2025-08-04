@@ -15,7 +15,7 @@ mathTool::mathTool()
 }
 
 
-bool mathTool::isDirectionSmooth(const QPointF& dir1, const QPointF& dir2, qreal angleTolDeg = 5.0)
+bool mathTool::isDirectionSmooth(const QPointF& dir1, const QPointF& dir2, qreal angleTolDeg = 1.0)
 {
     qDebug() << "=== isDirectionSmooth DEBUG START ===";
     qDebug() << "dir1:" << dir1 << "dir2:" << dir2;
@@ -451,15 +451,114 @@ bool mathTool::isPointOnLeftSide(const QPointF& A, const QPointF& B, const QPoin
         return false; // 点 C 在向量 AB 的右边或共线
 }
 
+constexpr double EPS = 1e-6;
+constexpr double PI = 3.14159265358979323846;
+
+bool isAngleOnArc_getArcAndCircleIntersection(double angle, double startAngle, double endAngle) {
+    while (endAngle < startAngle) endAngle += 2 * PI;
+    while (angle < startAngle) angle += 2 * PI;
+    return angle <= endAngle + EPS;
+}
+
+
+
+bool isSameSideOfLine(const QPointF& lineStart, const QPointF& lineEnd,
+                      const QPointF& p1, const QPointF& p2)
+{
+    QPointF dir = lineEnd - lineStart;
+    QPointF v1 = p1 - lineStart;
+    QPointF v2 = p2 - lineStart;
+
+    // 计算两个点相对于 line 的叉积符号
+    double cross1 = dir.x() * v1.y() - dir.y() * v1.x();
+    double cross2 = dir.x() * v2.y() - dir.y() * v2.x();
+
+    return (cross1 * cross2 >= 0);  // 同号 => 同侧
+}
+
+QVector<QPointF> mathTool::getArcAndCircleIntersection(
+    const QPointF& arcStart,
+    const QPointF& arcControl,
+    const QPointF& arcEnd,
+    double arcRadius,
+    double smallRadius,
+    ArcCircleAnchor anchor
+)
+{
+    QVector<QPointF> result;
+
+    qDebug() << "======== getArcAndCircleIntersection BEGIN ========";
+    qDebug() << "arcStart:" << arcStart;
+    qDebug() << "arcControl:" << arcControl;
+    qDebug() << "arcEnd:" << arcEnd;
+    qDebug() << "arcRadius:" << arcRadius;
+    qDebug() << "smallRadius:" << smallRadius;
+    qDebug() << "anchor:" << (anchor == ArcCircleAnchor::Start ? "Start" : "End");
+
+    // 1. 求大圆圆心
+    QPointF bigCenter = getCircleCenterFrom3Points(arcStart, arcControl, arcEnd);
+    qDebug() << "bigCenter:" << bigCenter;
+
+    // 2. 确定小圆圆心
+    QPointF smallCenter = (anchor == ArcCircleAnchor::Start) ? arcStart : arcEnd;
+    qDebug() << "smallCenter:" << smallCenter;
+
+    // 3. 两圆心之间的 dx, dy, 距离 d
+    double dx = bigCenter.x() - smallCenter.x();
+    double dy = bigCenter.y() - smallCenter.y();
+    double d = std::hypot(dx, dy);
+    qDebug() << "dx:" << dx << "dy:" << dy << "distance d:" << d;
+
+    // 4. 检查交点存在性
+    if (d > arcRadius + smallRadius || d < std::fabs(arcRadius - smallRadius) || d < EPS) {
+        qDebug() << "No intersection: circles too far apart or contained";
+        return result;
+    }
+
+    // 5. 计算中点与交点的距离 a 和 h
+    double a = (smallRadius * smallRadius - arcRadius * arcRadius + d * d) / (2 * d);
+    double hSquared = smallRadius * smallRadius - a * a;
+    double h = std::sqrt(std::max(0.0, hSquared));
+    qDebug() << "a:" << a << "h^2:" << hSquared << "h:" << h;
+
+    // 6. P0 为从小圆心指向大圆心 a 距离的点
+    double x0 = smallCenter.x() + a * (dx / d);
+    double y0 = smallCenter.y() + a * (dy / d);
+    qDebug() << "P0 (base point for perpendicular): (" << x0 << "," << y0 << ")";
+
+    // 7. 垂直方向偏移（交点）
+    double rx = -dy * (h / d);
+    double ry =  dx * (h / d);
+
+    QPointF p1(x0 + rx, y0 + ry);
+    QPointF p2(x0 - rx, y0 - ry);
+    qDebug() << "Intersection p1:" << p1;
+    qDebug() << "Intersection p2:" << p2;
+
+    // 判断哪个交点和 control 点在同一侧
+    bool p1SameSide = isSameSideOfLine(arcStart, arcEnd, arcControl, p1);
+    bool p2SameSide = isSameSideOfLine(arcStart, arcEnd, arcControl, p2);
+
+    if (p1SameSide) {
+        result.append(p1);
+    } else if (p2SameSide) {
+        result.append(p2);
+    }
+
+
+    qDebug() << "======== getArcAndCircleIntersection END ==========";
+    return result;
+}
+
+
 bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
                                     const QPointF& start2, const QPointF& tran2, const QPointF& end2,
-                                    double r, QPointF& t1, QPointF& control, QPointF& t2)
+                                    double r, QPointF& t1, QPointF& control, QPointF& t2,bool isLine2arc)
 {
     // ⭐ 保证线段方向统一为从圆弧方向切出
     QPointF s1 = start1;
     QPointF e1 = end1;
 
-    bool rotateLeft=false;
     if (start1 == end2) {
         s1 = end1;
         e1 = start1;
@@ -468,22 +567,32 @@ bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
     QPointF circleCenter = getCircleCenterFrom3Points(start2, tran2, end2);
     double angle = mathTool::angleBetweenVectors(e1, circleCenter, e1, s1);
 
-    qDebug() << "angle*************************************************" << angle;
     double newR;
     QLineF lineC;
     double circleR = std::hypot(circleCenter.x() - start2.x(), circleCenter.y() - start2.y());
     if (circleR < 0) return false;
 
-    //bool intersect = isSegmentIntersectCircle(s1, e1, circleCenter, circleR);
 
 
+    qDebug() << "angle*************************************************" << angle;
+    qDebug() << "tran2*************************************************" << tran2;
+    qDebug() << "end2*************************************************" << end2;
+    qDebug() << "arcRadius*************************************************" << circleR;
+    qDebug() << "smallRadius*************************************************" << r;
     if (angle < 90) {
+        ArcCircleAnchor anchor = isLine2arc ? ArcCircleAnchor::Start : ArcCircleAnchor::End;
 
-        lineC = offsetLineSegment(s1, e1, r, isPointOnLeftSide(s1,e1,circleCenter));  // 向左偏移
+        QVector<QPointF>  directionPoint=getArcAndCircleIntersection(start2,tran2,end2,circleR,r,anchor);
+        bool onLeft = isPointOnLeftSide(s1, e1, directionPoint[0]);
+        qDebug() << "directionPoint[0]***************onLeft**********************************" << directionPoint[0]<<"  "<<onLeft;
+        lineC = offsetLineSegment(s1, e1, r, onLeft);  // 向左偏移
         newR = (circleR - r);
     } else {
-
-        lineC = offsetLineSegment(s1, e1, r, isPointOnLeftSide(s1,e1,circleCenter));
+        ArcCircleAnchor anchor = isLine2arc ? ArcCircleAnchor::Start : ArcCircleAnchor::End;
+        QVector<QPointF>  directionPoint=getArcAndCircleIntersection(start2,tran2,end2,circleR,r,anchor);
+        bool onLeft = isPointOnLeftSide(s1, e1, directionPoint[0]);
+        qDebug() << "directionPoint[0]***************onLeft**********************************" << directionPoint[0]<<"  "<<onLeft;
+        lineC = offsetLineSegment(s1, e1, r, onLeft);
         newR = (circleR + r);
     }
 
@@ -505,8 +614,6 @@ bool mathTool::computeTransitionArc(const QPointF& start1, const QPointF& end1,
         return false;
 
     // 控制点
-    //QLineF lineS = extendLineFromPoint(s1, start2, 1e6);
-    //control = computeControlPoint(t2, smoothCircleCenter, circleCenter, lineS, r);
     control=arcMidPoint(smoothCircleCenter,t1,t2);
     // 调试信息
     qDebug() << "smoothCircleCenter - circleCenter: " << dir;
@@ -881,20 +988,23 @@ QPointF mathTool::getReverseControlPoint(const QPointF& A_start, const QPointF& 
 
     double radius = std::hypot(A_start.x() - C.x(), A_start.y() - C.y());
 
-    double angle_start = normalizeAngle(std::atan2(A_start.y() - C.y(), A_start.x() - C.x()));
-    double angle_end = normalizeAngle(std::atan2(A_end.y() - C.y(), A_end.x() - C.x()));
+    // 极角
+    double angle_start = std::atan2(A_start.y() - C.y(), A_start.x() - C.x());
+    double angle_end = std::atan2(A_end.y() - C.y(), A_end.x() - C.x());
 
-    // 当前圆弧是从 angle_start 到 angle_end 方向（按你的程序方向，假设逆时针）
-    // 另一段弧是补集区间
+    // 顺时针弧：从 angle_start 到 angle_end 的反方向
+    double angle_diff = angle_end - angle_start;
 
-    // 计算当前弧的中点角度
-    double arc_mid = angle_start + (angle_end - angle_start) / 2;
-    arc_mid = normalizeAngle(arc_mid);
+    // 如果原弧是逆时针（差值为正，或跨越0点），我们取顺时针
+    if (angle_diff > 0) {
+        angle_diff = angle_diff - 2 * M_PI;
+    }
 
-    // 计算补集区间的中点角度
-    double complement_mid = normalizeAngle(arc_mid + M_PI); // +180°
+    // 中间角度（在另一段弧方向上的中点）
+    double mid_angle = angle_start + angle_diff / 2;
 
-    QPointF A_tran_rev = getPointOnCircle(C, radius, complement_mid);
+    // 得到圆上的控制点（弧的中点）
+    QPointF A_tran_rev = getPointOnCircle(C, radius, mid_angle);
 
     return A_tran_rev;
 }

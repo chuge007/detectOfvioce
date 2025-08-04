@@ -19,6 +19,10 @@ struct ArcInsertResult {
     qreal radius;         // 圆弧半径
 };
 
+enum class ArcCircleAnchor {
+    Start,
+    End
+};
 
 constexpr double EPSILON = 1e-9;
 
@@ -63,7 +67,7 @@ public:
     bool isSegmentIntersectCircle(const QPointF& A, const QPointF& B, const QPointF& center, double R);
 
     // 将线段向法线方向偏移指定半径
-    QLineF mathTool::offsetLineSegment(const QPointF& A, const QPointF& B, double offsetR, bool rotateLeft);
+    QLineF offsetLineSegment(const QPointF& A, const QPointF& B, double offsetR, bool rotateLeft);
 
     // 求直线与圆的交点（取较近或精度内匹配的交点）
     bool intersectLineCircle(const QLineF& line, const QPointF& center, double radius, QPointF& result);
@@ -75,10 +79,20 @@ public:
     QPointF arcMidPoint(const QPointF& circleCenter, const QPointF& t1, const QPointF& t2);
 
     bool isPointOnLeftSide(const QPointF& A, const QPointF& B, const QPointF& C);
+
+
+    QVector<QPointF> getArcAndCircleIntersection(
+        const QPointF& arcStart,
+        const QPointF& arcControl,
+        const QPointF& arcEnd,
+        double arcRadius,
+        double smallRadius,
+         ArcCircleAnchor anchor);
+
     // 主函数：计算三点圆弧过渡
     bool computeTransitionArc(const QPointF& start1, const QPointF& end1,
                               const QPointF& start2, const QPointF& tran2, const QPointF& end2,
-                              double r, QPointF& t1, QPointF& control, QPointF& t2);
+                              double r, QPointF& t1, QPointF& control, QPointF& t2,bool isLine2arc);
 
 
     bool computeTransitionArcArc(const QPointF& start1,const QPointF& tran1, const QPointF& end1,
