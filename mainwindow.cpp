@@ -834,20 +834,35 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
         double posx = parts[0].toDouble();
         double posy = parts[1].toDouble();
 
+
         // 在新位置绘制红色小圆圈
         QGraphicsEllipseItem* circle = new QGraphicsEllipseItem((posx - 5)*factor, (posy - 5)*factor, 10*factor, 10*factor); // 半径为20
         circle->setBrush(QBrush(Qt::yellow));  // 红色
         //circle->setFlag(QGraphicsItem::ItemIgnoresTransformations);
         scene->addItem(circle);
-        // 显示坐标文字
-        QString coordText = QString("(%1, %2)").arg(posx*factor).arg(posy*factor);
-        QGraphicsTextItem* textItem = new QGraphicsTextItem(coordText);
-        textItem->setDefaultTextColor(Qt::black); // 设置字体颜色
-        textItem->setFont(QFont("Arial", 10));    // 设置字体大小
-        //textItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
-        // 放在圆的旁边（你可以微调这个偏移）
-        textItem->setPos(posx + 25, posy - 10);  // 右边偏移一些位置
-        scene->addItem(textItem);
+                if (it==GlobeUniquePoints.constBegin()){
+
+                    // 显示坐标文字
+                    QString coordText = QString(QString::fromLocal8Bit("端点1 : %1, %2")).arg(posx*factor).arg(posy*factor);
+                    QGraphicsTextItem* textItem = new QGraphicsTextItem(coordText);
+                    textItem->setDefaultTextColor(Qt::black); // 设置字体颜色
+                    textItem->setFont(QFont("Arial", 10));    // 设置字体大小
+                    //textItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+                    // 放在圆的旁边（你可以微调这个偏移）
+                    textItem->setPos(posx - 50, posy - 50);  // 右边偏移一些位置
+                    scene->addItem(textItem);
+                }else{
+
+                    QString coordText = QString(QString::fromLocal8Bit("端点2 : %1, %2")).arg(posx*factor).arg(posy*factor);
+                    QGraphicsTextItem* textItem = new QGraphicsTextItem(coordText);
+                    textItem->setDefaultTextColor(Qt::black); // 设置字体颜色
+                    textItem->setFont(QFont("Arial", 10));    // 设置字体大小
+                    //textItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+                    // 放在圆的旁边（你可以微调这个偏移）
+                    textItem->setPos(posx + 50, posy +50);  // 右边偏移一些位置
+                    scene->addItem(textItem);
+                }
+
 
         if(GlobeUniquePoints.length()>3){
             QString coordText = QString::fromLocal8Bit("轨迹首非相连，请检查黄点绿点处有无衔接好（黄点绿点数量不能大于2）");
@@ -2667,12 +2682,12 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
 
     //   if(true){return;}
     //    // 修改前图元终点为 q0
-        model->setData(model->index(prevRow, 10), result.q0.x());
-        model->setData(model->index(prevRow, 11), result.q0.y());
+        model->setData(model->index(prevRow, 10), QString::number(static_cast<double>(result.q0.x()), 'f', 3));
+        model->setData(model->index(prevRow, 11), QString::number(static_cast<double>(result.q0.y()), 'f', 3));
 
         // 修改后图元起点为 q2
-        model->setData(model->index(nextRow, 2), result.q2.x());
-        model->setData(model->index(nextRow, 3), result.q2.y());
+        model->setData(model->index(nextRow, 2), QString::number(static_cast<double>(result.q2.x()), 'f', 3));
+        model->setData(model->index(nextRow, 3), QString::number(static_cast<double>(result.q2.y()), 'f', 3));
 
         // 插入新行
         int insertRow = id;
@@ -2681,18 +2696,18 @@ void MainWindow::insertSmoothArcBetween(int id,int prevRow, int nextRow, qreal s
         model->setData(model->index(insertRow, 0), insertRow);  // id
         model->setData(model->index(insertRow, 1), "arc");
 
-        model->setData(model->index(insertRow, 2), result.q0.x());
-        model->setData(model->index(insertRow, 3), result.q0.y());
+        model->setData(model->index(insertRow, 2), QString::number(static_cast<double>(result.q0.x()), 'f', 3));
+        model->setData(model->index(insertRow, 3), QString::number(static_cast<double>(result.q0.y()), 'f', 3));
         model->setData(model->index(insertRow, 4), 0.0);  // z
         model->setData(model->index(insertRow, 5), 0.0);  // r
 
-        model->setData(model->index(insertRow, 6), result.Transition.x());
-        model->setData(model->index(insertRow, 7), result.Transition.y());
+        model->setData(model->index(insertRow, 6), QString::number(static_cast<double>(result.Transition.x()), 'f', 3));
+        model->setData(model->index(insertRow, 7), QString::number(static_cast<double>(result.Transition.y()), 'f', 3));
         model->setData(model->index(insertRow, 8), 0.0);
         model->setData(model->index(insertRow, 9), 0.0);
 
-        model->setData(model->index(insertRow, 10), result.q2.x());
-        model->setData(model->index(insertRow, 11), result.q2.y());
+        model->setData(model->index(insertRow, 10),QString::number(static_cast<double>(result.q2.x()), 'f', 3));
+        model->setData(model->index(insertRow, 11),QString::number(static_cast<double>(result.q2.y()), 'f', 3));
         model->setData(model->index(insertRow, 12), 0.0);
         model->setData(model->index(insertRow, 13), 0.0);
 
