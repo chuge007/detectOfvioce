@@ -37,16 +37,15 @@ public:
     QTabWidget *tabWidget;
     QWidget *tab_2;
     QGridLayout *gridLayout;
+    QPushButton *moveDownTabelRow_btu;
     QPushButton *editPos_but;
-    QFrame *line_2;
-    QTableView *tableView;
+    QPushButton *insertLinePos_but;
     QPushButton *insertArcPos_but;
     QPushButton *moveUpTabelRow_btu;
     QPushButton *cleanTable_but;
-    QPushButton *delete_but;
-    QPushButton *insertLinePos_but;
-    QPushButton *moveDownTabelRow_btu;
     QPushButton *moveDirectionNot_but;
+    QTableView *tableView;
+    QPushButton *delete_but;
     TGraphicsViewRefactor *graphicsView;
     QFrame *frame;
     QGridLayout *gridLayout_2;
@@ -190,23 +189,61 @@ public:
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
         gridLayout = new QGridLayout(tab_2);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        moveDownTabelRow_btu = new QPushButton(tab_2);
+        moveDownTabelRow_btu->setObjectName(QString::fromUtf8("moveDownTabelRow_btu"));
+        sizePolicy.setHeightForWidth(moveDownTabelRow_btu->sizePolicy().hasHeightForWidth());
+        moveDownTabelRow_btu->setSizePolicy(sizePolicy);
+        moveDownTabelRow_btu->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(moveDownTabelRow_btu, 2, 3, 1, 1);
+
         editPos_but = new QPushButton(tab_2);
         editPos_but->setObjectName(QString::fromUtf8("editPos_but"));
         sizePolicy.setHeightForWidth(editPos_but->sizePolicy().hasHeightForWidth());
         editPos_but->setSizePolicy(sizePolicy);
         editPos_but->setMinimumSize(QSize(0, 0));
 
-        gridLayout->addWidget(editPos_but, 2, 0, 1, 1);
+        gridLayout->addWidget(editPos_but, 1, 0, 1, 1);
 
-        line_2 = new QFrame(tab_2);
-        line_2->setObjectName(QString::fromUtf8("line_2"));
-        sizePolicy.setHeightForWidth(line_2->sizePolicy().hasHeightForWidth());
-        line_2->setSizePolicy(sizePolicy);
-        line_2->setMinimumSize(QSize(0, 0));
-        line_2->setFrameShape(QFrame::HLine);
-        line_2->setFrameShadow(QFrame::Sunken);
+        insertLinePos_but = new QPushButton(tab_2);
+        insertLinePos_but->setObjectName(QString::fromUtf8("insertLinePos_but"));
+        sizePolicy.setHeightForWidth(insertLinePos_but->sizePolicy().hasHeightForWidth());
+        insertLinePos_but->setSizePolicy(sizePolicy);
+        insertLinePos_but->setMinimumSize(QSize(0, 0));
 
-        gridLayout->addWidget(line_2, 1, 1, 1, 1);
+        gridLayout->addWidget(insertLinePos_but, 1, 3, 1, 1);
+
+        insertArcPos_but = new QPushButton(tab_2);
+        insertArcPos_but->setObjectName(QString::fromUtf8("insertArcPos_but"));
+        sizePolicy.setHeightForWidth(insertArcPos_but->sizePolicy().hasHeightForWidth());
+        insertArcPos_but->setSizePolicy(sizePolicy);
+        insertArcPos_but->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(insertArcPos_but, 1, 2, 1, 1);
+
+        moveUpTabelRow_btu = new QPushButton(tab_2);
+        moveUpTabelRow_btu->setObjectName(QString::fromUtf8("moveUpTabelRow_btu"));
+        sizePolicy.setHeightForWidth(moveUpTabelRow_btu->sizePolicy().hasHeightForWidth());
+        moveUpTabelRow_btu->setSizePolicy(sizePolicy);
+        moveUpTabelRow_btu->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(moveUpTabelRow_btu, 2, 2, 1, 1);
+
+        cleanTable_but = new QPushButton(tab_2);
+        cleanTable_but->setObjectName(QString::fromUtf8("cleanTable_but"));
+        sizePolicy.setHeightForWidth(cleanTable_but->sizePolicy().hasHeightForWidth());
+        cleanTable_but->setSizePolicy(sizePolicy);
+        cleanTable_but->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(cleanTable_but, 1, 1, 1, 1);
+
+        moveDirectionNot_but = new QPushButton(tab_2);
+        moveDirectionNot_but->setObjectName(QString::fromUtf8("moveDirectionNot_but"));
+        sizePolicy.setHeightForWidth(moveDirectionNot_but->sizePolicy().hasHeightForWidth());
+        moveDirectionNot_but->setSizePolicy(sizePolicy);
+        moveDirectionNot_but->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(moveDirectionNot_but, 2, 1, 1, 1);
 
         tableView = new QTableView(tab_2);
         tableView->setObjectName(QString::fromUtf8("tableView"));
@@ -216,61 +253,13 @@ public:
 
         gridLayout->addWidget(tableView, 0, 0, 1, 4);
 
-        insertArcPos_but = new QPushButton(tab_2);
-        insertArcPos_but->setObjectName(QString::fromUtf8("insertArcPos_but"));
-        sizePolicy.setHeightForWidth(insertArcPos_but->sizePolicy().hasHeightForWidth());
-        insertArcPos_but->setSizePolicy(sizePolicy);
-        insertArcPos_but->setMinimumSize(QSize(0, 0));
-
-        gridLayout->addWidget(insertArcPos_but, 2, 2, 1, 1);
-
-        moveUpTabelRow_btu = new QPushButton(tab_2);
-        moveUpTabelRow_btu->setObjectName(QString::fromUtf8("moveUpTabelRow_btu"));
-        sizePolicy.setHeightForWidth(moveUpTabelRow_btu->sizePolicy().hasHeightForWidth());
-        moveUpTabelRow_btu->setSizePolicy(sizePolicy);
-        moveUpTabelRow_btu->setMinimumSize(QSize(0, 0));
-
-        gridLayout->addWidget(moveUpTabelRow_btu, 3, 2, 1, 1);
-
-        cleanTable_but = new QPushButton(tab_2);
-        cleanTable_but->setObjectName(QString::fromUtf8("cleanTable_but"));
-        sizePolicy.setHeightForWidth(cleanTable_but->sizePolicy().hasHeightForWidth());
-        cleanTable_but->setSizePolicy(sizePolicy);
-        cleanTable_but->setMinimumSize(QSize(0, 0));
-
-        gridLayout->addWidget(cleanTable_but, 2, 1, 1, 1);
-
         delete_but = new QPushButton(tab_2);
         delete_but->setObjectName(QString::fromUtf8("delete_but"));
         sizePolicy.setHeightForWidth(delete_but->sizePolicy().hasHeightForWidth());
         delete_but->setSizePolicy(sizePolicy);
         delete_but->setMinimumSize(QSize(0, 0));
 
-        gridLayout->addWidget(delete_but, 3, 0, 1, 1);
-
-        insertLinePos_but = new QPushButton(tab_2);
-        insertLinePos_but->setObjectName(QString::fromUtf8("insertLinePos_but"));
-        sizePolicy.setHeightForWidth(insertLinePos_but->sizePolicy().hasHeightForWidth());
-        insertLinePos_but->setSizePolicy(sizePolicy);
-        insertLinePos_but->setMinimumSize(QSize(0, 0));
-
-        gridLayout->addWidget(insertLinePos_but, 2, 3, 1, 1);
-
-        moveDownTabelRow_btu = new QPushButton(tab_2);
-        moveDownTabelRow_btu->setObjectName(QString::fromUtf8("moveDownTabelRow_btu"));
-        sizePolicy.setHeightForWidth(moveDownTabelRow_btu->sizePolicy().hasHeightForWidth());
-        moveDownTabelRow_btu->setSizePolicy(sizePolicy);
-        moveDownTabelRow_btu->setMinimumSize(QSize(0, 0));
-
-        gridLayout->addWidget(moveDownTabelRow_btu, 3, 3, 1, 1);
-
-        moveDirectionNot_but = new QPushButton(tab_2);
-        moveDirectionNot_but->setObjectName(QString::fromUtf8("moveDirectionNot_but"));
-        sizePolicy.setHeightForWidth(moveDirectionNot_but->sizePolicy().hasHeightForWidth());
-        moveDirectionNot_but->setSizePolicy(sizePolicy);
-        moveDirectionNot_but->setMinimumSize(QSize(0, 0));
-
-        gridLayout->addWidget(moveDirectionNot_but, 3, 1, 1, 1);
+        gridLayout->addWidget(delete_but, 2, 0, 1, 1);
 
         gridLayout->setRowStretch(0, 15);
         tabWidget->addTab(tab_2, QString());
@@ -1222,14 +1211,14 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+        moveDownTabelRow_btu->setText(QCoreApplication::translate("MainWindow", "\345\220\221\344\270\213\347\247\273\345\212\250\350\241\214", nullptr));
         editPos_but->setText(QCoreApplication::translate("MainWindow", "\347\274\226\350\276\221", nullptr));
+        insertLinePos_but->setText(QCoreApplication::translate("MainWindow", "\346\217\222\345\205\245\347\233\264\347\272\277", nullptr));
         insertArcPos_but->setText(QCoreApplication::translate("MainWindow", "\346\217\222\345\205\245\345\234\206\345\274\247", nullptr));
         moveUpTabelRow_btu->setText(QCoreApplication::translate("MainWindow", "\345\220\221\344\270\212\347\247\273\345\212\250\350\241\214", nullptr));
         cleanTable_but->setText(QCoreApplication::translate("MainWindow", "\346\270\205\347\251\272\350\241\250\346\240\274", nullptr));
-        delete_but->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", nullptr));
-        insertLinePos_but->setText(QCoreApplication::translate("MainWindow", "\346\217\222\345\205\245\347\233\264\347\272\277", nullptr));
-        moveDownTabelRow_btu->setText(QCoreApplication::translate("MainWindow", "\345\220\221\344\270\213\347\247\273\345\212\250\350\241\214", nullptr));
         moveDirectionNot_but->setText(QCoreApplication::translate("MainWindow", "\350\277\220\345\212\250\346\226\271\345\220\221\345\217\215\350\275\254", nullptr));
+        delete_but->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QCoreApplication::translate("MainWindow", "Trajectory Scan", nullptr));
         pBdeletePiece->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", nullptr));
         V_label_4->setText(QCoreApplication::translate("MainWindow", "y:", nullptr));

@@ -226,7 +226,7 @@ private:
 
     Graphics_view_zoom* zomm_gview;
     route_worksence *scene;
-    QList<int> rownum_itme_lst;
+
     void tableSelectionChanged();
     void graphicsSelectionChanged();
 

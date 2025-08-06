@@ -172,7 +172,7 @@ public:
         label_11->setFont(font1);
         frame_trans = new QFrame(addRoute_dialog);
         frame_trans->setObjectName(QString::fromUtf8("frame_trans"));
-        frame_trans->setGeometry(QRect(10, 240, 551, 81));
+        frame_trans->setGeometry(QRect(10, 140, 551, 81));
         frame_trans->setFrameShape(QFrame::StyledPanel);
         frame_trans->setFrameShadow(QFrame::Raised);
         label_3 = new QLabel(frame_trans);
@@ -197,7 +197,7 @@ public:
         zTrans_lin->setGeometry(QRect(320, 20, 101, 31));
         frame_star = new QFrame(addRoute_dialog);
         frame_star->setObjectName(QString::fromUtf8("frame_star"));
-        frame_star->setGeometry(QRect(10, 140, 551, 80));
+        frame_star->setGeometry(QRect(10, 240, 551, 80));
         frame_star->setFrameShape(QFrame::StyledPanel);
         frame_star->setFrameShadow(QFrame::Raised);
         label_2 = new QLabel(frame_star);
@@ -218,7 +218,7 @@ public:
         zEnd_lin->setGeometry(QRect(320, 40, 101, 31));
         setCurposToEnd_but = new QPushButton(addRoute_dialog);
         setCurposToEnd_but->setObjectName(QString::fromUtf8("setCurposToEnd_but"));
-        setCurposToEnd_but->setGeometry(QRect(200, 350, 161, 41));
+        setCurposToEnd_but->setGeometry(QRect(380, 350, 161, 41));
         sizePolicy.setHeightForWidth(setCurposToEnd_but->sizePolicy().hasHeightForWidth());
         setCurposToEnd_but->setSizePolicy(sizePolicy);
         setCurposToEnd_but->setAutoRepeat(false);
@@ -241,7 +241,7 @@ public:
 
         setCursPosToTrans_but = new QPushButton(addRoute_dialog);
         setCursPosToTrans_but->setObjectName(QString::fromUtf8("setCursPosToTrans_but"));
-        setCursPosToTrans_but->setGeometry(QRect(380, 350, 151, 41));
+        setCursPosToTrans_but->setGeometry(QRect(200, 350, 151, 41));
         sizePolicy.setHeightForWidth(setCursPosToTrans_but->sizePolicy().hasHeightForWidth());
         setCursPosToTrans_but->setSizePolicy(sizePolicy);
         setCursPosToTrans_but->setAutoRepeat(false);

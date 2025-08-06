@@ -353,7 +353,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>240</y>
+     <y>140</y>
      <width>551</width>
      <height>81</height>
     </rect>
@@ -441,7 +441,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>140</y>
+     <y>240</y>
      <width>551</width>
      <height>80</height>
     </rect>
@@ -528,7 +528,7 @@
   <widget class="QPushButton" name="setCurposToEnd_but">
    <property name="geometry">
     <rect>
-     <x>200</x>
+     <x>380</x>
      <y>350</y>
      <width>161</width>
      <height>41</height>
@@ -579,7 +579,7 @@
   <widget class="QPushButton" name="setCursPosToTrans_but">
    <property name="geometry">
     <rect>
-     <x>380</x>
+     <x>200</x>
      <y>350</y>
      <width>151</width>
      <height>41</height>

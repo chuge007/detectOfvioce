@@ -700,7 +700,13 @@ void MainWindow::on_delete_but_clicked()
         model->setData(model->index(row, 0), row);  // 第 0 列设置为当前行号
     }
 
-
+    if (!model->submitAll()) {
+        qDebug() << "提交失败:" << model->lastError();
+        dbManager->db.rollback();
+        return;
+    }
+    dbManager->db.commit();
+    updateSence();
 }
 
 
@@ -814,7 +820,6 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
 {
 
     scene->clear();
-    rownum_itme_lst.clear();
     model->select();
     int row_count =model->rowCount();
     float x0,y0,z0,r0,x1,y1,z1,r1,x2,y2,z2,r2;
@@ -895,7 +900,6 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
         z2=model->data(model->index(i, 12), Qt::DisplayRole).toFloat();
         r2=model->data(model->index(i, 13), Qt::DisplayRole).toFloat();
 
-        int row= model->data(model->index(i, 16), Qt::DisplayRole).toInt();
 
         start_pos= QPointF( x0*factor,y0*factor );
         trans_pos= QPointF( x1*factor,y1*factor );
@@ -905,14 +909,10 @@ void MainWindow::updateSence()//on_testRout_but_clicked()
 
             line_item* line = new line_item(start_pos,end_pos,i,scene);
             scene->addItem(line);
-            rownum_itme_lst.append(row);
         }else if(type=="arc"){
-
 
             arc_item* arc = new arc_item(start_pos,trans_pos,end_pos,i,scene);
             scene->addItem(arc);
-            rownum_itme_lst.append(row);
-
         }
 
         if(i==0){
@@ -2281,6 +2281,11 @@ void MainWindow::PbCreatGcode()
 {
     if(ui->cBworkpiece->currentText()==""){
         QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit("请选择工件"));
+        return;
+    }
+
+    if(ui->cBworkpiece->currentText()=="Initialization"){
+        QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit("请新建工件，初始工件只适用于编辑,不可运动"));
         return;
     }
 
