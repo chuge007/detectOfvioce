@@ -4,6 +4,7 @@
 #include <QList>
 #include<QMessageBox>
 #include <QCloseEvent>
+#include <QDoubleValidator>
 
 addRoute_dialog::addRoute_dialog(QWidget *parent) :
     QDialog(parent),
@@ -34,6 +35,57 @@ addRoute_dialog::addRoute_dialog(QWidget *parent) :
     connect(ui->pb_reject, &QPushButton::clicked, this, &addRoute_dialog::pB_reject);
 
 
+    QDoubleValidator *xStart_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    xStart_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->xStart_lin->setValidator(xStart_lin);
+
+    QDoubleValidator *yStart_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    yStart_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->yStart_lin->setValidator(yStart_lin);
+
+    QDoubleValidator *zStart_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    zStart_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->zStart_lin->setValidator(zStart_lin);
+
+    QDoubleValidator *rStart_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    rStart_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->rStart_lin->setValidator(rStart_lin);
+
+
+
+    QDoubleValidator *xTrans_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    xTrans_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->xTrans_lin->setValidator(xTrans_lin);
+
+    QDoubleValidator *yTrans_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    yTrans_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->yTrans_lin->setValidator(yTrans_lin);
+
+    QDoubleValidator *zTrans_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    zTrans_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->zTrans_lin->setValidator(zTrans_lin);
+
+    QDoubleValidator *rTrans_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    rTrans_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->rTrans_lin->setValidator(rTrans_lin);
+
+
+
+    QDoubleValidator *xEnd_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    xEnd_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->xEnd_lin->setValidator(xEnd_lin);
+
+    QDoubleValidator *yEnd_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    yEnd_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->yEnd_lin->setValidator(yEnd_lin);
+
+    QDoubleValidator *zEnd_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    zEnd_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->zEnd_lin->setValidator(zEnd_lin);
+
+    QDoubleValidator *rEnd_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    rEnd_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->rEnd_lin->setValidator(rEnd_lin);
 
 }
 

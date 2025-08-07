@@ -3448,6 +3448,27 @@ void MainWindow::saveSetting() {
 }
 
 void MainWindow::initSetting() {
+
+    QDoubleValidator *scanVelocity_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    scanVelocity_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->scanVelocity_lin->setValidator(scanVelocity_lin);
+
+    QDoubleValidator *AxleVelocity_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    AxleVelocity_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->AxleVelocity_lin->setValidator(AxleVelocity_lin);
+
+    QDoubleValidator *pointVelocity_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    pointVelocity_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->pointVelocity_lin->setValidator(pointVelocity_lin);
+
+    QDoubleValidator *lineVelocity_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    lineVelocity_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->lineVelocity_lin->setValidator(lineVelocity_lin);
+
+    QDoubleValidator *arcVelocity_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
+    arcVelocity_lin->setNotation(QDoubleValidator::StandardNotation);
+    ui->lineVelocity_lin->setValidator(arcVelocity_lin);
+
     // Load general settings with defaults
     ui->ip_lin->setText(settings->value("ip", "").toString());
     ui->port_lin->setText(settings->value("port", "").toString());
