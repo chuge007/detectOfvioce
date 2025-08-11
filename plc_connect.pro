@@ -20,6 +20,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    MotionControl.cpp \
     addroute_dialog.cpp \
     ascan.cpp \
     dxflib/dl_dxf.cpp \
@@ -30,7 +31,6 @@ SOURCES += \
     imageProcessing.cpp \
     imageprocessing.cpp \
     main.cpp \
-    mainwindow.cpp \
     mathtool.cpp \
     scanMovecontrl/scandetect_frictionwelding.cpp \
     widgetDefin/Graphics_view_zoom.cpp \
@@ -199,6 +199,7 @@ HEADERS += \
     C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HXLD.h \
     C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/HpThread.h \
     C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/hlib/IOSpy.h \
+    MotionControl.h \
     addroute_dialog.h \
     ascan.h \
     dxflib/dl_attributes.h \
@@ -220,7 +221,6 @@ HEADERS += \
     libssh2_1.11.0_x64/libssh2.h \
     libssh2_1.11.0_x64/libssh2_publickey.h \
     libssh2_1.11.0_x64/libssh2_sftp.h \
-    mainwindow.h \
     mathtool.h \
     scanMovecontrl/modbusconfig.h \
     scanMovecontrl/scancontrolabstract.h \
@@ -236,13 +236,13 @@ HEADERS += \
 
 FORMS += \
     ImageProcessing.ui \
+    MotionControl.ui \
     addroute_dialog.ui \
     ascan.ui \
     gcodemodulation.ui \
     imageProcessing.ui \
     imageprocessing.ui \
-    imageprocessing.ui \
-    mainwindow.ui
+    imageprocessing.ui
 
 #INCLUDEPATH += $$PWD/include
 #LIBS += -L$$PWD/lib/ -ldxfrw

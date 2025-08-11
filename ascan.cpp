@@ -5,7 +5,7 @@
 #include <QMessageBox>
 #include <QElapsedTimer>
 
-#include "mainwindow.h"
+#include "MotionControl.h"
 
 
 ascan::ascan(QWidget *parent) :

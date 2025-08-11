@@ -34,19 +34,55 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QGridLayout *gridLayout_5;
-    QTabWidget *tabWidget;
-    QWidget *tab_2;
-    QGridLayout *gridLayout;
-    QPushButton *moveDownTabelRow_btu;
-    QPushButton *editPos_but;
-    QPushButton *insertLinePos_but;
-    QPushButton *insertArcPos_but;
-    QPushButton *moveUpTabelRow_btu;
-    QPushButton *cleanTable_but;
-    QPushButton *moveDirectionNot_but;
-    QTableView *tableView;
-    QPushButton *delete_but;
-    TGraphicsViewRefactor *graphicsView;
+    QFrame *frame_3;
+    QGridLayout *gridLayout_4;
+    QLabel *label_11;
+    QPushButton *xAdd_but;
+    QLineEdit *ip_lin;
+    QPushButton *xSub_but;
+    QLabel *label_2;
+    QComboBox *plcType_cb;
+    QLabel *label_12;
+    QLabel *xCurPos_lab;
+    QLabel *zCurPos_lab;
+    QLabel *label_6;
+    QLabel *label_3;
+    QLabel *yCurPos_lab;
+    QLabel *label_7;
+    QPushButton *ySub_but;
+    QLabel *disMess_lab;
+    QPushButton *yAdd_but;
+    QPushButton *rAdd_but;
+    QPushButton *zSub_but;
+    QLabel *label_10;
+    QPushButton *rSub_but;
+    QLabel *label_8;
+    QLabel *label_13;
+    QPushButton *zAdd_but;
+    QLabel *label;
+    QLabel *label_9;
+    QLabel *rCurPos_lab;
+    QLineEdit *port_lin;
+    QFrame *line;
+    QPushButton *connect_but;
+    QWidget *widget;
+    QHBoxLayout *horizontalLayout_2;
+    QComboBox *comboBox;
+    QLabel *label_5;
+    QLineEdit *scanVelocity_lin;
+    QLabel *label_14;
+    QLabel *label_23;
+    QLineEdit *AxleVelocity_lin;
+    QLabel *label_17;
+    QLabel *label_24;
+    QLineEdit *pointVelocity_lin;
+    QLabel *label_21;
+    QLabel *label_16;
+    QLineEdit *lineVelocity_lin;
+    QLabel *label_18;
+    QLabel *label_20;
+    QLineEdit *arcVelocity_lin;
+    QLabel *label_19;
     QFrame *frame;
     QGridLayout *gridLayout_2;
     QSpacerItem *horizontalSpacer_3;
@@ -113,55 +149,20 @@ public:
     QPushButton *imageProcess_but;
     QPushButton *writeInPLC_but;
     QSpacerItem *horizontalSpacer_25;
-    QFrame *frame_3;
-    QGridLayout *gridLayout_4;
-    QPushButton *zSub_but;
-    QLineEdit *port_lin;
-    QLabel *label_2;
-    QPushButton *xAdd_but;
-    QPushButton *yAdd_but;
-    QPushButton *rSub_but;
-    QLabel *label_10;
-    QFrame *line;
-    QLabel *label_12;
-    QLabel *label_6;
-    QLabel *label_8;
-    QLabel *rCurPos_lab;
-    QLabel *label_9;
-    QPushButton *xSub_but;
-    QLabel *zCurPos_lab;
-    QPushButton *ySub_but;
-    QLabel *label;
-    QComboBox *plcType_cb;
-    QLabel *xCurPos_lab;
-    QPushButton *connect_but;
-    QLineEdit *ip_lin;
-    QLabel *label_13;
-    QPushButton *rAdd_but;
-    QLabel *label_3;
-    QPushButton *zAdd_but;
-    QLabel *yCurPos_lab;
-    QLabel *label_7;
-    QLabel *label_11;
-    QLabel *disMess_lab;
-    QWidget *widget;
-    QHBoxLayout *horizontalLayout_2;
-    QComboBox *comboBox;
-    QLabel *label_5;
-    QLineEdit *scanVelocity_lin;
-    QLabel *label_14;
-    QLabel *label_23;
-    QLineEdit *AxleVelocity_lin;
-    QLabel *label_17;
-    QLabel *label_24;
-    QLineEdit *pointVelocity_lin;
-    QLabel *label_21;
-    QLabel *label_16;
-    QLineEdit *lineVelocity_lin;
-    QLabel *label_18;
-    QLabel *label_20;
-    QLineEdit *arcVelocity_lin;
-    QLabel *label_19;
+    TGraphicsViewRefactor *graphicsView;
+    QTabWidget *State;
+    QWidget *tab_2;
+    QGridLayout *gridLayout;
+    QPushButton *moveDownTabelRow_btu;
+    QPushButton *editPos_but;
+    QPushButton *insertLinePos_but;
+    QPushButton *insertArcPos_but;
+    QPushButton *moveUpTabelRow_btu;
+    QPushButton *cleanTable_but;
+    QPushButton *moveDirectionNot_but;
+    QTableView *tableView;
+    QPushButton *delete_but;
+    QWidget *plcState;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -178,105 +179,440 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout_5 = new QGridLayout(centralwidget);
         gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
-        tabWidget = new QTabWidget(centralwidget);
-        tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
-        sizePolicy.setHeightForWidth(tabWidget->sizePolicy().hasHeightForWidth());
-        tabWidget->setSizePolicy(sizePolicy);
-        tabWidget->setMinimumSize(QSize(0, 0));
-        tabWidget->setLayoutDirection(Qt::LeftToRight);
-        tabWidget->setTabPosition(QTabWidget::West);
-        tab_2 = new QWidget();
-        tab_2->setObjectName(QString::fromUtf8("tab_2"));
-        gridLayout = new QGridLayout(tab_2);
-        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        moveDownTabelRow_btu = new QPushButton(tab_2);
-        moveDownTabelRow_btu->setObjectName(QString::fromUtf8("moveDownTabelRow_btu"));
-        sizePolicy.setHeightForWidth(moveDownTabelRow_btu->sizePolicy().hasHeightForWidth());
-        moveDownTabelRow_btu->setSizePolicy(sizePolicy);
-        moveDownTabelRow_btu->setMinimumSize(QSize(0, 0));
+        frame_3 = new QFrame(centralwidget);
+        frame_3->setObjectName(QString::fromUtf8("frame_3"));
+        sizePolicy.setHeightForWidth(frame_3->sizePolicy().hasHeightForWidth());
+        frame_3->setSizePolicy(sizePolicy);
+        frame_3->setFrameShape(QFrame::StyledPanel);
+        frame_3->setFrameShadow(QFrame::Raised);
+        gridLayout_4 = new QGridLayout(frame_3);
+        gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
+        gridLayout_4->setHorizontalSpacing(6);
+        gridLayout_4->setVerticalSpacing(0);
+        gridLayout_4->setContentsMargins(-1, -1, -1, 0);
+        label_11 = new QLabel(frame_3);
+        label_11->setObjectName(QString::fromUtf8("label_11"));
+        sizePolicy.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
+        label_11->setSizePolicy(sizePolicy);
+        label_11->setMinimumSize(QSize(0, 0));
+        QFont font;
+        font.setFamily(QString::fromUtf8("3ds"));
+        font.setPointSize(11);
+        label_11->setFont(font);
+        label_11->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-        gridLayout->addWidget(moveDownTabelRow_btu, 2, 3, 1, 1);
+        gridLayout_4->addWidget(label_11, 5, 8, 1, 1);
 
-        editPos_but = new QPushButton(tab_2);
-        editPos_but->setObjectName(QString::fromUtf8("editPos_but"));
-        sizePolicy.setHeightForWidth(editPos_but->sizePolicy().hasHeightForWidth());
-        editPos_but->setSizePolicy(sizePolicy);
-        editPos_but->setMinimumSize(QSize(0, 0));
+        xAdd_but = new QPushButton(frame_3);
+        xAdd_but->setObjectName(QString::fromUtf8("xAdd_but"));
+        sizePolicy.setHeightForWidth(xAdd_but->sizePolicy().hasHeightForWidth());
+        xAdd_but->setSizePolicy(sizePolicy);
+        xAdd_but->setMinimumSize(QSize(0, 0));
+        xAdd_but->setAutoRepeat(false);
+        xAdd_but->setAutoExclusive(false);
 
-        gridLayout->addWidget(editPos_but, 1, 0, 1, 1);
+        gridLayout_4->addWidget(xAdd_but, 2, 11, 1, 1);
 
-        insertLinePos_but = new QPushButton(tab_2);
-        insertLinePos_but->setObjectName(QString::fromUtf8("insertLinePos_but"));
-        sizePolicy.setHeightForWidth(insertLinePos_but->sizePolicy().hasHeightForWidth());
-        insertLinePos_but->setSizePolicy(sizePolicy);
-        insertLinePos_but->setMinimumSize(QSize(0, 0));
+        ip_lin = new QLineEdit(frame_3);
+        ip_lin->setObjectName(QString::fromUtf8("ip_lin"));
+        sizePolicy.setHeightForWidth(ip_lin->sizePolicy().hasHeightForWidth());
+        ip_lin->setSizePolicy(sizePolicy);
+        ip_lin->setMinimumSize(QSize(0, 0));
 
-        gridLayout->addWidget(insertLinePos_but, 1, 3, 1, 1);
+        gridLayout_4->addWidget(ip_lin, 2, 1, 1, 1);
 
-        insertArcPos_but = new QPushButton(tab_2);
-        insertArcPos_but->setObjectName(QString::fromUtf8("insertArcPos_but"));
-        sizePolicy.setHeightForWidth(insertArcPos_but->sizePolicy().hasHeightForWidth());
-        insertArcPos_but->setSizePolicy(sizePolicy);
-        insertArcPos_but->setMinimumSize(QSize(0, 0));
+        xSub_but = new QPushButton(frame_3);
+        xSub_but->setObjectName(QString::fromUtf8("xSub_but"));
+        sizePolicy.setHeightForWidth(xSub_but->sizePolicy().hasHeightForWidth());
+        xSub_but->setSizePolicy(sizePolicy);
+        xSub_but->setMinimumSize(QSize(0, 0));
+        xSub_but->setAutoRepeat(false);
+        xSub_but->setAutoExclusive(false);
 
-        gridLayout->addWidget(insertArcPos_but, 1, 2, 1, 1);
+        gridLayout_4->addWidget(xSub_but, 5, 11, 1, 1);
 
-        moveUpTabelRow_btu = new QPushButton(tab_2);
-        moveUpTabelRow_btu->setObjectName(QString::fromUtf8("moveUpTabelRow_btu"));
-        sizePolicy.setHeightForWidth(moveUpTabelRow_btu->sizePolicy().hasHeightForWidth());
-        moveUpTabelRow_btu->setSizePolicy(sizePolicy);
-        moveUpTabelRow_btu->setMinimumSize(QSize(0, 0));
+        label_2 = new QLabel(frame_3);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        sizePolicy.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
+        label_2->setSizePolicy(sizePolicy);
+        label_2->setMinimumSize(QSize(0, 0));
 
-        gridLayout->addWidget(moveUpTabelRow_btu, 2, 2, 1, 1);
+        gridLayout_4->addWidget(label_2, 2, 2, 1, 1);
 
-        cleanTable_but = new QPushButton(tab_2);
-        cleanTable_but->setObjectName(QString::fromUtf8("cleanTable_but"));
-        sizePolicy.setHeightForWidth(cleanTable_but->sizePolicy().hasHeightForWidth());
-        cleanTable_but->setSizePolicy(sizePolicy);
-        cleanTable_but->setMinimumSize(QSize(0, 0));
+        plcType_cb = new QComboBox(frame_3);
+        plcType_cb->addItem(QString());
+        plcType_cb->addItem(QString());
+        plcType_cb->setObjectName(QString::fromUtf8("plcType_cb"));
+        sizePolicy.setHeightForWidth(plcType_cb->sizePolicy().hasHeightForWidth());
+        plcType_cb->setSizePolicy(sizePolicy);
+        plcType_cb->setMinimumSize(QSize(0, 0));
 
-        gridLayout->addWidget(cleanTable_but, 1, 1, 1, 1);
+        gridLayout_4->addWidget(plcType_cb, 5, 15, 1, 1);
 
-        moveDirectionNot_but = new QPushButton(tab_2);
-        moveDirectionNot_but->setObjectName(QString::fromUtf8("moveDirectionNot_but"));
-        sizePolicy.setHeightForWidth(moveDirectionNot_but->sizePolicy().hasHeightForWidth());
-        moveDirectionNot_but->setSizePolicy(sizePolicy);
-        moveDirectionNot_but->setMinimumSize(QSize(0, 0));
+        label_12 = new QLabel(frame_3);
+        label_12->setObjectName(QString::fromUtf8("label_12"));
+        sizePolicy.setHeightForWidth(label_12->sizePolicy().hasHeightForWidth());
+        label_12->setSizePolicy(sizePolicy);
+        label_12->setMinimumSize(QSize(0, 0));
+        QFont font1;
+        font1.setFamily(QString::fromUtf8("SansSerif"));
+        font1.setPointSize(11);
+        label_12->setFont(font1);
 
-        gridLayout->addWidget(moveDirectionNot_but, 2, 1, 1, 1);
+        gridLayout_4->addWidget(label_12, 2, 10, 1, 1);
 
-        tableView = new QTableView(tab_2);
-        tableView->setObjectName(QString::fromUtf8("tableView"));
-        sizePolicy.setHeightForWidth(tableView->sizePolicy().hasHeightForWidth());
-        tableView->setSizePolicy(sizePolicy);
-        tableView->setMinimumSize(QSize(0, 0));
+        xCurPos_lab = new QLabel(frame_3);
+        xCurPos_lab->setObjectName(QString::fromUtf8("xCurPos_lab"));
+        sizePolicy.setHeightForWidth(xCurPos_lab->sizePolicy().hasHeightForWidth());
+        xCurPos_lab->setSizePolicy(sizePolicy);
+        xCurPos_lab->setMinimumSize(QSize(0, 0));
+        xCurPos_lab->setFont(font);
 
-        gridLayout->addWidget(tableView, 0, 0, 1, 4);
+        gridLayout_4->addWidget(xCurPos_lab, 2, 6, 1, 1);
 
-        delete_but = new QPushButton(tab_2);
-        delete_but->setObjectName(QString::fromUtf8("delete_but"));
-        sizePolicy.setHeightForWidth(delete_but->sizePolicy().hasHeightForWidth());
-        delete_but->setSizePolicy(sizePolicy);
-        delete_but->setMinimumSize(QSize(0, 0));
+        zCurPos_lab = new QLabel(frame_3);
+        zCurPos_lab->setObjectName(QString::fromUtf8("zCurPos_lab"));
+        sizePolicy.setHeightForWidth(zCurPos_lab->sizePolicy().hasHeightForWidth());
+        zCurPos_lab->setSizePolicy(sizePolicy);
+        zCurPos_lab->setMinimumSize(QSize(0, 0));
+        zCurPos_lab->setFont(font);
 
-        gridLayout->addWidget(delete_but, 2, 0, 1, 1);
+        gridLayout_4->addWidget(zCurPos_lab, 2, 9, 1, 1);
 
-        gridLayout->setRowStretch(0, 15);
-        tabWidget->addTab(tab_2, QString());
+        label_6 = new QLabel(frame_3);
+        label_6->setObjectName(QString::fromUtf8("label_6"));
+        sizePolicy.setHeightForWidth(label_6->sizePolicy().hasHeightForWidth());
+        label_6->setSizePolicy(sizePolicy);
+        label_6->setMinimumSize(QSize(0, 0));
+        label_6->setFont(font);
+        label_6->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-        gridLayout_5->addWidget(tabWidget, 1, 1, 1, 1);
+        gridLayout_4->addWidget(label_6, 2, 5, 1, 1);
 
-        graphicsView = new TGraphicsViewRefactor(centralwidget);
-        graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
-        graphicsView->setEnabled(true);
-        sizePolicy.setHeightForWidth(graphicsView->sizePolicy().hasHeightForWidth());
-        graphicsView->setSizePolicy(sizePolicy);
-        graphicsView->setMinimumSize(QSize(0, 0));
-        graphicsView->setMaximumSize(QSize(16777215, 16777215));
-        graphicsView->setBaseSize(QSize(0, 0));
-        graphicsView->setInteractive(true);
+        label_3 = new QLabel(frame_3);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+        sizePolicy.setHeightForWidth(label_3->sizePolicy().hasHeightForWidth());
+        label_3->setSizePolicy(sizePolicy);
+        label_3->setMinimumSize(QSize(0, 0));
 
-        gridLayout_5->addWidget(graphicsView, 1, 0, 1, 1);
+        gridLayout_4->addWidget(label_3, 2, 15, 1, 1);
+
+        yCurPos_lab = new QLabel(frame_3);
+        yCurPos_lab->setObjectName(QString::fromUtf8("yCurPos_lab"));
+        sizePolicy.setHeightForWidth(yCurPos_lab->sizePolicy().hasHeightForWidth());
+        yCurPos_lab->setSizePolicy(sizePolicy);
+        yCurPos_lab->setMinimumSize(QSize(0, 0));
+        yCurPos_lab->setFont(font);
+
+        gridLayout_4->addWidget(yCurPos_lab, 5, 6, 1, 1);
+
+        label_7 = new QLabel(frame_3);
+        label_7->setObjectName(QString::fromUtf8("label_7"));
+        sizePolicy.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
+        label_7->setSizePolicy(sizePolicy);
+        label_7->setMinimumSize(QSize(0, 0));
+        label_7->setFont(font);
+        label_7->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout_4->addWidget(label_7, 5, 5, 1, 1);
+
+        ySub_but = new QPushButton(frame_3);
+        ySub_but->setObjectName(QString::fromUtf8("ySub_but"));
+        sizePolicy.setHeightForWidth(ySub_but->sizePolicy().hasHeightForWidth());
+        ySub_but->setSizePolicy(sizePolicy);
+        ySub_but->setMinimumSize(QSize(0, 0));
+        ySub_but->setAutoRepeat(false);
+        ySub_but->setAutoExclusive(false);
+
+        gridLayout_4->addWidget(ySub_but, 5, 12, 1, 1);
+
+        disMess_lab = new QLabel(frame_3);
+        disMess_lab->setObjectName(QString::fromUtf8("disMess_lab"));
+        sizePolicy.setHeightForWidth(disMess_lab->sizePolicy().hasHeightForWidth());
+        disMess_lab->setSizePolicy(sizePolicy);
+
+        gridLayout_4->addWidget(disMess_lab, 5, 0, 1, 4);
+
+        yAdd_but = new QPushButton(frame_3);
+        yAdd_but->setObjectName(QString::fromUtf8("yAdd_but"));
+        sizePolicy.setHeightForWidth(yAdd_but->sizePolicy().hasHeightForWidth());
+        yAdd_but->setSizePolicy(sizePolicy);
+        yAdd_but->setMinimumSize(QSize(0, 0));
+        yAdd_but->setAutoRepeat(false);
+        yAdd_but->setAutoExclusive(false);
+
+        gridLayout_4->addWidget(yAdd_but, 2, 12, 1, 1);
+
+        rAdd_but = new QPushButton(frame_3);
+        rAdd_but->setObjectName(QString::fromUtf8("rAdd_but"));
+        sizePolicy.setHeightForWidth(rAdd_but->sizePolicy().hasHeightForWidth());
+        rAdd_but->setSizePolicy(sizePolicy);
+        rAdd_but->setMinimumSize(QSize(0, 0));
+        rAdd_but->setAutoRepeat(false);
+        rAdd_but->setAutoExclusive(false);
+
+        gridLayout_4->addWidget(rAdd_but, 2, 14, 1, 1);
+
+        zSub_but = new QPushButton(frame_3);
+        zSub_but->setObjectName(QString::fromUtf8("zSub_but"));
+        sizePolicy.setHeightForWidth(zSub_but->sizePolicy().hasHeightForWidth());
+        zSub_but->setSizePolicy(sizePolicy);
+        zSub_but->setMinimumSize(QSize(0, 0));
+        zSub_but->setAutoRepeat(false);
+        zSub_but->setAutoExclusive(false);
+
+        gridLayout_4->addWidget(zSub_but, 5, 13, 1, 1);
+
+        label_10 = new QLabel(frame_3);
+        label_10->setObjectName(QString::fromUtf8("label_10"));
+        sizePolicy.setHeightForWidth(label_10->sizePolicy().hasHeightForWidth());
+        label_10->setSizePolicy(sizePolicy);
+        label_10->setMinimumSize(QSize(0, 0));
+        label_10->setFont(font1);
+
+        gridLayout_4->addWidget(label_10, 5, 10, 1, 1);
+
+        rSub_but = new QPushButton(frame_3);
+        rSub_but->setObjectName(QString::fromUtf8("rSub_but"));
+        sizePolicy.setHeightForWidth(rSub_but->sizePolicy().hasHeightForWidth());
+        rSub_but->setSizePolicy(sizePolicy);
+        rSub_but->setMinimumSize(QSize(0, 0));
+        rSub_but->setAutoRepeat(false);
+        rSub_but->setAutoExclusive(false);
+
+        gridLayout_4->addWidget(rSub_but, 5, 14, 1, 1);
+
+        label_8 = new QLabel(frame_3);
+        label_8->setObjectName(QString::fromUtf8("label_8"));
+        sizePolicy.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
+        label_8->setSizePolicy(sizePolicy);
+        label_8->setMinimumSize(QSize(0, 0));
+        label_8->setFont(font1);
+
+        gridLayout_4->addWidget(label_8, 2, 7, 1, 1);
+
+        label_13 = new QLabel(frame_3);
+        label_13->setObjectName(QString::fromUtf8("label_13"));
+        sizePolicy.setHeightForWidth(label_13->sizePolicy().hasHeightForWidth());
+        label_13->setSizePolicy(sizePolicy);
+        label_13->setMinimumSize(QSize(0, 0));
+        label_13->setFont(font);
+        label_13->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout_4->addWidget(label_13, 2, 8, 1, 1);
+
+        zAdd_but = new QPushButton(frame_3);
+        zAdd_but->setObjectName(QString::fromUtf8("zAdd_but"));
+        sizePolicy.setHeightForWidth(zAdd_but->sizePolicy().hasHeightForWidth());
+        zAdd_but->setSizePolicy(sizePolicy);
+        zAdd_but->setMinimumSize(QSize(0, 0));
+        zAdd_but->setAutoRepeat(false);
+        zAdd_but->setAutoExclusive(false);
+
+        gridLayout_4->addWidget(zAdd_but, 2, 13, 1, 1);
+
+        label = new QLabel(frame_3);
+        label->setObjectName(QString::fromUtf8("label"));
+        sizePolicy.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
+        label->setSizePolicy(sizePolicy);
+        label->setMinimumSize(QSize(0, 0));
+
+        gridLayout_4->addWidget(label, 2, 0, 1, 1);
+
+        label_9 = new QLabel(frame_3);
+        label_9->setObjectName(QString::fromUtf8("label_9"));
+        sizePolicy.setHeightForWidth(label_9->sizePolicy().hasHeightForWidth());
+        label_9->setSizePolicy(sizePolicy);
+        label_9->setMinimumSize(QSize(0, 0));
+        label_9->setFont(font1);
+
+        gridLayout_4->addWidget(label_9, 5, 7, 1, 1);
+
+        rCurPos_lab = new QLabel(frame_3);
+        rCurPos_lab->setObjectName(QString::fromUtf8("rCurPos_lab"));
+        sizePolicy.setHeightForWidth(rCurPos_lab->sizePolicy().hasHeightForWidth());
+        rCurPos_lab->setSizePolicy(sizePolicy);
+        rCurPos_lab->setMinimumSize(QSize(0, 0));
+        rCurPos_lab->setFont(font);
+
+        gridLayout_4->addWidget(rCurPos_lab, 5, 9, 1, 1);
+
+        port_lin = new QLineEdit(frame_3);
+        port_lin->setObjectName(QString::fromUtf8("port_lin"));
+        sizePolicy.setHeightForWidth(port_lin->sizePolicy().hasHeightForWidth());
+        port_lin->setSizePolicy(sizePolicy);
+        port_lin->setMinimumSize(QSize(0, 0));
+        port_lin->setMaximumSize(QSize(16777215, 16777215));
+
+        gridLayout_4->addWidget(port_lin, 2, 3, 1, 1);
+
+        line = new QFrame(frame_3);
+        line->setObjectName(QString::fromUtf8("line"));
+        sizePolicy.setHeightForWidth(line->sizePolicy().hasHeightForWidth());
+        line->setSizePolicy(sizePolicy);
+        line->setMinimumSize(QSize(0, 0));
+        line->setFrameShape(QFrame::VLine);
+        line->setFrameShadow(QFrame::Sunken);
+
+        gridLayout_4->addWidget(line, 6, 5, 1, 1);
+
+        connect_but = new QPushButton(frame_3);
+        connect_but->setObjectName(QString::fromUtf8("connect_but"));
+        sizePolicy.setHeightForWidth(connect_but->sizePolicy().hasHeightForWidth());
+        connect_but->setSizePolicy(sizePolicy);
+        connect_but->setMinimumSize(QSize(0, 0));
+
+        gridLayout_4->addWidget(connect_but, 2, 4, 1, 1);
+
+
+        gridLayout_5->addWidget(frame_3, 0, 0, 1, 2);
+
+        widget = new QWidget(centralwidget);
+        widget->setObjectName(QString::fromUtf8("widget"));
+        sizePolicy.setHeightForWidth(widget->sizePolicy().hasHeightForWidth());
+        widget->setSizePolicy(sizePolicy);
+        widget->setMinimumSize(QSize(0, 0));
+        horizontalLayout_2 = new QHBoxLayout(widget);
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        comboBox = new QComboBox(widget);
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->setObjectName(QString::fromUtf8("comboBox"));
+        sizePolicy.setHeightForWidth(comboBox->sizePolicy().hasHeightForWidth());
+        comboBox->setSizePolicy(sizePolicy);
+        comboBox->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(comboBox);
+
+        label_5 = new QLabel(widget);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+        sizePolicy.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
+        label_5->setSizePolicy(sizePolicy);
+        label_5->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(label_5);
+
+        scanVelocity_lin = new QLineEdit(widget);
+        scanVelocity_lin->setObjectName(QString::fromUtf8("scanVelocity_lin"));
+        sizePolicy.setHeightForWidth(scanVelocity_lin->sizePolicy().hasHeightForWidth());
+        scanVelocity_lin->setSizePolicy(sizePolicy);
+        scanVelocity_lin->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(scanVelocity_lin);
+
+        label_14 = new QLabel(widget);
+        label_14->setObjectName(QString::fromUtf8("label_14"));
+        sizePolicy.setHeightForWidth(label_14->sizePolicy().hasHeightForWidth());
+        label_14->setSizePolicy(sizePolicy);
+        label_14->setMinimumSize(QSize(0, 0));
+        label_14->setFont(font1);
+
+        horizontalLayout_2->addWidget(label_14);
+
+        label_23 = new QLabel(widget);
+        label_23->setObjectName(QString::fromUtf8("label_23"));
+        sizePolicy.setHeightForWidth(label_23->sizePolicy().hasHeightForWidth());
+        label_23->setSizePolicy(sizePolicy);
+        label_23->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(label_23);
+
+        AxleVelocity_lin = new QLineEdit(widget);
+        AxleVelocity_lin->setObjectName(QString::fromUtf8("AxleVelocity_lin"));
+        sizePolicy.setHeightForWidth(AxleVelocity_lin->sizePolicy().hasHeightForWidth());
+        AxleVelocity_lin->setSizePolicy(sizePolicy);
+        AxleVelocity_lin->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(AxleVelocity_lin);
+
+        label_17 = new QLabel(widget);
+        label_17->setObjectName(QString::fromUtf8("label_17"));
+        sizePolicy.setHeightForWidth(label_17->sizePolicy().hasHeightForWidth());
+        label_17->setSizePolicy(sizePolicy);
+        label_17->setMinimumSize(QSize(0, 0));
+        label_17->setFont(font1);
+
+        horizontalLayout_2->addWidget(label_17);
+
+        label_24 = new QLabel(widget);
+        label_24->setObjectName(QString::fromUtf8("label_24"));
+        sizePolicy.setHeightForWidth(label_24->sizePolicy().hasHeightForWidth());
+        label_24->setSizePolicy(sizePolicy);
+        label_24->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(label_24);
+
+        pointVelocity_lin = new QLineEdit(widget);
+        pointVelocity_lin->setObjectName(QString::fromUtf8("pointVelocity_lin"));
+        sizePolicy.setHeightForWidth(pointVelocity_lin->sizePolicy().hasHeightForWidth());
+        pointVelocity_lin->setSizePolicy(sizePolicy);
+        pointVelocity_lin->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(pointVelocity_lin);
+
+        label_21 = new QLabel(widget);
+        label_21->setObjectName(QString::fromUtf8("label_21"));
+        sizePolicy.setHeightForWidth(label_21->sizePolicy().hasHeightForWidth());
+        label_21->setSizePolicy(sizePolicy);
+        label_21->setMinimumSize(QSize(0, 0));
+        label_21->setFont(font1);
+
+        horizontalLayout_2->addWidget(label_21);
+
+        label_16 = new QLabel(widget);
+        label_16->setObjectName(QString::fromUtf8("label_16"));
+        sizePolicy.setHeightForWidth(label_16->sizePolicy().hasHeightForWidth());
+        label_16->setSizePolicy(sizePolicy);
+        label_16->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(label_16);
+
+        lineVelocity_lin = new QLineEdit(widget);
+        lineVelocity_lin->setObjectName(QString::fromUtf8("lineVelocity_lin"));
+        sizePolicy.setHeightForWidth(lineVelocity_lin->sizePolicy().hasHeightForWidth());
+        lineVelocity_lin->setSizePolicy(sizePolicy);
+        lineVelocity_lin->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(lineVelocity_lin);
+
+        label_18 = new QLabel(widget);
+        label_18->setObjectName(QString::fromUtf8("label_18"));
+        sizePolicy.setHeightForWidth(label_18->sizePolicy().hasHeightForWidth());
+        label_18->setSizePolicy(sizePolicy);
+        label_18->setMinimumSize(QSize(0, 0));
+        label_18->setFont(font1);
+
+        horizontalLayout_2->addWidget(label_18);
+
+        label_20 = new QLabel(widget);
+        label_20->setObjectName(QString::fromUtf8("label_20"));
+        sizePolicy.setHeightForWidth(label_20->sizePolicy().hasHeightForWidth());
+        label_20->setSizePolicy(sizePolicy);
+        label_20->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(label_20);
+
+        arcVelocity_lin = new QLineEdit(widget);
+        arcVelocity_lin->setObjectName(QString::fromUtf8("arcVelocity_lin"));
+        sizePolicy.setHeightForWidth(arcVelocity_lin->sizePolicy().hasHeightForWidth());
+        arcVelocity_lin->setSizePolicy(sizePolicy);
+        arcVelocity_lin->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_2->addWidget(arcVelocity_lin);
+
+        label_19 = new QLabel(widget);
+        label_19->setObjectName(QString::fromUtf8("label_19"));
+        sizePolicy.setHeightForWidth(label_19->sizePolicy().hasHeightForWidth());
+        label_19->setSizePolicy(sizePolicy);
+        label_19->setMinimumSize(QSize(0, 0));
+        label_19->setFont(font1);
+
+        horizontalLayout_2->addWidget(label_19);
+
+
+        gridLayout_5->addWidget(widget, 4, 0, 1, 2);
 
         frame = new QFrame(centralwidget);
         frame->setObjectName(QString::fromUtf8("frame"));
@@ -304,10 +640,7 @@ public:
         sizePolicy.setHeightForWidth(V_label_4->sizePolicy().hasHeightForWidth());
         V_label_4->setSizePolicy(sizePolicy);
         V_label_4->setMinimumSize(QSize(0, 0));
-        QFont font;
-        font.setFamily(QString::fromUtf8("SansSerif"));
-        font.setPointSize(11);
-        V_label_4->setFont(font);
+        V_label_4->setFont(font1);
         V_label_4->setStyleSheet(QString::fromUtf8(""));
 
         gridLayout_2->addWidget(V_label_4, 0, 5, 1, 1);
@@ -471,7 +804,7 @@ public:
         sizePolicy.setHeightForWidth(V_label_10->sizePolicy().hasHeightForWidth());
         V_label_10->setSizePolicy(sizePolicy);
         V_label_10->setMinimumSize(QSize(0, 0));
-        V_label_10->setFont(font);
+        V_label_10->setFont(font1);
         V_label_10->setStyleSheet(QString::fromUtf8(""));
 
         gridLayout_2->addWidget(V_label_10, 0, 7, 1, 1);
@@ -481,7 +814,7 @@ public:
         sizePolicy.setHeightForWidth(V_label_9->sizePolicy().hasHeightForWidth());
         V_label_9->setSizePolicy(sizePolicy);
         V_label_9->setMinimumSize(QSize(0, 0));
-        V_label_9->setFont(font);
+        V_label_9->setFont(font1);
         V_label_9->setStyleSheet(QString::fromUtf8(""));
 
         gridLayout_2->addWidget(V_label_9, 0, 9, 1, 1);
@@ -491,7 +824,7 @@ public:
         sizePolicy.setHeightForWidth(V_label_3->sizePolicy().hasHeightForWidth());
         V_label_3->setSizePolicy(sizePolicy);
         V_label_3->setMinimumSize(QSize(0, 0));
-        V_label_3->setFont(font);
+        V_label_3->setFont(font1);
         V_label_3->setStyleSheet(QString::fromUtf8(""));
 
         gridLayout_2->addWidget(V_label_3, 0, 3, 1, 1);
@@ -763,437 +1096,108 @@ public:
 
         gridLayout_5->addWidget(frame, 3, 0, 1, 2);
 
-        frame_3 = new QFrame(centralwidget);
-        frame_3->setObjectName(QString::fromUtf8("frame_3"));
-        sizePolicy.setHeightForWidth(frame_3->sizePolicy().hasHeightForWidth());
-        frame_3->setSizePolicy(sizePolicy);
-        frame_3->setFrameShape(QFrame::StyledPanel);
-        frame_3->setFrameShadow(QFrame::Raised);
-        gridLayout_4 = new QGridLayout(frame_3);
-        gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
-        gridLayout_4->setHorizontalSpacing(6);
-        gridLayout_4->setVerticalSpacing(0);
-        gridLayout_4->setContentsMargins(-1, -1, -1, 0);
-        zSub_but = new QPushButton(frame_3);
-        zSub_but->setObjectName(QString::fromUtf8("zSub_but"));
-        sizePolicy.setHeightForWidth(zSub_but->sizePolicy().hasHeightForWidth());
-        zSub_but->setSizePolicy(sizePolicy);
-        zSub_but->setMinimumSize(QSize(0, 0));
-        zSub_but->setAutoRepeat(false);
-        zSub_but->setAutoExclusive(false);
-
-        gridLayout_4->addWidget(zSub_but, 5, 13, 1, 1);
-
-        port_lin = new QLineEdit(frame_3);
-        port_lin->setObjectName(QString::fromUtf8("port_lin"));
-        sizePolicy.setHeightForWidth(port_lin->sizePolicy().hasHeightForWidth());
-        port_lin->setSizePolicy(sizePolicy);
-        port_lin->setMinimumSize(QSize(0, 0));
-        port_lin->setMaximumSize(QSize(16777215, 16777215));
-
-        gridLayout_4->addWidget(port_lin, 2, 3, 1, 1);
-
-        label_2 = new QLabel(frame_3);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-        sizePolicy.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
-        label_2->setSizePolicy(sizePolicy);
-        label_2->setMinimumSize(QSize(0, 0));
-
-        gridLayout_4->addWidget(label_2, 2, 2, 1, 1);
-
-        xAdd_but = new QPushButton(frame_3);
-        xAdd_but->setObjectName(QString::fromUtf8("xAdd_but"));
-        sizePolicy.setHeightForWidth(xAdd_but->sizePolicy().hasHeightForWidth());
-        xAdd_but->setSizePolicy(sizePolicy);
-        xAdd_but->setMinimumSize(QSize(0, 0));
-        xAdd_but->setAutoRepeat(false);
-        xAdd_but->setAutoExclusive(false);
-
-        gridLayout_4->addWidget(xAdd_but, 2, 11, 1, 1);
-
-        yAdd_but = new QPushButton(frame_3);
-        yAdd_but->setObjectName(QString::fromUtf8("yAdd_but"));
-        sizePolicy.setHeightForWidth(yAdd_but->sizePolicy().hasHeightForWidth());
-        yAdd_but->setSizePolicy(sizePolicy);
-        yAdd_but->setMinimumSize(QSize(0, 0));
-        yAdd_but->setAutoRepeat(false);
-        yAdd_but->setAutoExclusive(false);
-
-        gridLayout_4->addWidget(yAdd_but, 2, 12, 1, 1);
-
-        rSub_but = new QPushButton(frame_3);
-        rSub_but->setObjectName(QString::fromUtf8("rSub_but"));
-        sizePolicy.setHeightForWidth(rSub_but->sizePolicy().hasHeightForWidth());
-        rSub_but->setSizePolicy(sizePolicy);
-        rSub_but->setMinimumSize(QSize(0, 0));
-        rSub_but->setAutoRepeat(false);
-        rSub_but->setAutoExclusive(false);
-
-        gridLayout_4->addWidget(rSub_but, 5, 14, 1, 1);
-
-        label_10 = new QLabel(frame_3);
-        label_10->setObjectName(QString::fromUtf8("label_10"));
-        sizePolicy.setHeightForWidth(label_10->sizePolicy().hasHeightForWidth());
-        label_10->setSizePolicy(sizePolicy);
-        label_10->setMinimumSize(QSize(0, 0));
-        label_10->setFont(font);
-
-        gridLayout_4->addWidget(label_10, 5, 10, 1, 1);
-
-        line = new QFrame(frame_3);
-        line->setObjectName(QString::fromUtf8("line"));
-        sizePolicy.setHeightForWidth(line->sizePolicy().hasHeightForWidth());
-        line->setSizePolicy(sizePolicy);
-        line->setMinimumSize(QSize(0, 0));
-        line->setFrameShape(QFrame::VLine);
-        line->setFrameShadow(QFrame::Sunken);
-
-        gridLayout_4->addWidget(line, 6, 5, 1, 1);
-
-        label_12 = new QLabel(frame_3);
-        label_12->setObjectName(QString::fromUtf8("label_12"));
-        sizePolicy.setHeightForWidth(label_12->sizePolicy().hasHeightForWidth());
-        label_12->setSizePolicy(sizePolicy);
-        label_12->setMinimumSize(QSize(0, 0));
-        label_12->setFont(font);
-
-        gridLayout_4->addWidget(label_12, 2, 10, 1, 1);
-
-        label_6 = new QLabel(frame_3);
-        label_6->setObjectName(QString::fromUtf8("label_6"));
-        sizePolicy.setHeightForWidth(label_6->sizePolicy().hasHeightForWidth());
-        label_6->setSizePolicy(sizePolicy);
-        label_6->setMinimumSize(QSize(0, 0));
-        QFont font1;
-        font1.setFamily(QString::fromUtf8("3ds"));
-        font1.setPointSize(11);
-        label_6->setFont(font1);
-        label_6->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
-        gridLayout_4->addWidget(label_6, 2, 5, 1, 1);
-
-        label_8 = new QLabel(frame_3);
-        label_8->setObjectName(QString::fromUtf8("label_8"));
-        sizePolicy.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
-        label_8->setSizePolicy(sizePolicy);
-        label_8->setMinimumSize(QSize(0, 0));
-        label_8->setFont(font);
-
-        gridLayout_4->addWidget(label_8, 2, 7, 1, 1);
-
-        rCurPos_lab = new QLabel(frame_3);
-        rCurPos_lab->setObjectName(QString::fromUtf8("rCurPos_lab"));
-        sizePolicy.setHeightForWidth(rCurPos_lab->sizePolicy().hasHeightForWidth());
-        rCurPos_lab->setSizePolicy(sizePolicy);
-        rCurPos_lab->setMinimumSize(QSize(0, 0));
-        rCurPos_lab->setFont(font1);
-
-        gridLayout_4->addWidget(rCurPos_lab, 5, 9, 1, 1);
-
-        label_9 = new QLabel(frame_3);
-        label_9->setObjectName(QString::fromUtf8("label_9"));
-        sizePolicy.setHeightForWidth(label_9->sizePolicy().hasHeightForWidth());
-        label_9->setSizePolicy(sizePolicy);
-        label_9->setMinimumSize(QSize(0, 0));
-        label_9->setFont(font);
-
-        gridLayout_4->addWidget(label_9, 5, 7, 1, 1);
-
-        xSub_but = new QPushButton(frame_3);
-        xSub_but->setObjectName(QString::fromUtf8("xSub_but"));
-        sizePolicy.setHeightForWidth(xSub_but->sizePolicy().hasHeightForWidth());
-        xSub_but->setSizePolicy(sizePolicy);
-        xSub_but->setMinimumSize(QSize(0, 0));
-        xSub_but->setAutoRepeat(false);
-        xSub_but->setAutoExclusive(false);
-
-        gridLayout_4->addWidget(xSub_but, 5, 11, 1, 1);
-
-        zCurPos_lab = new QLabel(frame_3);
-        zCurPos_lab->setObjectName(QString::fromUtf8("zCurPos_lab"));
-        sizePolicy.setHeightForWidth(zCurPos_lab->sizePolicy().hasHeightForWidth());
-        zCurPos_lab->setSizePolicy(sizePolicy);
-        zCurPos_lab->setMinimumSize(QSize(0, 0));
-        zCurPos_lab->setFont(font1);
-
-        gridLayout_4->addWidget(zCurPos_lab, 2, 9, 1, 1);
-
-        ySub_but = new QPushButton(frame_3);
-        ySub_but->setObjectName(QString::fromUtf8("ySub_but"));
-        sizePolicy.setHeightForWidth(ySub_but->sizePolicy().hasHeightForWidth());
-        ySub_but->setSizePolicy(sizePolicy);
-        ySub_but->setMinimumSize(QSize(0, 0));
-        ySub_but->setAutoRepeat(false);
-        ySub_but->setAutoExclusive(false);
-
-        gridLayout_4->addWidget(ySub_but, 5, 12, 1, 1);
-
-        label = new QLabel(frame_3);
-        label->setObjectName(QString::fromUtf8("label"));
-        sizePolicy.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
-        label->setSizePolicy(sizePolicy);
-        label->setMinimumSize(QSize(0, 0));
-
-        gridLayout_4->addWidget(label, 2, 0, 1, 1);
-
-        plcType_cb = new QComboBox(frame_3);
-        plcType_cb->addItem(QString());
-        plcType_cb->addItem(QString());
-        plcType_cb->setObjectName(QString::fromUtf8("plcType_cb"));
-        sizePolicy.setHeightForWidth(plcType_cb->sizePolicy().hasHeightForWidth());
-        plcType_cb->setSizePolicy(sizePolicy);
-        plcType_cb->setMinimumSize(QSize(0, 0));
-
-        gridLayout_4->addWidget(plcType_cb, 5, 15, 1, 1);
-
-        xCurPos_lab = new QLabel(frame_3);
-        xCurPos_lab->setObjectName(QString::fromUtf8("xCurPos_lab"));
-        sizePolicy.setHeightForWidth(xCurPos_lab->sizePolicy().hasHeightForWidth());
-        xCurPos_lab->setSizePolicy(sizePolicy);
-        xCurPos_lab->setMinimumSize(QSize(0, 0));
-        xCurPos_lab->setFont(font1);
-
-        gridLayout_4->addWidget(xCurPos_lab, 2, 6, 1, 1);
-
-        connect_but = new QPushButton(frame_3);
-        connect_but->setObjectName(QString::fromUtf8("connect_but"));
-        sizePolicy.setHeightForWidth(connect_but->sizePolicy().hasHeightForWidth());
-        connect_but->setSizePolicy(sizePolicy);
-        connect_but->setMinimumSize(QSize(0, 0));
-
-        gridLayout_4->addWidget(connect_but, 2, 4, 1, 1);
-
-        ip_lin = new QLineEdit(frame_3);
-        ip_lin->setObjectName(QString::fromUtf8("ip_lin"));
-        sizePolicy.setHeightForWidth(ip_lin->sizePolicy().hasHeightForWidth());
-        ip_lin->setSizePolicy(sizePolicy);
-        ip_lin->setMinimumSize(QSize(0, 0));
-
-        gridLayout_4->addWidget(ip_lin, 2, 1, 1, 1);
-
-        label_13 = new QLabel(frame_3);
-        label_13->setObjectName(QString::fromUtf8("label_13"));
-        sizePolicy.setHeightForWidth(label_13->sizePolicy().hasHeightForWidth());
-        label_13->setSizePolicy(sizePolicy);
-        label_13->setMinimumSize(QSize(0, 0));
-        label_13->setFont(font1);
-        label_13->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
-        gridLayout_4->addWidget(label_13, 2, 8, 1, 1);
-
-        rAdd_but = new QPushButton(frame_3);
-        rAdd_but->setObjectName(QString::fromUtf8("rAdd_but"));
-        sizePolicy.setHeightForWidth(rAdd_but->sizePolicy().hasHeightForWidth());
-        rAdd_but->setSizePolicy(sizePolicy);
-        rAdd_but->setMinimumSize(QSize(0, 0));
-        rAdd_but->setAutoRepeat(false);
-        rAdd_but->setAutoExclusive(false);
-
-        gridLayout_4->addWidget(rAdd_but, 2, 14, 1, 1);
-
-        label_3 = new QLabel(frame_3);
-        label_3->setObjectName(QString::fromUtf8("label_3"));
-        sizePolicy.setHeightForWidth(label_3->sizePolicy().hasHeightForWidth());
-        label_3->setSizePolicy(sizePolicy);
-        label_3->setMinimumSize(QSize(0, 0));
-
-        gridLayout_4->addWidget(label_3, 2, 15, 1, 1);
-
-        zAdd_but = new QPushButton(frame_3);
-        zAdd_but->setObjectName(QString::fromUtf8("zAdd_but"));
-        sizePolicy.setHeightForWidth(zAdd_but->sizePolicy().hasHeightForWidth());
-        zAdd_but->setSizePolicy(sizePolicy);
-        zAdd_but->setMinimumSize(QSize(0, 0));
-        zAdd_but->setAutoRepeat(false);
-        zAdd_but->setAutoExclusive(false);
-
-        gridLayout_4->addWidget(zAdd_but, 2, 13, 1, 1);
-
-        yCurPos_lab = new QLabel(frame_3);
-        yCurPos_lab->setObjectName(QString::fromUtf8("yCurPos_lab"));
-        sizePolicy.setHeightForWidth(yCurPos_lab->sizePolicy().hasHeightForWidth());
-        yCurPos_lab->setSizePolicy(sizePolicy);
-        yCurPos_lab->setMinimumSize(QSize(0, 0));
-        yCurPos_lab->setFont(font1);
-
-        gridLayout_4->addWidget(yCurPos_lab, 5, 6, 1, 1);
-
-        label_7 = new QLabel(frame_3);
-        label_7->setObjectName(QString::fromUtf8("label_7"));
-        sizePolicy.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
-        label_7->setSizePolicy(sizePolicy);
-        label_7->setMinimumSize(QSize(0, 0));
-        label_7->setFont(font1);
-        label_7->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
-        gridLayout_4->addWidget(label_7, 5, 5, 1, 1);
-
-        label_11 = new QLabel(frame_3);
-        label_11->setObjectName(QString::fromUtf8("label_11"));
-        sizePolicy.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
-        label_11->setSizePolicy(sizePolicy);
-        label_11->setMinimumSize(QSize(0, 0));
-        label_11->setFont(font1);
-        label_11->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
-        gridLayout_4->addWidget(label_11, 5, 8, 1, 1);
-
-        disMess_lab = new QLabel(frame_3);
-        disMess_lab->setObjectName(QString::fromUtf8("disMess_lab"));
-        sizePolicy.setHeightForWidth(disMess_lab->sizePolicy().hasHeightForWidth());
-        disMess_lab->setSizePolicy(sizePolicy);
-
-        gridLayout_4->addWidget(disMess_lab, 5, 0, 1, 4);
-
-
-        gridLayout_5->addWidget(frame_3, 0, 0, 1, 2);
-
-        widget = new QWidget(centralwidget);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        sizePolicy.setHeightForWidth(widget->sizePolicy().hasHeightForWidth());
-        widget->setSizePolicy(sizePolicy);
-        widget->setMinimumSize(QSize(0, 0));
-        horizontalLayout_2 = new QHBoxLayout(widget);
-        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        comboBox = new QComboBox(widget);
-        comboBox->addItem(QString());
-        comboBox->addItem(QString());
-        comboBox->addItem(QString());
-        comboBox->addItem(QString());
-        comboBox->setObjectName(QString::fromUtf8("comboBox"));
-        sizePolicy.setHeightForWidth(comboBox->sizePolicy().hasHeightForWidth());
-        comboBox->setSizePolicy(sizePolicy);
-        comboBox->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(comboBox);
-
-        label_5 = new QLabel(widget);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
-        sizePolicy.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
-        label_5->setSizePolicy(sizePolicy);
-        label_5->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(label_5);
-
-        scanVelocity_lin = new QLineEdit(widget);
-        scanVelocity_lin->setObjectName(QString::fromUtf8("scanVelocity_lin"));
-        sizePolicy.setHeightForWidth(scanVelocity_lin->sizePolicy().hasHeightForWidth());
-        scanVelocity_lin->setSizePolicy(sizePolicy);
-        scanVelocity_lin->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(scanVelocity_lin);
-
-        label_14 = new QLabel(widget);
-        label_14->setObjectName(QString::fromUtf8("label_14"));
-        sizePolicy.setHeightForWidth(label_14->sizePolicy().hasHeightForWidth());
-        label_14->setSizePolicy(sizePolicy);
-        label_14->setMinimumSize(QSize(0, 0));
-        label_14->setFont(font);
-
-        horizontalLayout_2->addWidget(label_14);
-
-        label_23 = new QLabel(widget);
-        label_23->setObjectName(QString::fromUtf8("label_23"));
-        sizePolicy.setHeightForWidth(label_23->sizePolicy().hasHeightForWidth());
-        label_23->setSizePolicy(sizePolicy);
-        label_23->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(label_23);
-
-        AxleVelocity_lin = new QLineEdit(widget);
-        AxleVelocity_lin->setObjectName(QString::fromUtf8("AxleVelocity_lin"));
-        sizePolicy.setHeightForWidth(AxleVelocity_lin->sizePolicy().hasHeightForWidth());
-        AxleVelocity_lin->setSizePolicy(sizePolicy);
-        AxleVelocity_lin->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(AxleVelocity_lin);
-
-        label_17 = new QLabel(widget);
-        label_17->setObjectName(QString::fromUtf8("label_17"));
-        sizePolicy.setHeightForWidth(label_17->sizePolicy().hasHeightForWidth());
-        label_17->setSizePolicy(sizePolicy);
-        label_17->setMinimumSize(QSize(0, 0));
-        label_17->setFont(font);
-
-        horizontalLayout_2->addWidget(label_17);
-
-        label_24 = new QLabel(widget);
-        label_24->setObjectName(QString::fromUtf8("label_24"));
-        sizePolicy.setHeightForWidth(label_24->sizePolicy().hasHeightForWidth());
-        label_24->setSizePolicy(sizePolicy);
-        label_24->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(label_24);
-
-        pointVelocity_lin = new QLineEdit(widget);
-        pointVelocity_lin->setObjectName(QString::fromUtf8("pointVelocity_lin"));
-        sizePolicy.setHeightForWidth(pointVelocity_lin->sizePolicy().hasHeightForWidth());
-        pointVelocity_lin->setSizePolicy(sizePolicy);
-        pointVelocity_lin->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(pointVelocity_lin);
-
-        label_21 = new QLabel(widget);
-        label_21->setObjectName(QString::fromUtf8("label_21"));
-        sizePolicy.setHeightForWidth(label_21->sizePolicy().hasHeightForWidth());
-        label_21->setSizePolicy(sizePolicy);
-        label_21->setMinimumSize(QSize(0, 0));
-        label_21->setFont(font);
-
-        horizontalLayout_2->addWidget(label_21);
-
-        label_16 = new QLabel(widget);
-        label_16->setObjectName(QString::fromUtf8("label_16"));
-        sizePolicy.setHeightForWidth(label_16->sizePolicy().hasHeightForWidth());
-        label_16->setSizePolicy(sizePolicy);
-        label_16->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(label_16);
-
-        lineVelocity_lin = new QLineEdit(widget);
-        lineVelocity_lin->setObjectName(QString::fromUtf8("lineVelocity_lin"));
-        sizePolicy.setHeightForWidth(lineVelocity_lin->sizePolicy().hasHeightForWidth());
-        lineVelocity_lin->setSizePolicy(sizePolicy);
-        lineVelocity_lin->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(lineVelocity_lin);
-
-        label_18 = new QLabel(widget);
-        label_18->setObjectName(QString::fromUtf8("label_18"));
-        sizePolicy.setHeightForWidth(label_18->sizePolicy().hasHeightForWidth());
-        label_18->setSizePolicy(sizePolicy);
-        label_18->setMinimumSize(QSize(0, 0));
-        label_18->setFont(font);
-
-        horizontalLayout_2->addWidget(label_18);
-
-        label_20 = new QLabel(widget);
-        label_20->setObjectName(QString::fromUtf8("label_20"));
-        sizePolicy.setHeightForWidth(label_20->sizePolicy().hasHeightForWidth());
-        label_20->setSizePolicy(sizePolicy);
-        label_20->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(label_20);
-
-        arcVelocity_lin = new QLineEdit(widget);
-        arcVelocity_lin->setObjectName(QString::fromUtf8("arcVelocity_lin"));
-        sizePolicy.setHeightForWidth(arcVelocity_lin->sizePolicy().hasHeightForWidth());
-        arcVelocity_lin->setSizePolicy(sizePolicy);
-        arcVelocity_lin->setMinimumSize(QSize(0, 0));
-
-        horizontalLayout_2->addWidget(arcVelocity_lin);
-
-        label_19 = new QLabel(widget);
-        label_19->setObjectName(QString::fromUtf8("label_19"));
-        sizePolicy.setHeightForWidth(label_19->sizePolicy().hasHeightForWidth());
-        label_19->setSizePolicy(sizePolicy);
-        label_19->setMinimumSize(QSize(0, 0));
-        label_19->setFont(font);
-
-        horizontalLayout_2->addWidget(label_19);
-
-
-        gridLayout_5->addWidget(widget, 4, 0, 1, 2);
+        graphicsView = new TGraphicsViewRefactor(centralwidget);
+        graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
+        graphicsView->setEnabled(true);
+        sizePolicy.setHeightForWidth(graphicsView->sizePolicy().hasHeightForWidth());
+        graphicsView->setSizePolicy(sizePolicy);
+        graphicsView->setMinimumSize(QSize(0, 0));
+        graphicsView->setMaximumSize(QSize(16777215, 16777215));
+        graphicsView->setBaseSize(QSize(0, 0));
+        graphicsView->setInteractive(true);
+
+        gridLayout_5->addWidget(graphicsView, 1, 0, 1, 1);
+
+        State = new QTabWidget(centralwidget);
+        State->setObjectName(QString::fromUtf8("State"));
+        sizePolicy.setHeightForWidth(State->sizePolicy().hasHeightForWidth());
+        State->setSizePolicy(sizePolicy);
+        State->setMinimumSize(QSize(0, 0));
+        State->setLayoutDirection(Qt::LeftToRight);
+        State->setTabPosition(QTabWidget::West);
+        tab_2 = new QWidget();
+        tab_2->setObjectName(QString::fromUtf8("tab_2"));
+        gridLayout = new QGridLayout(tab_2);
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        moveDownTabelRow_btu = new QPushButton(tab_2);
+        moveDownTabelRow_btu->setObjectName(QString::fromUtf8("moveDownTabelRow_btu"));
+        sizePolicy.setHeightForWidth(moveDownTabelRow_btu->sizePolicy().hasHeightForWidth());
+        moveDownTabelRow_btu->setSizePolicy(sizePolicy);
+        moveDownTabelRow_btu->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(moveDownTabelRow_btu, 2, 3, 1, 1);
+
+        editPos_but = new QPushButton(tab_2);
+        editPos_but->setObjectName(QString::fromUtf8("editPos_but"));
+        sizePolicy.setHeightForWidth(editPos_but->sizePolicy().hasHeightForWidth());
+        editPos_but->setSizePolicy(sizePolicy);
+        editPos_but->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(editPos_but, 1, 0, 1, 1);
+
+        insertLinePos_but = new QPushButton(tab_2);
+        insertLinePos_but->setObjectName(QString::fromUtf8("insertLinePos_but"));
+        sizePolicy.setHeightForWidth(insertLinePos_but->sizePolicy().hasHeightForWidth());
+        insertLinePos_but->setSizePolicy(sizePolicy);
+        insertLinePos_but->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(insertLinePos_but, 1, 3, 1, 1);
+
+        insertArcPos_but = new QPushButton(tab_2);
+        insertArcPos_but->setObjectName(QString::fromUtf8("insertArcPos_but"));
+        sizePolicy.setHeightForWidth(insertArcPos_but->sizePolicy().hasHeightForWidth());
+        insertArcPos_but->setSizePolicy(sizePolicy);
+        insertArcPos_but->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(insertArcPos_but, 1, 2, 1, 1);
+
+        moveUpTabelRow_btu = new QPushButton(tab_2);
+        moveUpTabelRow_btu->setObjectName(QString::fromUtf8("moveUpTabelRow_btu"));
+        sizePolicy.setHeightForWidth(moveUpTabelRow_btu->sizePolicy().hasHeightForWidth());
+        moveUpTabelRow_btu->setSizePolicy(sizePolicy);
+        moveUpTabelRow_btu->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(moveUpTabelRow_btu, 2, 2, 1, 1);
+
+        cleanTable_but = new QPushButton(tab_2);
+        cleanTable_but->setObjectName(QString::fromUtf8("cleanTable_but"));
+        sizePolicy.setHeightForWidth(cleanTable_but->sizePolicy().hasHeightForWidth());
+        cleanTable_but->setSizePolicy(sizePolicy);
+        cleanTable_but->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(cleanTable_but, 1, 1, 1, 1);
+
+        moveDirectionNot_but = new QPushButton(tab_2);
+        moveDirectionNot_but->setObjectName(QString::fromUtf8("moveDirectionNot_but"));
+        sizePolicy.setHeightForWidth(moveDirectionNot_but->sizePolicy().hasHeightForWidth());
+        moveDirectionNot_but->setSizePolicy(sizePolicy);
+        moveDirectionNot_but->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(moveDirectionNot_but, 2, 1, 1, 1);
+
+        tableView = new QTableView(tab_2);
+        tableView->setObjectName(QString::fromUtf8("tableView"));
+        sizePolicy.setHeightForWidth(tableView->sizePolicy().hasHeightForWidth());
+        tableView->setSizePolicy(sizePolicy);
+        tableView->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(tableView, 0, 0, 1, 4);
+
+        delete_but = new QPushButton(tab_2);
+        delete_but->setObjectName(QString::fromUtf8("delete_but"));
+        sizePolicy.setHeightForWidth(delete_but->sizePolicy().hasHeightForWidth());
+        delete_but->setSizePolicy(sizePolicy);
+        delete_but->setMinimumSize(QSize(0, 0));
+
+        gridLayout->addWidget(delete_but, 2, 0, 1, 1);
+
+        gridLayout->setRowStretch(0, 15);
+        State->addTab(tab_2, QString());
+        plcState = new QWidget();
+        plcState->setObjectName(QString::fromUtf8("plcState"));
+        State->addTab(plcState, QString());
+
+        gridLayout_5->addWidget(State, 1, 1, 1, 1);
 
         gridLayout_5->setRowStretch(1, 15);
         gridLayout_5->setColumnStretch(0, 5);
@@ -1202,7 +1206,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
+        State->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -1211,15 +1215,61 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        moveDownTabelRow_btu->setText(QCoreApplication::translate("MainWindow", "\345\220\221\344\270\213\347\247\273\345\212\250\350\241\214", nullptr));
-        editPos_but->setText(QCoreApplication::translate("MainWindow", "\347\274\226\350\276\221", nullptr));
-        insertLinePos_but->setText(QCoreApplication::translate("MainWindow", "\346\217\222\345\205\245\347\233\264\347\272\277", nullptr));
-        insertArcPos_but->setText(QCoreApplication::translate("MainWindow", "\346\217\222\345\205\245\345\234\206\345\274\247", nullptr));
-        moveUpTabelRow_btu->setText(QCoreApplication::translate("MainWindow", "\345\220\221\344\270\212\347\247\273\345\212\250\350\241\214", nullptr));
-        cleanTable_but->setText(QCoreApplication::translate("MainWindow", "\346\270\205\347\251\272\350\241\250\346\240\274", nullptr));
-        moveDirectionNot_but->setText(QCoreApplication::translate("MainWindow", "\350\277\220\345\212\250\346\226\271\345\220\221\345\217\215\350\275\254", nullptr));
-        delete_but->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(tab_2), QCoreApplication::translate("MainWindow", "Trajectory Scan", nullptr));
+        label_11->setText(QCoreApplication::translate("MainWindow", "r\357\274\232", nullptr));
+        xAdd_but->setText(QCoreApplication::translate("MainWindow", "X+", nullptr));
+        ip_lin->setText(QCoreApplication::translate("MainWindow", "192.168.1.88", nullptr));
+        xSub_but->setText(QCoreApplication::translate("MainWindow", "X-", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow", "Port:", nullptr));
+        plcType_cb->setItemText(0, QCoreApplication::translate("MainWindow", "h5u", nullptr));
+        plcType_cb->setItemText(1, QCoreApplication::translate("MainWindow", "ac700", nullptr));
+
+        label_12->setText(QCoreApplication::translate("MainWindow", "mm", nullptr));
+        xCurPos_lab->setText(QString());
+        zCurPos_lab->setText(QString());
+        label_6->setText(QCoreApplication::translate("MainWindow", "x\357\274\232", nullptr));
+        label_3->setText(QCoreApplication::translate("MainWindow", "plc\347\261\273\345\236\213\357\274\232", nullptr));
+        yCurPos_lab->setText(QString());
+        label_7->setText(QCoreApplication::translate("MainWindow", "y\357\274\232", nullptr));
+        ySub_but->setText(QCoreApplication::translate("MainWindow", "Y-", nullptr));
+        disMess_lab->setText(QString());
+        yAdd_but->setText(QCoreApplication::translate("MainWindow", "Y+", nullptr));
+        rAdd_but->setText(QCoreApplication::translate("MainWindow", "R+", nullptr));
+        zSub_but->setText(QCoreApplication::translate("MainWindow", "Z-", nullptr));
+        label_10->setText(QCoreApplication::translate("MainWindow", "mm", nullptr));
+        rSub_but->setText(QCoreApplication::translate("MainWindow", "R-", nullptr));
+        label_8->setText(QCoreApplication::translate("MainWindow", "mm", nullptr));
+        label_13->setText(QCoreApplication::translate("MainWindow", "z\357\274\232", nullptr));
+        zAdd_but->setText(QCoreApplication::translate("MainWindow", "Z+", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "IP:", nullptr));
+        label_9->setText(QCoreApplication::translate("MainWindow", "mm", nullptr));
+        rCurPos_lab->setText(QString());
+        port_lin->setText(QCoreApplication::translate("MainWindow", "502", nullptr));
+        connect_but->setText(QCoreApplication::translate("MainWindow", " \350\277\236\346\216\245", nullptr));
+        comboBox->setItemText(0, QCoreApplication::translate("MainWindow", "x", nullptr));
+        comboBox->setItemText(1, QCoreApplication::translate("MainWindow", "y", nullptr));
+        comboBox->setItemText(2, QCoreApplication::translate("MainWindow", "z", nullptr));
+        comboBox->setItemText(3, QCoreApplication::translate("MainWindow", "r", nullptr));
+
+        label_5->setText(QCoreApplication::translate("MainWindow", "\350\275\264\351\200\237\345\272\246\357\274\232", nullptr));
+        scanVelocity_lin->setText(QString());
+        scanVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
+        label_14->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
+        label_23->setText(QCoreApplication::translate("MainWindow", "\345\256\232\344\275\215\351\200\237\345\272\246\357\274\232", nullptr));
+        AxleVelocity_lin->setText(QString());
+        AxleVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
+        label_17->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
+        label_24->setText(QCoreApplication::translate("MainWindow", "\347\202\271\345\212\250\351\200\237\345\272\246\357\274\232", nullptr));
+        pointVelocity_lin->setText(QString());
+        pointVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
+        label_21->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
+        label_16->setText(QCoreApplication::translate("MainWindow", "\347\233\264\347\272\277\351\200\237\345\272\246\357\274\232", nullptr));
+        lineVelocity_lin->setText(QString());
+        lineVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
+        label_18->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
+        label_20->setText(QCoreApplication::translate("MainWindow", "\345\234\206\345\274\247\351\200\237\345\272\246\357\274\232", nullptr));
+        arcVelocity_lin->setText(QString());
+        arcVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
+        label_19->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
         pBdeletePiece->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", nullptr));
         V_label_4->setText(QCoreApplication::translate("MainWindow", "y:", nullptr));
         smooth_but->setText(QCoreApplication::translate("MainWindow", "\344\270\200\351\224\256\351\241\272\346\273\221", nullptr));
@@ -1259,61 +1309,16 @@ public:
         traject_y0->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
         imageProcess_but->setText(QCoreApplication::translate("MainWindow", "imageProcess", nullptr));
         writeInPLC_but->setText(QCoreApplication::translate("MainWindow", " \345\257\204\345\255\230\345\231\250\350\277\220\350\241\214\357\274\210plc\357\274\211", nullptr));
-        zSub_but->setText(QCoreApplication::translate("MainWindow", "Z-", nullptr));
-        port_lin->setText(QCoreApplication::translate("MainWindow", "502", nullptr));
-        label_2->setText(QCoreApplication::translate("MainWindow", "Port:", nullptr));
-        xAdd_but->setText(QCoreApplication::translate("MainWindow", "X+", nullptr));
-        yAdd_but->setText(QCoreApplication::translate("MainWindow", "Y+", nullptr));
-        rSub_but->setText(QCoreApplication::translate("MainWindow", "R-", nullptr));
-        label_10->setText(QCoreApplication::translate("MainWindow", "mm", nullptr));
-        label_12->setText(QCoreApplication::translate("MainWindow", "mm", nullptr));
-        label_6->setText(QCoreApplication::translate("MainWindow", "x\357\274\232", nullptr));
-        label_8->setText(QCoreApplication::translate("MainWindow", "mm", nullptr));
-        rCurPos_lab->setText(QString());
-        label_9->setText(QCoreApplication::translate("MainWindow", "mm", nullptr));
-        xSub_but->setText(QCoreApplication::translate("MainWindow", "X-", nullptr));
-        zCurPos_lab->setText(QString());
-        ySub_but->setText(QCoreApplication::translate("MainWindow", "Y-", nullptr));
-        label->setText(QCoreApplication::translate("MainWindow", "IP:", nullptr));
-        plcType_cb->setItemText(0, QCoreApplication::translate("MainWindow", "h5u", nullptr));
-        plcType_cb->setItemText(1, QCoreApplication::translate("MainWindow", "ac700", nullptr));
-
-        xCurPos_lab->setText(QString());
-        connect_but->setText(QCoreApplication::translate("MainWindow", " \350\277\236\346\216\245", nullptr));
-        ip_lin->setText(QCoreApplication::translate("MainWindow", "192.168.1.88", nullptr));
-        label_13->setText(QCoreApplication::translate("MainWindow", "z\357\274\232", nullptr));
-        rAdd_but->setText(QCoreApplication::translate("MainWindow", "R+", nullptr));
-        label_3->setText(QCoreApplication::translate("MainWindow", "plc\347\261\273\345\236\213\357\274\232", nullptr));
-        zAdd_but->setText(QCoreApplication::translate("MainWindow", "Z+", nullptr));
-        yCurPos_lab->setText(QString());
-        label_7->setText(QCoreApplication::translate("MainWindow", "y\357\274\232", nullptr));
-        label_11->setText(QCoreApplication::translate("MainWindow", "r\357\274\232", nullptr));
-        disMess_lab->setText(QString());
-        comboBox->setItemText(0, QCoreApplication::translate("MainWindow", "x", nullptr));
-        comboBox->setItemText(1, QCoreApplication::translate("MainWindow", "y", nullptr));
-        comboBox->setItemText(2, QCoreApplication::translate("MainWindow", "z", nullptr));
-        comboBox->setItemText(3, QCoreApplication::translate("MainWindow", "r", nullptr));
-
-        label_5->setText(QCoreApplication::translate("MainWindow", "\350\275\264\351\200\237\345\272\246\357\274\232", nullptr));
-        scanVelocity_lin->setText(QString());
-        scanVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
-        label_14->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
-        label_23->setText(QCoreApplication::translate("MainWindow", "\345\256\232\344\275\215\351\200\237\345\272\246\357\274\232", nullptr));
-        AxleVelocity_lin->setText(QString());
-        AxleVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
-        label_17->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
-        label_24->setText(QCoreApplication::translate("MainWindow", "\347\202\271\345\212\250\351\200\237\345\272\246\357\274\232", nullptr));
-        pointVelocity_lin->setText(QString());
-        pointVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
-        label_21->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
-        label_16->setText(QCoreApplication::translate("MainWindow", "\347\233\264\347\272\277\351\200\237\345\272\246\357\274\232", nullptr));
-        lineVelocity_lin->setText(QString());
-        lineVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
-        label_18->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
-        label_20->setText(QCoreApplication::translate("MainWindow", "\345\234\206\345\274\247\351\200\237\345\272\246\357\274\232", nullptr));
-        arcVelocity_lin->setText(QString());
-        arcVelocity_lin->setPlaceholderText(QCoreApplication::translate("MainWindow", "\345\233\236\350\275\246\347\241\256\350\256\244", nullptr));
-        label_19->setText(QCoreApplication::translate("MainWindow", "mm/s", nullptr));
+        moveDownTabelRow_btu->setText(QCoreApplication::translate("MainWindow", "\345\220\221\344\270\213\347\247\273\345\212\250\350\241\214", nullptr));
+        editPos_but->setText(QCoreApplication::translate("MainWindow", "\347\274\226\350\276\221", nullptr));
+        insertLinePos_but->setText(QCoreApplication::translate("MainWindow", "\346\217\222\345\205\245\347\233\264\347\272\277", nullptr));
+        insertArcPos_but->setText(QCoreApplication::translate("MainWindow", "\346\217\222\345\205\245\345\234\206\345\274\247", nullptr));
+        moveUpTabelRow_btu->setText(QCoreApplication::translate("MainWindow", "\345\220\221\344\270\212\347\247\273\345\212\250\350\241\214", nullptr));
+        cleanTable_but->setText(QCoreApplication::translate("MainWindow", "\346\270\205\347\251\272\350\241\250\346\240\274", nullptr));
+        moveDirectionNot_but->setText(QCoreApplication::translate("MainWindow", "\350\277\220\345\212\250\346\226\271\345\220\221\345\217\215\350\275\254", nullptr));
+        delete_but->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", nullptr));
+        State->setTabText(State->indexOf(tab_2), QCoreApplication::translate("MainWindow", "Trajectory Scan", nullptr));
+        State->setTabText(State->indexOf(plcState), QCoreApplication::translate("MainWindow", "plcState", nullptr));
     } // retranslateUi
 
 };

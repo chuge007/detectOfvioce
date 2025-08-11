@@ -5,7 +5,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QSettings>
-#include "mainwindow.h"
+#include "MotionControl.h"
 
 namespace Ui {
 class ascan;
@@ -30,7 +30,7 @@ public:
 
     int     numStepCorretionRow;
     int     numStepCorretionCol;
-    MainWindow *mw;
+    MotionControl *mw;
 
     std::vector<std::pair<float, float>> getNeighbors(float x, float y, float z, float r, float searchRange, float stepSize);
     bool autoCorretionPathAlgrith(int index, float& x, float& y, float& z, float& r);

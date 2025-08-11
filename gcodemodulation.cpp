@@ -1,6 +1,6 @@
 ﻿#include "gcodemodulation.h"
 #include "ui_gcodemodulation.h"
-#include "mainwindow.h"
+#include "MotionControl.h"
 #include "./libssh2_1.11.0_x64/libssh2.h"
 #include "./libssh2_1.11.0_x64/libssh2_publickey.h"
 #include "./libssh2_1.11.0_x64/libssh2_sftp.h"
@@ -78,7 +78,7 @@ gCodeModulation::gCodeModulation(QWidget *parent) :
     connect(ui->TransmissionBtn, &QPushButton::clicked,this, &gCodeModulation::TransmissionFile);
     connect(ui->trajectory_smooth_but, &QPushButton::clicked,this, &gCodeModulation::on_trajectory_smooth_clicked);
 
-    connect(ui->pbAganStart, &QPushButton::clicked, MainWindow::scanDetectCtrl, &ScanControlAbstract::on_aganStartScanBtn_clicked);
+    connect(ui->pbAganStart, &QPushButton::clicked, MotionControl::scanDetectCtrl, &ScanControlAbstract::on_aganStartScanBtn_clicked);
     connect(ui->pTEgcode, &QPlainTextEdit::textChanged, this, &gCodeModulation::autoSave);
     gcodePath = QCoreApplication::applicationDirPath() + "/PlcLogic/";
 
