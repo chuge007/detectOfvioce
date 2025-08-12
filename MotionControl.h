@@ -55,8 +55,21 @@ public:
         double r;
     };
 
+    struct AxisLimit {
+        double min;
+        double max;
+    };
 
+    AxisLimit limitX;
+    AxisLimit limitY;
+    AxisLimit limitZ;
+    AxisLimit limitR;
 
+    bool getAxisLimits(QWidget *parent,
+                       double &xmin, double &xmax,
+                       double &ymin, double &ymax,
+                       double &zmin, double &zmax,
+                       double &rmin, double &rmax);
 
     static ScanControlAbstract *scanDetectCtrl;
 

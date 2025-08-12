@@ -46,6 +46,11 @@
 #include <QSqlDriver>
 #include <QSqlRecord>
 #include <QThread>
+#include <QDialog>
+#include <QFormLayout>
+#include <QDoubleSpinBox>
+#include <QDialogButtonBox>
+
 
 ScanControlAbstract *MotionControl::scanDetectCtrl=0;
 
@@ -202,7 +207,7 @@ MotionControl::MotionControl(QWidget *parent)
     connect(ui->alarmReset_but, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_alarmResetBtn_clicked);
     //connect(ui->startScan_But, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_startScanBtn_clicked);
     connect(ui->stopScan_but, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_stopScanBtn_clicked);
-    connect(ui->stopScan_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_stopScanBtn_clicked);
+    //connect(ui->stopScan_but, &QPushButton::released, scanDetectCtrl, &ScanControlAbstract::on_stopScanBtn_clicked);
     connect(ui->endScan_but, &QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::on_endScanBtn_clicked);
     connect(ui->pbBackO,&QPushButton::clicked, scanDetectCtrl, &ScanControlAbstract::onBackOriginBtn_clicked);
 
@@ -401,6 +406,31 @@ void MotionControl::updatePosition(QPointF pos,float cur_r,float cur_z)
     QGraphicsEllipseItem* circle = new QGraphicsEllipseItem(scaledX - 5, scaledY - 5, 10, 10); // 半径为 5 的小圆圈
     circle->setBrush(QBrush(Qt::red));  // 红色
     scene->addItem(circle);
+
+
+
+    QStringList overLimits;
+
+    if (pos.x() < limitX.min) overLimits << QString::fromLocal8Bit("X轴低限");
+    else if (pos.x() > limitX.max) overLimits << QString::fromLocal8Bit("X轴高限");
+
+    if (pos.y() < limitY.min) overLimits << QString::fromLocal8Bit("Y轴低限");
+    else if (pos.y() > limitY.max) overLimits << QString::fromLocal8Bit("Y轴高限");
+
+    if (cur_z < limitZ.min) overLimits << QString::fromLocal8Bit("Z轴低限");
+    else if (cur_z > limitZ.max) overLimits << QString::fromLocal8Bit("Z轴高限");
+
+    if (cur_r < limitR.min) overLimits << QString::fromLocal8Bit("R轴低限");
+    else if (cur_r > limitR.max) overLimits << QString::fromLocal8Bit("R轴高限");
+
+    if (!overLimits.isEmpty()) {
+        scanDetectCtrl->on_stopScanBtn_clicked();
+        QString msg = QString::fromLocal8Bit("安全警报！超出限位！：") + overLimits.join(", ");
+        QMessageBox::warning(nullptr, "error", msg);
+    }
+
+
+
 
     currentTargetPos.x=pos.x();
 
@@ -881,6 +911,23 @@ void MotionControl::updateSence()//on_testRout_but_clicked()
         }
     }
 
+
+
+
+    QPointF p1(limitX.min * factor, limitY.min * factor); // 左下角
+    QPointF p2(limitX.max * factor, limitY.min * factor); // 右下角
+    QPointF p3(limitX.max * factor, limitY.max * factor); // 右上角
+    QPointF p4(limitX.min * factor, limitY.max * factor); // 左上角
+    QVector<QPointF> points = {p1, p2, p3, p4};
+    for (int i = 0; i < points.size(); ++i) {
+        QPointF p1 = points[i];
+        QPointF p2 = points[(i + 1) % points.size()];
+        QGraphicsLineItem* line = new QGraphicsLineItem(QLineF(p1, p2));
+        QPen pen(Qt::red);
+        pen.setWidth(2);
+        line->setPen(pen);
+        scene->addItem(line);
+    }
 
     for(int i = 0; i < row_count; ++i)
     {
@@ -2525,6 +2572,7 @@ void MotionControl::modbusStateChange(QModbusDevice::State state){
 
 void MotionControl::PbMoveToPosition(){
 
+    bool SecurityBoundary = QApplication::keyboardModifiers() & Qt::ControlModifier;
     double x = ui->traject_x0->text().toDouble();
     double y = ui->traject_y0->text().toDouble();
     double z = ui->traject_z0->text().toDouble();
@@ -2534,7 +2582,91 @@ void MotionControl::PbMoveToPosition(){
     // 调用运动控制，设置目标位置
     scanDetectCtrl->runTargetPosition(x, y, z, r);
 
+    if(SecurityBoundary){
+
+        double xmin, xmax, ymin, ymax, zmin, zmax, rmin, rmax;
+        if (getAxisLimits(this, xmin, xmax, ymin, ymax, zmin, zmax, rmin, rmax)) {
+            qDebug() << "X:" << xmin << xmax;
+            qDebug() << "Y:" << ymin << ymax;
+            qDebug() << "Z:" << zmin << zmax;
+            qDebug() << "R:" << rmin << rmax;
+
+            limitX.min = xmin;
+            limitX.max = xmax;
+
+            limitY.min = ymin;
+            limitY.max = ymax;
+
+            limitZ.min = zmin;
+            limitZ.max = zmax;
+
+            limitR.min = rmin;
+            limitR.max = rmax;
+
+
+        }
+
+        saveSetting();
+        updateSence();
+    }
 }
+
+bool MotionControl::getAxisLimits(QWidget *parent,
+                   double &xmin, double &xmax,
+                   double &ymin, double &ymax,
+                   double &zmin, double &zmax,
+                   double &rmin, double &rmax)
+{
+    QDialog dlg(parent);
+    dlg.setWindowTitle(QString::fromLocal8Bit("设置轴限位"));
+
+    QFormLayout *layout = new QFormLayout(&dlg);
+
+    QDoubleSpinBox *spinXmin = new QDoubleSpinBox;
+    QDoubleSpinBox *spinXmax = new QDoubleSpinBox;
+    QDoubleSpinBox *spinYmin = new QDoubleSpinBox;
+    QDoubleSpinBox *spinYmax = new QDoubleSpinBox;
+    QDoubleSpinBox *spinZmin = new QDoubleSpinBox;
+    QDoubleSpinBox *spinZmax = new QDoubleSpinBox;
+    QDoubleSpinBox *spinRmin = new QDoubleSpinBox;
+    QDoubleSpinBox *spinRmax = new QDoubleSpinBox;
+
+    QList<QDoubleSpinBox*> spins = {spinXmin, spinXmax, spinYmin, spinYmax, spinZmin, spinZmax, spinRmin, spinRmax};
+    for (auto spin : spins) {
+        spin->setRange(-1e6, 1e6);
+        spin->setDecimals(3);
+        spin->setValue(0);
+    }
+
+    layout->addRow("X min:", spinXmin);
+    layout->addRow("X max:", spinXmax);
+    layout->addRow("Y min:", spinYmin);
+    layout->addRow("Y max:", spinYmax);
+    layout->addRow("Z min:", spinZmin);
+    layout->addRow("Z max:", spinZmax);
+    layout->addRow("R min:", spinRmin);
+    layout->addRow("R max:", spinRmax);
+
+    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    layout->addWidget(buttons);
+
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+
+    if (dlg.exec() == QDialog::Accepted) {
+        xmin = spinXmin->value();
+        xmax = spinXmax->value();
+        ymin = spinYmin->value();
+        ymax = spinYmax->value();
+        zmin = spinZmin->value();
+        zmax = spinZmax->value();
+        rmin = spinRmin->value();
+        rmax = spinRmax->value();
+        return true;
+    }
+    return false;
+}
+
 void MotionControl::PbSetOrigin(){
 
     bool reverseAll = QApplication::keyboardModifiers() & Qt::ControlModifier;
@@ -3417,6 +3549,20 @@ void MotionControl::saveSetting() {
     settings->setValue("traject_z0", ui->traject_z0->text());
     settings->setValue("traject_r0", ui->traject_r0->text());
 
+
+    settings->setValue("limitX_min", limitX.min);
+    settings->setValue("limitX_max", limitX.max);
+
+    settings->setValue("limitY_min", limitY.min);
+    settings->setValue("limitY_max", limitY.max);
+
+    settings->setValue("limitZ_min", limitZ.min);
+    settings->setValue("limitZ_max", limitZ.max);
+
+    settings->setValue("limitR_min", limitR.min);
+    settings->setValue("limitR_max", limitR.max);
+
+
     // Update workpiece list
     QStringList pieces;
 
@@ -3477,6 +3623,21 @@ void MotionControl::initSetting() {
     ui->traject_y0->setText(settings->value("traject_y0", "0").toString());
     ui->traject_z0->setText(settings->value("traject_z0", "0").toString());
     ui->traject_r0->setText(settings->value("traject_r0", "0").toString());
+
+
+    limitX.min = settings->value("limitX_min", -300).toDouble();
+    limitX.max = settings->value("limitX_max", 300).toDouble();
+
+    limitY.min = settings->value("limitY_min", -300).toDouble();
+    limitY.max = settings->value("limitY_max", 300).toDouble();
+
+    limitZ.min = settings->value("limitZ_min", -50).toDouble();
+    limitZ.max = settings->value("limitZ_max", 50).toDouble();
+
+    limitR.min = settings->value("limitR_min", -720).toDouble();
+    limitR.max = settings->value("limitR_max", 720).toDouble();
+
+
 
     originR=settings->value("originR", "0").toDouble();
     // Load workpiece list
