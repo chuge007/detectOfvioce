@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'gcodemodulation.ui'
 **
-** Created by: Qt User Interface Compiler version 5.14.2
+** Created by: Qt User Interface Compiler version 5.12.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -326,23 +326,23 @@ public:
 
     void retranslateUi(QWidget *gCodeModulation)
     {
-        gCodeModulation->setWindowTitle(QCoreApplication::translate("gCodeModulation", "Form", nullptr));
-        label_4->setText(QCoreApplication::translate("gCodeModulation", "\345\215\225\346\255\245\346\232\202\345\201\234\350\260\203\350\257\225\357\274\232", nullptr));
-        label_10->setText(QCoreApplication::translate("gCodeModulation", "\345\234\206\345\274\247\351\200\237\345\272\246\357\274\232", nullptr));
-        addRangeBtn->setText(QCoreApplication::translate("gCodeModulation", "\346\267\273\345\212\240\346\235\241\344\273\266", nullptr));
-        saveVBtn->setText(QCoreApplication::translate("gCodeModulation", "\344\277\235\345\255\230\351\200\237\345\272\246", nullptr));
-        TransmissionBtn->setText(QCoreApplication::translate("gCodeModulation", "\345\217\221\351\200\201\346\226\207\344\273\266", nullptr));
-        label_9->setText(QCoreApplication::translate("gCodeModulation", "\347\233\264\347\272\277\351\200\237\345\272\246\357\274\232", nullptr));
-        label_6->setText(QCoreApplication::translate("gCodeModulation", "\345\212\240\351\200\237\345\272\246\357\274\232", nullptr));
-        pbDeleteALLPaus->setText(QCoreApplication::translate("gCodeModulation", "\345\205\250\351\203\250\345\210\240\351\231\244", nullptr));
-        label_2->setText(QCoreApplication::translate("gCodeModulation", "\350\241\214\345\217\267\357\274\232", nullptr));
-        pbdeleteCodeLine->setText(QCoreApplication::translate("gCodeModulation", "\345\210\240\351\231\244", nullptr));
-        pbALLPaus->setText(QCoreApplication::translate("gCodeModulation", "\345\205\250\351\203\250\346\217\222\345\205\245", nullptr));
-        label_3->setText(QCoreApplication::translate("gCodeModulation", "\345\210\240\351\231\244N \350\241\214\345\217\267\357\274\232", nullptr));
-        pbAganStart->setText(QCoreApplication::translate("gCodeModulation", "\345\206\215\345\220\257\345\212\250", nullptr));
-        label->setText(QCoreApplication::translate("gCodeModulation", "<html><head/><body><p>\345\234\250\350\277\220\350\241\214\345\210\260N \350\241\214\345\217\267<br/>\346\227\266\346\232\202\345\201\234\357\274\232</p></body></html>", nullptr));
-        pbPaus->setText(QCoreApplication::translate("gCodeModulation", "\346\217\222\345\205\245", nullptr));
-        trajectory_smooth_but->setText(QCoreApplication::translate("gCodeModulation", "\350\275\250\350\277\271\351\241\272\346\273\221", nullptr));
+        gCodeModulation->setWindowTitle(QApplication::translate("gCodeModulation", "Form", nullptr));
+        label_4->setText(QApplication::translate("gCodeModulation", "\345\215\225\346\255\245\346\232\202\345\201\234\350\260\203\350\257\225\357\274\232", nullptr));
+        label_10->setText(QApplication::translate("gCodeModulation", "\345\234\206\345\274\247\351\200\237\345\272\246\357\274\232", nullptr));
+        addRangeBtn->setText(QApplication::translate("gCodeModulation", "\346\267\273\345\212\240\346\235\241\344\273\266", nullptr));
+        saveVBtn->setText(QApplication::translate("gCodeModulation", "\344\277\235\345\255\230\351\200\237\345\272\246", nullptr));
+        TransmissionBtn->setText(QApplication::translate("gCodeModulation", "\345\217\221\351\200\201\346\226\207\344\273\266", nullptr));
+        label_9->setText(QApplication::translate("gCodeModulation", "\347\233\264\347\272\277\351\200\237\345\272\246\357\274\232", nullptr));
+        label_6->setText(QApplication::translate("gCodeModulation", "\345\212\240\351\200\237\345\272\246\357\274\232", nullptr));
+        pbDeleteALLPaus->setText(QApplication::translate("gCodeModulation", "\345\205\250\351\203\250\345\210\240\351\231\244", nullptr));
+        label_2->setText(QApplication::translate("gCodeModulation", "\350\241\214\345\217\267\357\274\232", nullptr));
+        pbdeleteCodeLine->setText(QApplication::translate("gCodeModulation", "\345\210\240\351\231\244", nullptr));
+        pbALLPaus->setText(QApplication::translate("gCodeModulation", "\345\205\250\351\203\250\346\217\222\345\205\245", nullptr));
+        label_3->setText(QApplication::translate("gCodeModulation", "\345\210\240\351\231\244N \350\241\214\345\217\267\357\274\232", nullptr));
+        pbAganStart->setText(QApplication::translate("gCodeModulation", "\345\206\215\345\220\257\345\212\250", nullptr));
+        label->setText(QApplication::translate("gCodeModulation", "<html><head/><body><p>\345\234\250\350\277\220\350\241\214\345\210\260N \350\241\214\345\217\267<br/>\346\227\266\346\232\202\345\201\234\357\274\232</p></body></html>", nullptr));
+        pbPaus->setText(QApplication::translate("gCodeModulation", "\346\217\222\345\205\245", nullptr));
+        trajectory_smooth_but->setText(QApplication::translate("gCodeModulation", "\350\275\250\350\277\271\351\241\272\346\273\221", nullptr));
     } // retranslateUi
 
 };

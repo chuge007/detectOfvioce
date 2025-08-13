@@ -1,19 +1,18 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'MotionControl.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.14.2)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.12.4)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include <memory>
 #include "../MotionControl.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'MotionControl.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.14.2. It"
+#error "This file was generated using the moc from 5.12.4. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -396,7 +395,7 @@ void MotionControl::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
 }
 
 QT_INIT_METAOBJECT const QMetaObject MotionControl::staticMetaObject = { {
-    QMetaObject::SuperData::link<QMainWindow::staticMetaObject>(),
+    &QMainWindow::staticMetaObject,
     qt_meta_stringdata_MotionControl.data,
     qt_meta_data_MotionControl,
     qt_static_metacall,
@@ -438,70 +437,70 @@ int MotionControl::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 // SIGNAL 0
 void MotionControl::x_velocity_editingFinished(float _t1)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 
 // SIGNAL 1
 void MotionControl::y_velocity_editingFinished(float _t1)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);
 }
 
 // SIGNAL 2
 void MotionControl::jog_velocity_editingFinished(float _t1)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 2, _a);
 }
 
 // SIGNAL 3
 void MotionControl::x_lenght_editingFinished(float _t1)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 3, _a);
 }
 
 // SIGNAL 4
 void MotionControl::y_lenght_editingFinished(float _t1)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 4, _a);
 }
 
 // SIGNAL 5
 void MotionControl::y_step_editingFinished(float _t1)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 5, _a);
 }
 
 // SIGNAL 6
 void MotionControl::backOrigin_velocity_editingFinished(float _t1)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 6, _a);
 }
 
 // SIGNAL 7
 void MotionControl::scan_velocity_editingFinished(float _t1)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 7, _a);
 }
 
 // SIGNAL 8
 void MotionControl::jog_add_sub_velocity_editingFinished(float _t1)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 8, _a);
 }
 
 // SIGNAL 9
 void MotionControl::movePosition(double _t1, double _t2)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 9, _a);
 }
 

@@ -3,6 +3,7 @@
 #include "databasemanager.h"
 #include "graphicTool.h"
 #include "CoustomGraphicsView.h"
+#include "Graphics_view_zoom.h"
 #include "dxfhelper.h"
 #include "scandetect_frictionwelding.h"
 #include "imageprocessing.h"
@@ -407,31 +408,6 @@ void MotionControl::updatePosition(QPointF pos,float cur_r,float cur_z)
     circle->setBrush(QBrush(Qt::red));  // 红色
     scene->addItem(circle);
 
-
-
-    QStringList overLimits;
-
-    if (pos.x() < limitX.min) overLimits << QString::fromLocal8Bit("X轴低限");
-    else if (pos.x() > limitX.max) overLimits << QString::fromLocal8Bit("X轴高限");
-
-    if (pos.y() < limitY.min) overLimits << QString::fromLocal8Bit("Y轴低限");
-    else if (pos.y() > limitY.max) overLimits << QString::fromLocal8Bit("Y轴高限");
-
-    if (cur_z < limitZ.min) overLimits << QString::fromLocal8Bit("Z轴低限");
-    else if (cur_z > limitZ.max) overLimits << QString::fromLocal8Bit("Z轴高限");
-
-    if (cur_r < limitR.min) overLimits << QString::fromLocal8Bit("R轴低限");
-    else if (cur_r > limitR.max) overLimits << QString::fromLocal8Bit("R轴高限");
-
-    if (!overLimits.isEmpty()) {
-        scanDetectCtrl->on_stopScanBtn_clicked();
-        QString msg = QString::fromLocal8Bit("安全警报！超出限位！：") + overLimits.join(", ");
-        QMessageBox::warning(nullptr, "error", msg);
-    }
-
-
-
-
     currentTargetPos.x=pos.x();
 
     currentTargetPos.y=pos.y();
@@ -439,6 +415,43 @@ void MotionControl::updatePosition(QPointF pos,float cur_r,float cur_z)
     currentTargetPos.z=cur_z;
 
     currentTargetPos.r=cur_r;
+
+
+
+
+    if(!isLimit){
+
+        QStringList overLimits;
+
+        if (pos.x() < limitX.min) overLimits << QString::fromLocal8Bit("X轴低限");
+        else if (pos.x() > limitX.max) overLimits << QString::fromLocal8Bit("X轴高限");
+
+        if (pos.y() < limitY.min) overLimits << QString::fromLocal8Bit("Y轴低限");
+        else if (pos.y() > limitY.max) overLimits << QString::fromLocal8Bit("Y轴高限");
+
+        if (cur_z < limitZ.min) overLimits << QString::fromLocal8Bit("Z轴低限");
+        else if (cur_z > limitZ.max) overLimits << QString::fromLocal8Bit("Z轴高限");
+
+        if (cur_r < limitR.min) overLimits << QString::fromLocal8Bit("R轴低限");
+        else if (cur_r > limitR.max) overLimits << QString::fromLocal8Bit("R轴高限");
+
+        if (!overLimits.isEmpty()) {
+            isLimit=true;
+            scanDetectCtrl->on_stopScanBtn_clicked();
+            QString msg = QString::fromLocal8Bit("安全警报！超出限位！：") + overLimits.join(", ");
+            QMessageBox::warning(nullptr, "error", msg);
+        }
+    }else{
+
+        if (pos.x() >= limitX.min && pos.x() <= limitX.max &&
+                pos.y() >= limitY.min && pos.y() <= limitY.max &&
+                cur_z   >= limitZ.min && cur_z   <= limitZ.max &&
+                cur_r   >= limitR.min && cur_r   <= limitR.max)
+        {
+            isLimit=false;
+        }
+
+    }
 }
 
 
@@ -875,28 +888,28 @@ void MotionControl::updateSence()//on_testRout_but_clicked()
         circle->setBrush(QBrush(Qt::yellow));  // 红色
         //circle->setFlag(QGraphicsItem::ItemIgnoresTransformations);
         scene->addItem(circle);
-                if (it==GlobeUniquePoints.constBegin()){
+        if (it==GlobeUniquePoints.constBegin()){
 
-                    // 显示坐标文字
-                    QString coordText = QString(QString::fromLocal8Bit("端点1 : %1, %2")).arg(posx*factor).arg(posy*factor);
-                    QGraphicsTextItem* textItem = new QGraphicsTextItem(coordText);
-                    textItem->setDefaultTextColor(Qt::black); // 设置字体颜色
-                    textItem->setFont(QFont("Arial", 10));    // 设置字体大小
-                    //textItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
-                    // 放在圆的旁边（你可以微调这个偏移）
-                    textItem->setPos(posx - 50, posy - 50);  // 右边偏移一些位置
-                    scene->addItem(textItem);
-                }else{
+            // 显示坐标文字
+            QString coordText = QString(QString::fromLocal8Bit("端点1 : %1, %2")).arg(posx*factor).arg(posy*factor);
+            QGraphicsTextItem* textItem = new QGraphicsTextItem(coordText);
+            textItem->setDefaultTextColor(Qt::black); // 设置字体颜色
+            textItem->setFont(QFont("Arial", 10));    // 设置字体大小
+            //textItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+            // 放在圆的旁边（你可以微调这个偏移）
+            textItem->setPos(posx - 50, posy - 50);  // 右边偏移一些位置
+            scene->addItem(textItem);
+        }else{
 
-                    QString coordText = QString(QString::fromLocal8Bit("端点2 : %1, %2")).arg(posx*factor).arg(posy*factor);
-                    QGraphicsTextItem* textItem = new QGraphicsTextItem(coordText);
-                    textItem->setDefaultTextColor(Qt::black); // 设置字体颜色
-                    textItem->setFont(QFont("Arial", 10));    // 设置字体大小
-                    //textItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
-                    // 放在圆的旁边（你可以微调这个偏移）
-                    textItem->setPos(posx + 50, posy +50);  // 右边偏移一些位置
-                    scene->addItem(textItem);
-                }
+            QString coordText = QString(QString::fromLocal8Bit("端点2 : %1, %2")).arg(posx*factor).arg(posy*factor);
+            QGraphicsTextItem* textItem = new QGraphicsTextItem(coordText);
+            textItem->setDefaultTextColor(Qt::black); // 设置字体颜色
+            textItem->setFont(QFont("Arial", 10));    // 设置字体大小
+            //textItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+            // 放在圆的旁边（你可以微调这个偏移）
+            textItem->setPos(posx + 50, posy +50);  // 右边偏移一些位置
+            scene->addItem(textItem);
+        }
 
 
         if(GlobeUniquePoints.length()>3){
@@ -2573,14 +2586,7 @@ void MotionControl::modbusStateChange(QModbusDevice::State state){
 void MotionControl::PbMoveToPosition(){
 
     bool SecurityBoundary = QApplication::keyboardModifiers() & Qt::ControlModifier;
-    double x = ui->traject_x0->text().toDouble();
-    double y = ui->traject_y0->text().toDouble();
-    double z = ui->traject_z0->text().toDouble();
-    double r = ui->traject_r0->text().toDouble();
 
-    qDebug()<<"x"<<x<<"y"<<y<<"z"<<z<<"r"<<r;
-    // 调用运动控制，设置目标位置
-    scanDetectCtrl->runTargetPosition(x, y, z, r);
 
     if(SecurityBoundary){
 
@@ -2608,14 +2614,24 @@ void MotionControl::PbMoveToPosition(){
 
         saveSetting();
         updateSence();
+    }else{
+
+        double x = ui->traject_x0->text().toDouble();
+        double y = ui->traject_y0->text().toDouble();
+        double z = ui->traject_z0->text().toDouble();
+        double r = ui->traject_r0->text().toDouble();
+
+        qDebug()<<"x"<<x<<"y"<<y<<"z"<<z<<"r"<<r;
+        // 调用运动控制，设置目标位置
+        scanDetectCtrl->runTargetPosition(x, y, z, r);
     }
 }
 
 bool MotionControl::getAxisLimits(QWidget *parent,
-                   double &xmin, double &xmax,
-                   double &ymin, double &ymax,
-                   double &zmin, double &zmax,
-                   double &rmin, double &rmax)
+                                  double &xmin, double &xmax,
+                                  double &ymin, double &ymax,
+                                  double &zmin, double &zmax,
+                                  double &rmin, double &rmax)
 {
     QDialog dlg(parent);
     dlg.setWindowTitle(QString::fromLocal8Bit("设置轴限位"));
@@ -2819,46 +2835,46 @@ void MotionControl::insertSmoothArcBetween(int id,int prevRow, int nextRow, qrea
 
     //   if(true){return;}
     //    // 修改前图元终点为 q0
-        model->setData(model->index(prevRow, 10), QString::number(static_cast<double>(result.q0.x()), 'f', 3));
-        model->setData(model->index(prevRow, 11), QString::number(static_cast<double>(result.q0.y()), 'f', 3));
+    model->setData(model->index(prevRow, 10), QString::number(static_cast<double>(result.q0.x()), 'f', 3));
+    model->setData(model->index(prevRow, 11), QString::number(static_cast<double>(result.q0.y()), 'f', 3));
 
-        // 修改后图元起点为 q2
-        model->setData(model->index(nextRow, 2), QString::number(static_cast<double>(result.q2.x()), 'f', 3));
-        model->setData(model->index(nextRow, 3), QString::number(static_cast<double>(result.q2.y()), 'f', 3));
+    // 修改后图元起点为 q2
+    model->setData(model->index(nextRow, 2), QString::number(static_cast<double>(result.q2.x()), 'f', 3));
+    model->setData(model->index(nextRow, 3), QString::number(static_cast<double>(result.q2.y()), 'f', 3));
 
-        // 插入新行
-        int insertRow = id;
-        model->insertRow(id);
+    // 插入新行
+    int insertRow = id;
+    model->insertRow(id);
 
-        model->setData(model->index(insertRow, 0), insertRow);  // id
-        model->setData(model->index(insertRow, 1), "arc");
+    model->setData(model->index(insertRow, 0), insertRow);  // id
+    model->setData(model->index(insertRow, 1), "arc");
 
-        model->setData(model->index(insertRow, 2), QString::number(static_cast<double>(result.q0.x()), 'f', 3));
-        model->setData(model->index(insertRow, 3), QString::number(static_cast<double>(result.q0.y()), 'f', 3));
-        model->setData(model->index(insertRow, 4), 0.0);  // z
-        model->setData(model->index(insertRow, 5), 0.0);  // r
+    model->setData(model->index(insertRow, 2), QString::number(static_cast<double>(result.q0.x()), 'f', 3));
+    model->setData(model->index(insertRow, 3), QString::number(static_cast<double>(result.q0.y()), 'f', 3));
+    model->setData(model->index(insertRow, 4), 0.0);  // z
+    model->setData(model->index(insertRow, 5), 0.0);  // r
 
-        model->setData(model->index(insertRow, 6), QString::number(static_cast<double>(result.Transition.x()), 'f', 3));
-        model->setData(model->index(insertRow, 7), QString::number(static_cast<double>(result.Transition.y()), 'f', 3));
-        model->setData(model->index(insertRow, 8), 0.0);
-        model->setData(model->index(insertRow, 9), 0.0);
+    model->setData(model->index(insertRow, 6), QString::number(static_cast<double>(result.Transition.x()), 'f', 3));
+    model->setData(model->index(insertRow, 7), QString::number(static_cast<double>(result.Transition.y()), 'f', 3));
+    model->setData(model->index(insertRow, 8), 0.0);
+    model->setData(model->index(insertRow, 9), 0.0);
 
-        model->setData(model->index(insertRow, 10),QString::number(static_cast<double>(result.q2.x()), 'f', 3));
-        model->setData(model->index(insertRow, 11),QString::number(static_cast<double>(result.q2.y()), 'f', 3));
-        model->setData(model->index(insertRow, 12), 0.0);
-        model->setData(model->index(insertRow, 13), 0.0);
+    model->setData(model->index(insertRow, 10),QString::number(static_cast<double>(result.q2.x()), 'f', 3));
+    model->setData(model->index(insertRow, 11),QString::number(static_cast<double>(result.q2.y()), 'f', 3));
+    model->setData(model->index(insertRow, 12), 0.0);
+    model->setData(model->index(insertRow, 13), 0.0);
 
 
-        model->submitAll();
-        model->select();
+    model->submitAll();
+    model->select();
 
-        if (!dbManager->db.commit()) {
-            qDebug() << "事务提交失败:" << dbManager->db.lastError().text();
-            QMessageBox::critical(this, "错误", "事务提交失败:" + dbManager->db.lastError().text());
-            dbManager->db.rollback();
-        } else {
-            qDebug() << "排序及更新完成，事务提交成功！";
-        }
+    if (!dbManager->db.commit()) {
+        qDebug() << "事务提交失败:" << dbManager->db.lastError().text();
+        QMessageBox::critical(this, "错误", "事务提交失败:" + dbManager->db.lastError().text());
+        dbManager->db.rollback();
+    } else {
+        qDebug() << "排序及更新完成，事务提交成功！";
+    }
 
 }
 
@@ -3299,26 +3315,26 @@ void MotionControl::pbMoveDirectionNot(){
             return;
         }
         int row = selectedIndexes.first().row();
-         QString type = model->data(model->index(row, 1)).toString().toLower();
-         qDebug() << "reverseArc***********row**"<<row;
+        QString type = model->data(model->index(row, 1)).toString().toLower();
+        qDebug() << "reverseArc***********row**"<<row;
 
-         if(type!="arc")return;
+        if(type!="arc")return;
 
-         QPointF A_start(model->data(model->index(row, 2)).toFloat(),
-                         model->data(model->index(row, 3)).toFloat());
-         QPointF A_tran(model->data(model->index(row, 6)).toFloat(),
-                        model->data(model->index(row, 7)).toFloat());
-         QPointF A_end(model->data(model->index(row, 10)).toFloat(),
-                       model->data(model->index(row, 11)).toFloat());
+        QPointF A_start(model->data(model->index(row, 2)).toFloat(),
+                        model->data(model->index(row, 3)).toFloat());
+        QPointF A_tran(model->data(model->index(row, 6)).toFloat(),
+                       model->data(model->index(row, 7)).toFloat());
+        QPointF A_end(model->data(model->index(row, 10)).toFloat(),
+                      model->data(model->index(row, 11)).toFloat());
 
-         mathTool mathTool;
-         QPointF A_tran_rev = mathTool.getReverseControlPoint(A_start, A_tran, A_end);
-         model->setData(model->index(row, 6), A_tran_rev.x());
-         model->setData(model->index(row, 7), A_tran_rev.y());
-         qDebug() << "reverseArc***********A_start**"<<A_start;
-         qDebug() << "reverseArc***********A_end**"<<A_end;
-         qDebug() << "reverseArc***********A_tran**"<<A_tran;
-         qDebug() << "reverseArc***********A_tran_rev**"<<A_tran_rev;
+        mathTool mathTool;
+        QPointF A_tran_rev = mathTool.getReverseControlPoint(A_start, A_tran, A_end);
+        model->setData(model->index(row, 6), A_tran_rev.x());
+        model->setData(model->index(row, 7), A_tran_rev.y());
+        qDebug() << "reverseArc***********A_start**"<<A_start;
+        qDebug() << "reverseArc***********A_end**"<<A_end;
+        qDebug() << "reverseArc***********A_tran**"<<A_tran;
+        qDebug() << "reverseArc***********A_tran_rev**"<<A_tran_rev;
 
     }else{
         // 获取当前选中的行

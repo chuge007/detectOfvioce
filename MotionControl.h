@@ -71,6 +71,9 @@ public:
                        double &zmin, double &zmax,
                        double &rmin, double &rmax);
 
+    bool isLimit=false;
+
+
     static ScanControlAbstract *scanDetectCtrl;
 
     QString curryWorkpieceName;

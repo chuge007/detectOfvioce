@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ascan.ui'
 **
-** Created by: Qt User Interface Compiler version 5.14.2
+** Created by: Qt User Interface Compiler version 5.12.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -176,16 +176,16 @@ public:
 
     void retranslateUi(QWidget *ascan)
     {
-        ascan->setWindowTitle(QCoreApplication::translate("ascan", "Form", nullptr));
-        label->setText(QCoreApplication::translate("ascan", "\344\277\241\346\201\257\357\274\232", nullptr));
+        ascan->setWindowTitle(QApplication::translate("ascan", "Form", nullptr));
+        label->setText(QApplication::translate("ascan", "\344\277\241\346\201\257\357\274\232", nullptr));
         disPlayIformationLb->setText(QString());
-        label_3->setText(QCoreApplication::translate("ascan", "\346\220\234\347\264\242\346\255\245\351\225\277\357\274\232", nullptr));
-        label_2->setText(QCoreApplication::translate("ascan", "\346\220\234\347\264\242\350\214\203\345\233\264\357\274\232", nullptr));
-        label_4->setText(QCoreApplication::translate("ascan", "\345\215\225\346\255\245\347\272\240\345\201\217\347\202\271\350\241\214\345\222\214\345\210\227\357\274\232", nullptr));
-        pbstepCorrect->setText(QCoreApplication::translate("ascan", "\345\215\225\346\255\245\347\272\240\345\201\217", nullptr));
-        autoCorrection_but->setText(QCoreApplication::translate("ascan", "\350\207\252\345\212\250\347\272\240\345\201\217", nullptr));
-        saveScanStan_but->setText(QCoreApplication::translate("ascan", "\344\277\235\345\255\230\346\240\207\345\207\206\347\202\271", nullptr));
-        pbstopCorrcet->setText(QCoreApplication::translate("ascan", "\345\201\234\346\255\242\347\272\240\345\201\217", nullptr));
+        label_3->setText(QApplication::translate("ascan", "\346\220\234\347\264\242\346\255\245\351\225\277\357\274\232", nullptr));
+        label_2->setText(QApplication::translate("ascan", "\346\220\234\347\264\242\350\214\203\345\233\264\357\274\232", nullptr));
+        label_4->setText(QApplication::translate("ascan", "\345\215\225\346\255\245\347\272\240\345\201\217\347\202\271\350\241\214\345\222\214\345\210\227\357\274\232", nullptr));
+        pbstepCorrect->setText(QApplication::translate("ascan", "\345\215\225\346\255\245\347\272\240\345\201\217", nullptr));
+        autoCorrection_but->setText(QApplication::translate("ascan", "\350\207\252\345\212\250\347\272\240\345\201\217", nullptr));
+        saveScanStan_but->setText(QApplication::translate("ascan", "\344\277\235\345\255\230\346\240\207\345\207\206\347\202\271", nullptr));
+        pbstopCorrcet->setText(QApplication::translate("ascan", "\345\201\234\346\255\242\347\272\240\345\201\217", nullptr));
     } // retranslateUi
 
 };
