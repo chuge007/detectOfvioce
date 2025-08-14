@@ -65,6 +65,19 @@ void Graphics_view_zoom::set_zoom_factor_base(double value) {
 
 bool Graphics_view_zoom::eventFilter(QObject *object, QEvent *event)
 {
+    if (event->type() == QEvent::MouseButtonPress){
+        QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            PressMs=true;
+            emit seleft();
+        }
+    }else if(event->type() == QEvent::MouseButtonRelease){
+        QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            PressMs=false;
+            emit seleft();
+        }
+    }
 
     if (event->type() == QEvent::MouseMove)
     {
@@ -86,6 +99,10 @@ bool Graphics_view_zoom::eventFilter(QObject *object, QEvent *event)
             return true;
         }
 
+        if(PressMs){
+            emit graphhicsPos(target_scene_pos.x(),target_scene_pos.y());
+            //qDebug()<<"emit graphhicsPos(target_scene_pos.x(),target_scene_pos.y());"<<PressMs;
+        }
 
     }
     else if (event->type() == QEvent::Wheel)

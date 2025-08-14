@@ -245,8 +245,8 @@ private:
 
     void tableSelectionChanged();
     void graphicsSelectionChanged();
-
-
+    void moveGraphics(double x, double y);
+    QString nearestName;
 
     QString generateGCode();
 

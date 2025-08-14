@@ -29,6 +29,8 @@ TGraphicsViewRefactor::TGraphicsViewRefactor(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     fitInView(sceneRect(), Qt::KeepAspectRatio); // 自动适配场景
+
+    setDragMode(QGraphicsView::NoDrag);
 }
 
 void TGraphicsViewRefactor::SetDefaultItem()
@@ -556,38 +558,36 @@ void TGraphicsViewRefactor::DrawCanvasRect(QPainter &painter)
 
 void TGraphicsViewRefactor::mousePressEvent(QMouseEvent *event)
 {
-    // 只有当中键按下时才开始拖动
-    if(event->button() == Qt::MiddleButton)
-    {
-        IsMoveView=!IsMoveView;
-        // 记录按下时的视图坐标
+    if (event->button() == Qt::RightButton) {
+        IsMoveView = true;
+        viewport()->setCursor(Qt::ClosedHandCursor);
         C_Movepos = mapToScene(event->pos()) - event->pos() + QPointF(width() / 2, height() / 2);
-        C_Downpos  = event->pos();
-
+        C_Downpos = event->pos();
+        event->accept();
         return;
     }
+    // 左键或其他按键，正常处理
     QGraphicsView::mousePressEvent(event);
 }
 
 void TGraphicsViewRefactor::mouseMoveEvent(QMouseEvent *event)
 {
-    if (IsMoveView)
-    {
+    // 只处理右键拖动
+    if (IsMoveView && (event->buttons() == Qt::RightButton)) {
         QPointF offsetPos = event->pos() - C_Downpos;
-
         setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
         centerOn(C_Movepos - offsetPos);
-
-        //qDebug()<<"IsMoveView"<<IsMoveView;
+        event->accept();
+        return;
     }
+    // 其他情况，正常处理
     QGraphicsView::mouseMoveEvent(event);
 }
 
 void TGraphicsViewRefactor::mouseReleaseEvent(QMouseEvent *event)
-{   qDebug() << "mouseReleaseEvent :"<<IsMoveView;
-    if (event->button() == Qt::MiddleButton)
-    {
-        //IsMoveView = false;
+{
+    if (event->button() == Qt::RightButton && IsMoveView) {
+        IsMoveView = false;
         viewport()->setCursor(Qt::ArrowCursor);
         event->accept();
         return;
@@ -595,19 +595,16 @@ void TGraphicsViewRefactor::mouseReleaseEvent(QMouseEvent *event)
     QGraphicsView::mouseReleaseEvent(event);
 }
 
-//中键双击居中
+
+// 中键双击居中
 void TGraphicsViewRefactor::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::RightButton)
-    {
-        // 将视图中心设置为场景的中心
+    if (event->button() == Qt::RightButton) {
         QRectF sceneRect = scene()->sceneRect(); // 场景矩形
         QPointF centerPoint = sceneRect.center(); // 场景中心点
-
         centerOn(centerPoint); // 让视图以 scene 中心为中心
-
+        event->accept();
         return;
     }
-
     QGraphicsView::mouseDoubleClickEvent(event);
 }

@@ -305,6 +305,11 @@ MotionControl::MotionControl(QWidget *parent)
 
     connect(zomm_gview,SIGNAL(zoomed(void)),this,SLOT(graphics_view_zoom(void)));
 
+    connect(zomm_gview,&Graphics_view_zoom::graphhicsPos,this,&MotionControl::moveGraphics);
+
+    connect(zomm_gview, &Graphics_view_zoom::seleft,
+            this, &MotionControl::tableSelectionChanged);
+
     connect(ui->tableView->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &MotionControl::tableSelectionChanged);
 
@@ -973,6 +978,11 @@ void MotionControl::updateSence()//on_testRout_but_clicked()
 
             arc_item* arc = new arc_item(start_pos,trans_pos,end_pos,i,scene);
             scene->addItem(arc);
+
+            QGraphicsEllipseItem* circle = new QGraphicsEllipseItem((x1 - 5)*factor, (y1 - 5)*factor, 10*factor, 10*factor); // 半径为20
+            circle->setBrush(QBrush(Qt::yellow));  // 红色
+            //circle->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+            scene->addItem(circle);
         }
 
         if(i==0){
@@ -1029,6 +1039,91 @@ void MotionControl::tableSelectionChanged()
     m_lastClickedRow = selectedRow;
     m_isSelected =  ui->tableView->selectionModel()->isSelected(index);
 
+
+
+    float x0,y0,r0,z0,x1,y1,r1,z1,x2,y2,z2,r2;
+
+    if(name=="arc"){
+        x0=model->data(model->index(m_lastClickedRow, 2), Qt::DisplayRole).toFloat();
+        y0=model->data(model->index(m_lastClickedRow, 3), Qt::DisplayRole).toFloat();
+        z0=model->data(model->index(m_lastClickedRow, 4), Qt::DisplayRole).toFloat();
+        r0=model->data(model->index(m_lastClickedRow, 5), Qt::DisplayRole).toFloat();
+
+        x1=model->data(model->index(m_lastClickedRow, 6), Qt::DisplayRole).toFloat();
+        y1=model->data(model->index(m_lastClickedRow, 7), Qt::DisplayRole).toFloat();
+        z1=model->data(model->index(m_lastClickedRow, 8), Qt::DisplayRole).toFloat();
+        r1=model->data(model->index(m_lastClickedRow, 9), Qt::DisplayRole).toFloat();
+
+        x2=model->data(model->index(m_lastClickedRow, 10), Qt::DisplayRole).toFloat();
+        y2=model->data(model->index(m_lastClickedRow, 11), Qt::DisplayRole).toFloat();
+        z2=model->data(model->index(m_lastClickedRow, 12), Qt::DisplayRole).toFloat();
+        r2=model->data(model->index(m_lastClickedRow, 13), Qt::DisplayRole).toFloat();
+
+
+    }else if (name=="line") {
+        x0=model->data(model->index(m_lastClickedRow, 2), Qt::DisplayRole).toFloat();
+        y0=model->data(model->index(m_lastClickedRow, 3), Qt::DisplayRole).toFloat();
+        z0=model->data(model->index(m_lastClickedRow, 4), Qt::DisplayRole).toFloat();
+        r0=model->data(model->index(m_lastClickedRow, 5), Qt::DisplayRole).toFloat();
+
+        x2=model->data(model->index(m_lastClickedRow, 10), Qt::DisplayRole).toFloat();
+        y2=model->data(model->index(m_lastClickedRow, 11), Qt::DisplayRole).toFloat();
+        z2=model->data(model->index(m_lastClickedRow, 12), Qt::DisplayRole).toFloat();
+        r2=model->data(model->index(m_lastClickedRow, 13), Qt::DisplayRole).toFloat();
+
+    }
+
+    QPointF target = zomm_gview->target_scene_pos;
+
+    float minDist = std::numeric_limits<float>::max();
+
+    QPointF nearestPoint;
+
+    auto calcDist = [](const QPointF &a, const QPointF &b) {
+        float dx = a.x() - b.x();
+        float dy = a.y() - b.y();
+        return std::sqrt(dx * dx + dy * dy);
+    };
+
+    if (name == "arc") {
+        // 依次检查 first, middle, last
+        struct PointInfo { QString name; QPointF pt; };
+        QVector<PointInfo> arcPoints = {
+            { "firstPoint",  QPointF(x0, y0) },
+            { "middlePoint", QPointF(x1, y1) },
+            { "lastPoint",   QPointF(x2, y2) }
+        };
+
+        for (const auto &p : arcPoints) {
+            float dist = calcDist(target, p.pt);
+            if (dist < minDist) {
+                minDist = dist;
+                nearestName = p.name;
+                nearestPoint = p.pt;
+            }
+        }
+    }
+    else if (name == "line") {
+        struct PointInfo { QString name; QPointF pt; };
+        QVector<PointInfo> linePoints = {
+            { "firstPoint", QPointF(x0, y0) },
+            { "lastPoint",   QPointF(x2, y2) }
+        };
+
+        for (const auto &p : linePoints) {
+            float dist = calcDist(target, p.pt);
+            if (dist < minDist) {
+                minDist = dist;
+                nearestName = p.name;
+                nearestPoint = p.pt;
+            }
+        }
+    }
+
+    qDebug() << "最近的点是:" << nearestName
+             << "坐标:" << nearestPoint
+             << "距离:" << minDist;
+
 }
 
 
@@ -1065,6 +1160,52 @@ void MotionControl::graphicsSelectionChanged()
     scene->update();
 
 }
+
+
+void MotionControl::moveGraphics(double x, double y){
+
+
+    int rowx,rowy;
+
+    if(nearestName=="firstPoint"){
+
+        rowx=2;
+        rowy=3;
+
+    }else if(nearestName=="middlePoint"){
+
+        rowx=6;
+        rowy=7;
+
+    }else{
+
+        rowx=10;
+        rowy=11;
+
+    }
+    qDebug() <<"moveGraphics"<<x<<" "<<y<<" "<<rowx<<" "<<rowy;
+
+    dbManager->db.transaction();
+
+
+    model->setData (model->index(m_lastClickedRow,rowx),x);
+    model->setData (model->index(m_lastClickedRow,rowy),y);
+
+    model->submitAll();
+    model->select();
+
+    if (!dbManager->db.commit()) {
+        qDebug() << "事务提交失败:" << dbManager->db.lastError().text();
+        QMessageBox::critical(this, "错误", "事务提交失败:" + dbManager->db.lastError().text());
+        dbManager->db.rollback();
+    } else {
+        qDebug() << "排序及更新完成，事务提交成功！";
+    }
+
+    updateSence();
+}
+
+
 
 void MotionControl::pBbrazing(){
 
