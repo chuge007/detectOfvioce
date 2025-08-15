@@ -138,7 +138,6 @@ MotionControl::MotionControl(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MotionControl)
     , modbusDevice(new QModbusTcpClient(this))
-    , config(NdtCfgMachine::getInstance())
 {
     ui->setupUi(this);
 
@@ -360,11 +359,11 @@ void MotionControl::closeEvent(QCloseEvent *event)
 
     // 这里做必要的保存、释放动作（如果不是都放在析构里）
 
-    //    qApp->quit();  // 请求退出事件循环，程序退出
+    qApp->quit();  // 请求退出事件循环，程序退出
 
-    //    event->accept();
+    event->accept();
 
-    //    forceExit();
+    forceExit();
 }
 
 
@@ -442,9 +441,12 @@ void MotionControl::updatePosition(QPointF pos,float cur_r,float cur_z)
 
         if (!overLimits.isEmpty()) {
             isLimit=true;
-            scanDetectCtrl->on_stopScanBtn_clicked();
-            QString msg = QString::fromLocal8Bit("安全警报！超出限位！：") + overLimits.join(", ");
-            QMessageBox::warning(nullptr, "error", msg);
+            scanDetectCtrl->on_endScanBtn_clicked();
+            _sleep(500);
+            scanDetectCtrl->on_endScanBtn_clicked();
+            _sleep(200);
+            scanDetectCtrl->on_alarmResetBtn_clicked();
+            QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit("安全警报！超出限位,运动已停止，请点击复位后回到安全区！：") + overLimits.join(", "));
         }
     }else{
 
@@ -1164,6 +1166,8 @@ void MotionControl::graphicsSelectionChanged()
 
 void MotionControl::moveGraphics(double x, double y){
 
+    bool SecurityBoundary = QApplication::keyboardModifiers() & Qt::ControlModifier;
+    if(!SecurityBoundary){return;}
 
     int rowx,rowy;
 
@@ -2810,6 +2814,18 @@ bool MotionControl::getAxisLimits(QWidget *parent,
     QObject::connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
 
+    spinXmin->setValue(limitX.min);
+    spinXmax->setValue(limitX.max);
+
+    spinYmin->setValue(limitY.min);
+    spinYmax->setValue(limitY.max);
+
+    spinZmin->setValue(limitZ.min);
+    spinZmax->setValue(limitZ.max);
+
+    spinRmin->setValue(limitR.min);
+    spinRmax->setValue(limitR.max);
+
     if (dlg.exec() == QDialog::Accepted) {
         xmin = spinXmin->value();
         xmax = spinXmax->value();
@@ -3024,7 +3040,7 @@ void MotionControl::insertSmoothArcBetween(int id,int prevRow, int nextRow, qrea
 
 void MotionControl::PbsmoothCurve(){
 
-
+    bool curve = QApplication::keyboardModifiers() & Qt::ControlModifier;
 
     mathTool mathTool;
 
@@ -3050,13 +3066,40 @@ void MotionControl::PbsmoothCurve(){
     int rowCount = model->rowCount();
     if (rowCount < 2) return;
 
+    int rowA ;
+    int rowB ;
+
     int offset = 0;  // 插入行会导致总行数增加，注意偏移
+    if(curve){
 
+        QDialog dlg(this);
+        dlg.setWindowTitle(QString::fromLocal8Bit("过度圆滑"));
 
-    for (int i = 0; i < rowCount - 1; ++i)
-    {
-        int rowA = i ;
-        int rowB = rowA + 1;
+        QFormLayout *layout = new QFormLayout(&dlg);
+        QSpinBox *rowAQSpinBox = new QSpinBox;
+        rowAQSpinBox->setRange(0, INT_MAX);
+
+        QSpinBox *rowBQSpinBox = new QSpinBox;
+        rowBQSpinBox->setRange(0, INT_MAX);
+
+        layout->addRow("idA:", rowAQSpinBox);
+        layout->addRow("idB:", rowBQSpinBox);
+
+        QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+        layout->addWidget(buttons);
+
+        QObject::connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+        QObject::connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+
+        if (dlg.exec() == QDialog::Accepted) {
+            rowA = rowAQSpinBox->value();
+            rowB = rowBQSpinBox->value();
+        }
+
+        if(std::abs(rowA-rowB)!=1){
+            QMessageBox::warning(this, "Error", QString::fromLocal8Bit("要相邻的图元才能计算"));
+            return;
+        }
 
         QString typeA = model->data(model->index(rowA, 1)).toString().toLower();
         QString typeB = model->data(model->index(rowB, 1)).toString().toLower();
@@ -3106,9 +3149,75 @@ void MotionControl::PbsmoothCurve(){
         if (!smooth) {
             insertSmoothArcBetween(rowCount+offset,rowA, rowB, ui->smoothX_dsb->value());  // 调用你已有函数
             offset += 1;
-            qDebug() << "No smooth at" << A_end<<"  "<<i<<"\n\n";
+            qDebug() << "No smooth at" << A_end<<"  "<<rowA<<"\n\n";
         }
+
+
+    }else{
+
+        for (int i = 0; i < rowCount - 1; ++i)
+        {
+
+            int rowA = i ;
+            int rowB = rowA + 1;
+
+            QString typeA = model->data(model->index(rowA, 1)).toString().toLower();
+            QString typeB = model->data(model->index(rowB, 1)).toString().toLower();
+
+            QPointF A_start(model->data(model->index(rowA, 2)).toFloat(),
+                            model->data(model->index(rowA, 3)).toFloat());
+            QPointF A_tran(model->data(model->index(rowA, 8)).toFloat(),
+                           model->data(model->index(rowA, 9)).toFloat());
+            QPointF A_end(model->data(model->index(rowA, 10)).toFloat(),
+                          model->data(model->index(rowA, 11)).toFloat());
+
+            QPointF B_start(model->data(model->index(rowB, 2)).toFloat(),
+                            model->data(model->index(rowB, 3)).toFloat());
+            QPointF B_tran(model->data(model->index(rowB, 8)).toFloat(),
+                           model->data(model->index(rowB, 9)).toFloat());
+            QPointF B_end(model->data(model->index(rowB, 10)).toFloat(),
+                          model->data(model->index(rowB, 11)).toFloat());
+
+            bool smooth;
+
+            if (typeA == "line" && typeB == "line") {
+
+                QPointF dirA = A_end - A_start;
+                QPointF dirB = B_end - B_start;  // 或视方向选择 B_tran - B_start
+
+                smooth = mathTool.isDirectionSmooth(dirA, dirB, Zsmooth);
+
+
+            } else if (typeA == "line" && typeB == "arc") {
+                QPointF centerB = mathTool.getCircleCenterFrom3Points(B_start, B_tran, B_end);
+                QPointF lineDir = A_end - A_start;
+                QPointF arcTangent = mathTool.getArcTangentAtPoint(centerB, B_start);
+
+                smooth = mathTool.isDirectionSmooth(lineDir, arcTangent, Zsmooth);
+
+            } else if (typeA == "arc" && typeB == "line") {
+                QPointF centerA = mathTool.getCircleCenterFrom3Points(A_start, A_tran, A_end);
+                QPointF lineDir = B_end - B_start;
+                QPointF arcTangent = mathTool.getArcTangentAtPoint(centerA, A_end);
+
+                smooth = mathTool.isDirectionSmooth(lineDir, arcTangent, Zsmooth);
+
+            } else if (typeA == "arc" && typeB == "arc") {
+                smooth=false;
+            }
+
+            if (!smooth) {
+                insertSmoothArcBetween(rowCount+offset,rowA, rowB, ui->smoothX_dsb->value());  // 调用你已有函数
+                offset += 1;
+                qDebug() << "No smooth at" << A_end<<"  "<<i<<"\n\n";
+            }
+        }
+
+
     }
+
+
+
 
     //sortModelLine();
 

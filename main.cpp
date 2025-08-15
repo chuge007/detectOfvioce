@@ -7,7 +7,7 @@
 
 
 // 设置应用程序样式
-QString styleSheet = R"(
+QString styleMcSheet = R"(
                      /* 主窗口样式 */
                      QMainWindow {
                      background-color: #f0f0f0;
@@ -29,6 +29,15 @@ QString styleSheet = R"(
                      padding: 8px 16px;
                      font-size: 12px;
                      min-height: 20px;
+                     }
+
+                     /* 通用按钮按下效果 */
+                     QPushButton:pressed {
+                         background-color: #d0d0d0;
+                         border: 1px solid #999;
+                         border-style: inset;
+                         padding-top: 9px;   /* 模拟下沉的位移 */
+                         padding-left: 15px;
                      }
 
                      QFrame {
@@ -187,7 +196,7 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    app.setStyleSheet(styleSheet);
+    app.setStyleSheet(styleMcSheet);
 
     MotionControl MotionControl; // 你的主窗口实例
 

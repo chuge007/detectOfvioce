@@ -2,7 +2,7 @@
 #define MotionControl_H
 
 #include <QMainWindow>
-#include <ndtcfgmachine.h>
+
 
 #include <QModbusTcpClient>
 #include <QUdpSocket>
@@ -250,7 +250,7 @@ private:
 
     QString generateGCode();
 
-     NdtCfgMachine &config;
+
 
     QProgressDialog *progressDialog;
 
