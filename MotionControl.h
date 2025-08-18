@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 
-
 #include <QModbusTcpClient>
 #include <QUdpSocket>
 #include <QSqlTableModel>

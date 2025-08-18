@@ -1,5 +1,7 @@
 ﻿#include "ascan.h"
 #include "ui_ascan.h"
+#include "widgetDefin/setStyleSheet.h"
+
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QMessageBox>
@@ -29,7 +31,7 @@ ascan::ascan(QWidget *parent) :
 
     checkTimer = new QTimer(this);
 
-
+    this->setStyleSheet(styleMcSheet);  // 在构造函数里给当前窗口用
 }
 
 ascan::~ascan()

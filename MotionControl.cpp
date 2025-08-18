@@ -9,6 +9,7 @@
 #include "imageprocessing.h"
 #include "gcodemodulation.h"
 #include "ascan.h"
+#include "widgetDefin/setStyleSheet.h"
 
 #include <cmath>
 #include <iostream>
@@ -119,7 +120,7 @@ void MotionControl::init()
 
     if (!dbManager->db.transaction()) {
         qDebug() << "Failed to start transaction:" << dbManager->db.lastError().text();
-        QMessageBox::critical(this, "Error", "无法开启数据库事务");
+        QMessageBox::critical(this, "Error",  QString::fromLocal8Bit("无法开启数据库事务"));
         return;
     }
 
@@ -323,7 +324,7 @@ MotionControl::MotionControl(QWidget *parent)
 
     //saveOriginalWidgetStates(this->centralWidget());
 
-
+    this->setStyleSheet(styleMcSheet);  // 在构造函数里给当前窗口用
 }
 
 MotionControl::~MotionControl()
@@ -972,6 +973,10 @@ void MotionControl::updateSence()//on_testRout_but_clicked()
         trans_pos= QPointF( x1*factor,y1*factor );
         end_pos = QPointF( x2*factor,y2*factor );
 
+        mathTool mathTool;
+        QPointF circleCenter=mathTool.getCircleCenterFrom3Points(start_pos,trans_pos,end_pos);
+        double distance=mathTool.towPointdistance(start_pos,circleCenter);
+
         if(type=="line"){
 
             line_item* line = new line_item(start_pos,end_pos,i,scene);
@@ -980,8 +985,8 @@ void MotionControl::updateSence()//on_testRout_but_clicked()
 
             arc_item* arc = new arc_item(start_pos,trans_pos,end_pos,i,scene);
             scene->addItem(arc);
-
-            QGraphicsEllipseItem* circle = new QGraphicsEllipseItem((x1 - 5)*factor, (y1 - 5)*factor, 10*factor, 10*factor); // 半径为20
+            double r = distance * 0.1;
+            QGraphicsEllipseItem* circle = new QGraphicsEllipseItem((x1 - r)*factor, (y1 - r)*factor, 2*r*factor, 2*r*factor); // 半径为20
             circle->setBrush(QBrush(Qt::yellow));  // 红色
             //circle->setFlag(QGraphicsItem::ItemIgnoresTransformations);
             scene->addItem(circle);

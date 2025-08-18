@@ -1,5 +1,7 @@
 ﻿#include "addroute_dialog.h"
 #include "ui_addroute_dialog.h"
+#include "widgetDefin/setStyleSheet.h"
+
 #include <QDebug>
 #include <QList>
 #include<QMessageBox>
@@ -86,6 +88,8 @@ addRoute_dialog::addRoute_dialog(QWidget *parent) :
     QDoubleValidator *rEnd_lin = new QDoubleValidator(0, 9999, 3, this);  // 0~9999，最多2位小数
     rEnd_lin->setNotation(QDoubleValidator::StandardNotation);
     ui->rEnd_lin->setValidator(rEnd_lin);
+
+    this->setStyleSheet(styleMcSheet);  // 在构造函数里给当前窗口用
 
 }
 

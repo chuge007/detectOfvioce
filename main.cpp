@@ -7,7 +7,7 @@
 
 
 // 设置应用程序样式
-QString styleMcSheet = R"(
+QString styleSheet = R"(
                      /* 主窗口样式 */
                      QMainWindow {
                      background-color: #f0f0f0;
@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    app.setStyleSheet(styleMcSheet);
+    app.setStyleSheet(styleSheet);
 
     MotionControl MotionControl; // 你的主窗口实例
 

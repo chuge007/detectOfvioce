@@ -18,6 +18,7 @@
 
 #include <thread>
 #include <chrono>
+#include "widgetDefin/setStyleSheet.h"
 
 #include "C:/Users/a/AppData/Local/Programs/MVTec/HALCON-24.11-Progress-Steady/include/halconcpp/HalconCpp.h"
 
@@ -56,7 +57,7 @@ imageprocessing::imageprocessing(QWidget *parent) :
     // 全局安装 filter，拦截滚轮及鼠标点击/移动
     ui->gVimageprocess->viewport()->installEventFilter(this);
 
-
+    this->setStyleSheet(styleMcSheet);  // 在构造函数里给当前窗口用
 
 }
 

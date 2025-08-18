@@ -1,6 +1,7 @@
 ﻿#include "gcodemodulation.h"
 #include "ui_gcodemodulation.h"
 #include "MotionControl.h"
+#include "widgetDefin/setStyleSheet.h"
 #include "./libssh2_1.11.0_x64/libssh2.h"
 #include "./libssh2_1.11.0_x64/libssh2_publickey.h"
 #include "./libssh2_1.11.0_x64/libssh2_sftp.h"
@@ -67,7 +68,7 @@ gCodeModulation::gCodeModulation(QWidget *parent) :
     rangeLayout = vlay;
     // 连接“添加范围”按钮
 
-    ui->pTEgcode->setDocument(false);
+
     connect(ui->addRangeBtn, &QPushButton::clicked, this, &gCodeModulation::addRangeRow);
     connect(ui->saveVBtn, &QPushButton::clicked, this, &gCodeModulation::on_saveBtn_clicked);
 
@@ -81,6 +82,23 @@ gCodeModulation::gCodeModulation(QWidget *parent) :
     connect(ui->pbAganStart, &QPushButton::clicked, MotionControl::scanDetectCtrl, &ScanControlAbstract::on_aganStartScanBtn_clicked);
     connect(ui->pTEgcode, &QPlainTextEdit::textChanged, this, &gCodeModulation::autoSave);
     gcodePath = QCoreApplication::applicationDirPath() + "/PlcLogic/";
+
+    this->setStyleSheet(styleMcSheet);  // 在构造函数里给当前窗口用
+    //ui->pTEgcode->setDocument(false);
+
+    ui->pTEgcode->setMinimumHeight(1000);
+    ui->pTEgcode->setMinimumWidth(600);
+    ui->rangeContainer->setMinimumHeight(300);
+    ui->rangeContainer->setMinimumWidth(700);
+
+    ui->pTEgcode->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->pTEgcode->setReadOnly(false);  // 确保是可编辑的
+    ui->pTEgcode->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->pTEgcode->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->pTEgcode->setWordWrapMode(QTextOption::NoWrap);
+    qDebug() << "hbar max =" << ui->pTEgcode->horizontalScrollBar()->maximum(); // > 0 表示可滚
+    qDebug() << "doc width =" << ui->pTEgcode->document()->idealWidth();
+    qDebug() << "view width =" << ui->pTEgcode->viewport()->width();
 
 }
 

@@ -32,6 +32,8 @@ class mathTool
 public:
     mathTool();
 
+    double towPointdistance(const QPointF& p1, const QPointF& p2);
+
     // 判断两个方向是否平滑（夹角在一定容差内）
     bool isDirectionSmooth(const QPointF& dir1, const QPointF& dir2, qreal angleTolDeg);
 
