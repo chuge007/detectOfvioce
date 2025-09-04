@@ -39,9 +39,58 @@ void scanDetect_frictionWelding::initWidget()
 
     modbusClient = new QModbusTcpClient(this);
 
+    udpSocket = new QUdpSocket(this);
+
+    if (udpSocket->bind(QHostAddress("192.168.1.100"), 10001)) {
+        qDebug() << "UDP Socket successfully bound to 192.168.1.100:10001";
+    } else {
+        qDebug()<< "Error", "UDP Socket bind failed!";
+    }
+
+    //connect(udpSocket, &QUdpSocket::readyRead, this, &scanDetect_frictionWelding::onUdpReadyRead);
+
     timer = new QTimer(this);
     timer->setInterval(200);
 
+}
+
+void scanDetect_frictionWelding::onUdpReadyRead()
+{
+    // 读取所有 pendingDatagrams，但只保存最新一条
+    while (udpSocket->hasPendingDatagrams()) {
+        QByteArray datagram;
+        datagram.resize(int(udpSocket->pendingDatagramSize()));
+        udpSocket->readDatagram(datagram.data(), datagram.size());
+
+        QMutexLocker locker(&datagramMutex);
+        latestDatagram = datagram; // 总是覆盖旧数据
+    }
+}
+
+void scanDetect_frictionWelding::processLatestDatagram()
+{
+    QByteArray datagramCopy;
+    {
+        QMutexLocker locker(&datagramMutex);
+        datagramCopy = latestDatagram;
+    }
+
+    if (datagramCopy.size() < 16) {
+        // 数据不够 4 个 float
+        return;
+    }
+
+    // 解析 float[4]
+    float vals[4] = {0};
+    memcpy(vals, datagramCopy.constData(), 16);
+
+    currentPos.setX(static_cast<qreal>(vals[0]));
+    currentPos.setY(static_cast<qreal>(vals[1]));
+    curZ = vals[2];
+    curR = vals[3];
+
+    emit positionChange(currentPos, curR, curZ);
+    qDebug() << "X=" << vals[0] << "Y=" << vals[1] << "Z=" << vals[2] << "R=" << vals[3];
 }
 
 
@@ -834,6 +883,14 @@ void scanDetect_frictionWelding::destroy()
         timer->deleteLater();
         timer = nullptr;
     }
+
+    if (udpSocket) {
+        udpSocket->close();   // 关闭 socket
+        udpSocket->deleteLater();  // 释放对象（可选）
+        udpSocket = nullptr;  // 避免野指针
+        qDebug() << "UDP Socket closed.";
+    }
+
 }
 
 
@@ -871,7 +928,9 @@ void scanDetect_frictionWelding::performTasks()
 
     }
     //_sleep(500);
-    updataCurrentPos();
+    //updataCurrentPos();
+    onUdpReadyRead();
+    processLatestDatagram();
 
 
 }

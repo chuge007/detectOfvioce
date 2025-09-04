@@ -42,6 +42,10 @@ public:
     QString filePath;
     QString workPiece;
 
+    const char *hostname = "192.168.1.88";
+    const char *username = "update";
+    const char *password = "123456";
+
     void loadGCodeToPlainText();
     void exportGCodeToFile(const QString& gCode);
     std::pair<int, int> getValueByRange(int input);
@@ -52,6 +56,8 @@ public:
     Point getPointAtDistance(float x0, float y0, float z0,
                              float x1, float y1, float z1,
                              float distance);
+
+    QVector<QString> listRemoteFiles();
 
     bool deleteRemoteFile(const QString& workPiece);
 

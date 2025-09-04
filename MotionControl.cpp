@@ -464,161 +464,270 @@ void MotionControl::updatePosition(QPointF pos,float cur_r,float cur_z)
 
 
 
-void MotionControl::updateAddRoute(int arc,int edit,int curRow)
-{
-    qDebug()<<"updateAddRoute";
-    dbManager->db.transaction();
-    QList<QString> curStartPos_list;
+//void MotionControl::updateAddRoute(int arc,int edit,int curRow)
+//{
+//    qDebug()<<"updateAddRoute";
+//    dbManager->db.transaction();
+//    QList<QString> curStartPos_list;
 
 
-    if (curRow<=0){
+//    if (curRow<=0){
 
-        if(edit==0){
-            if (!model->insertRow(curRow)) {
-                qDebug() << "Failed to insert row at" << curRow;
-                dbManager->db.rollback();
-                QMessageBox::critical(this, "Error", QString::fromLocal8Bit(" 插入新行失败 "));
-                return;
-            }
-            curStartPos_list = startPoint;
+//        if(edit==0){
+//            if (!model->insertRow(curRow)) {
+//                qDebug() << "Failed to insert row at" << curRow;
+//                dbManager->db.rollback();
+//                QMessageBox::critical(this, "Error", QString::fromLocal8Bit(" 插入新行失败 "));
+//                return;
+//            }
+//            curStartPos_list = startPoint;
 
-            addRoute->pbSetStartPos(curStartPos_list[0],curStartPos_list[1],curStartPos_list[2],curStartPos_list[3]);
-        }else {
-            QString x0=QString::number(model->data(model->index(0, 2), Qt::DisplayRole).toFloat(), 'f', 3);
-            QString y0=QString::number(model->data(model->index(0, 3), Qt::DisplayRole).toFloat(), 'f', 3);
-            QString z0=QString::number(model->data(model->index(0, 4), Qt::DisplayRole).toFloat(), 'f', 3);
-            QString r0=QString::number(model->data(model->index(0, 5), Qt::DisplayRole).toFloat(), 'f', 3);
-            curStartPos_list={x0,y0,z0,r0};
-            addRoute->pbSetStartPos(curStartPos_list[0],curStartPos_list[1],curStartPos_list[2],curStartPos_list[3]);
-        }
+//            addRoute->pbSetStartPos(curStartPos_list[0],curStartPos_list[1],curStartPos_list[2],curStartPos_list[3]);
+//        }else {
+//            QString x0=QString::number(model->data(model->index(0, 2), Qt::DisplayRole).toFloat(), 'f', 3);
+//            QString y0=QString::number(model->data(model->index(0, 3), Qt::DisplayRole).toFloat(), 'f', 3);
+//            QString z0=QString::number(model->data(model->index(0, 4), Qt::DisplayRole).toFloat(), 'f', 3);
+//            QString r0=QString::number(model->data(model->index(0, 5), Qt::DisplayRole).toFloat(), 'f', 3);
+//            curStartPos_list={x0,y0,z0,r0};
+//            addRoute->pbSetStartPos(curStartPos_list[0],curStartPos_list[1],curStartPos_list[2],curStartPos_list[3]);
+//        }
 
-    }else{
-        if(edit==0){
-            if (!model->insertRow(curRow)) {
-                qDebug() << "Failed to insert row at" << curRow;
-                dbManager->db.rollback();
-                QMessageBox::critical(this, "Error", QString::fromLocal8Bit(" 插入新行失败 "));
-                return;
-            }
-        }
-        QString x0=QString::number(model->data(model->index(curRow-1, 10), Qt::DisplayRole).toFloat(), 'f', 3);
-        QString y0=QString::number(model->data(model->index(curRow-1, 11), Qt::DisplayRole).toFloat(), 'f', 3);
-        QString z0=QString::number(model->data(model->index(curRow-1, 12), Qt::DisplayRole).toFloat(), 'f', 3);
-        QString r0=QString::number(model->data(model->index(curRow-1, 13), Qt::DisplayRole).toFloat(), 'f', 3);
-        curStartPos_list={x0,y0,z0,r0};
-        addRoute->pbSetStartPos(curStartPos_list[0],curStartPos_list[1],curStartPos_list[2],curStartPos_list[3]);
-    }
+//    }else{
+//        if(edit==0){
+//            if (!model->insertRow(curRow)) {
+//                qDebug() << "Failed to insert row at" << curRow;
+//                dbManager->db.rollback();
+//                QMessageBox::critical(this, "Error", QString::fromLocal8Bit(" 插入新行失败 "));
+//                return;
+//            }
+//        }
+//        QString x0=QString::number(model->data(model->index(curRow-1, 10), Qt::DisplayRole).toFloat(), 'f', 3);
+//        QString y0=QString::number(model->data(model->index(curRow-1, 11), Qt::DisplayRole).toFloat(), 'f', 3);
+//        QString z0=QString::number(model->data(model->index(curRow-1, 12), Qt::DisplayRole).toFloat(), 'f', 3);
+//        QString r0=QString::number(model->data(model->index(curRow-1, 13), Qt::DisplayRole).toFloat(), 'f', 3);
+//        curStartPos_list={x0,y0,z0,r0};
+//        addRoute->pbSetStartPos(curStartPos_list[0],curStartPos_list[1],curStartPos_list[2],curStartPos_list[3]);
+//    }
 
-    if (addRoute->exec()) {
+//    if (addRoute->exec()) {
 
-        curStartPos_list=addRoute->getStartPos();
-
-
-        QList<QString> curTransPos_list = addRoute->getTransPos();
-        QList<QString> curEndPos_list = addRoute->getEndPos();
-
-        if ( curStartPos_list == curTransPos_list ||
-             curStartPos_list == curEndPos_list   ||
-             curTransPos_list == curEndPos_list )
-        {
-            QMessageBox::information(this, " warning ", QString::fromLocal8Bit(" 有至少两个点重合，请检查 "));
-            return;
-        }
+//        curStartPos_list=addRoute->getStartPos();
 
 
+//        QList<QString> curTransPos_list = addRoute->getTransPos();
+//        QList<QString> curEndPos_list = addRoute->getEndPos();
 
-        // 根据 arc 标志判断，设置类型及转换位置信息
-        if (arc == 1) {
-
-
-            //model->setData(model->index(curRow, 0), curRow);
-            model->setData(model->index(curRow, 1), "arc");
-            model->setData(model->index(curRow, 2), curStartPos_list.at(0));
-            model->setData(model->index(curRow, 3), curStartPos_list.at(1));
-            model->setData(model->index(curRow, 4), curStartPos_list.at(2));
-            model->setData(model->index(curRow, 5), curStartPos_list.at(3));
-
-            model->setData(model->index(curRow, 6), curTransPos_list.at(0));
-            model->setData(model->index(curRow, 7), curTransPos_list.at(1));
-            model->setData(model->index(curRow, 8), curTransPos_list.at(2));
-            model->setData(model->index(curRow, 9), curTransPos_list.at(3));
-
-            model->setData(model->index(curRow, 10), curEndPos_list.at(0));
-            model->setData(model->index(curRow, 11), curEndPos_list.at(1));
-            model->setData(model->index(curRow, 12), curEndPos_list.at(2));
-            model->setData(model->index(curRow, 13), curEndPos_list.at(3));
-            qDebug()<<"***arc:*****start="<< curStartPos_list <<"trans"<<curTransPos_list<<
-                      " end"<<curEndPos_list;
-        } else {
-
-            //model->setData(model->index(curRow, 0), curRow);
-            model->setData(model->index(curRow, 1), "line");
-            model->setData(model->index(curRow, 2), curStartPos_list.at(0));
-            model->setData(model->index(curRow, 3), curStartPos_list.at(1));
-            model->setData(model->index(curRow, 4), curStartPos_list.at(2));
-            model->setData(model->index(curRow, 5), curStartPos_list.at(3));
-
-            model->setData(model->index(curRow, 10), curEndPos_list.at(0));
-            model->setData(model->index(curRow, 11), curEndPos_list.at(1));
-            model->setData(model->index(curRow, 12), curEndPos_list.at(2));
-            model->setData(model->index(curRow, 13), curEndPos_list.at(3));
-            qDebug()<<"***lin:*****start="<< curStartPos_list <<
-                      " end"<<curEndPos_list;
-        }
-
-        for (int row = 0; row < model->rowCount(); row++) {
-            model->setData(model->index(row, 0), row);  // 第 0 列设置为当前行号
-        }
-
-        QString x0=QString::number(model->data(model->index(curRow, 10), Qt::DisplayRole).toFloat(), 'f', 3);
-        QString y0=QString::number(model->data(model->index(curRow, 11), Qt::DisplayRole).toFloat(), 'f', 3);
-        QString z0=QString::number(model->data(model->index(curRow, 12), Qt::DisplayRole).toFloat(), 'f', 3);
-        QString r0=QString::number(model->data(model->index(curRow, 13), Qt::DisplayRole).toFloat(), 'f', 3);
-        curStartPos_list={x0,y0,z0,r0};
-
-        model->setData(model->index(curRow+1, 2), curStartPos_list.at(0));
-        model->setData(model->index(curRow+1, 3), curStartPos_list.at(1));
-        model->setData(model->index(curRow+1, 4), curStartPos_list.at(2));
-        model->setData(model->index(curRow+1, 5), curStartPos_list.at(3));
+//        if ( curStartPos_list == curTransPos_list ||
+//             curStartPos_list == curEndPos_list   ||
+//             curTransPos_list == curEndPos_list )
+//        {
+//            QMessageBox::information(this, " warning ", QString::fromLocal8Bit(" 有至少两个点重合，请检查 "));
+//            return;
+//        }
 
 
 
-        if (!model->submitAll()) {
-            qDebug() << "提交数据失败:" << model->lastError().text();
-            dbManager->db.rollback();
-            QMessageBox::critical(this, "Error", "提交数据失败: " + model->lastError().text());
-            return;
-        }
-    } else {
-        if(addRoute->isReject){
-            if(edit==0){
-                model->removeRow(curRow);
-                if (!model->submitAll()) {
-                    qDebug() << "提交数据失败:" << model->lastError().text();
-                    dbManager->db.rollback();
-                    QMessageBox::critical(this, "Error", "提交数据失败: " + model->lastError().text());
-                    return;
-                }
-            }
-            addRoute->isReject=false;
-        }
-
-        dbManager->db.rollback();
-        return;
-    }
+//        // 根据 arc 标志判断，设置类型及转换位置信息
+//        if (arc == 1) {
 
 
+//            //model->setData(model->index(curRow, 0), curRow);
+//            model->setData(model->index(curRow, 1), "arc");
+//            model->setData(model->index(curRow, 2), curStartPos_list.at(0));
+//            model->setData(model->index(curRow, 3), curStartPos_list.at(1));
+//            model->setData(model->index(curRow, 4), curStartPos_list.at(2));
+//            model->setData(model->index(curRow, 5), curStartPos_list.at(3));
+
+//            model->setData(model->index(curRow, 6), curTransPos_list.at(0));
+//            model->setData(model->index(curRow, 7), curTransPos_list.at(1));
+//            model->setData(model->index(curRow, 8), curTransPos_list.at(2));
+//            model->setData(model->index(curRow, 9), curTransPos_list.at(3));
+
+//            model->setData(model->index(curRow, 10), curEndPos_list.at(0));
+//            model->setData(model->index(curRow, 11), curEndPos_list.at(1));
+//            model->setData(model->index(curRow, 12), curEndPos_list.at(2));
+//            model->setData(model->index(curRow, 13), curEndPos_list.at(3));
+//            qDebug()<<"***arc:*****start="<< curStartPos_list <<"trans"<<curTransPos_list<<
+//                      " end"<<curEndPos_list;
+//        } else {
+
+//            //model->setData(model->index(curRow, 0), curRow);
+//            model->setData(model->index(curRow, 1), "line");
+//            model->setData(model->index(curRow, 2), curStartPos_list.at(0));
+//            model->setData(model->index(curRow, 3), curStartPos_list.at(1));
+//            model->setData(model->index(curRow, 4), curStartPos_list.at(2));
+//            model->setData(model->index(curRow, 5), curStartPos_list.at(3));
+
+//            model->setData(model->index(curRow, 10), curEndPos_list.at(0));
+//            model->setData(model->index(curRow, 11), curEndPos_list.at(1));
+//            model->setData(model->index(curRow, 12), curEndPos_list.at(2));
+//            model->setData(model->index(curRow, 13), curEndPos_list.at(3));
+//            qDebug()<<"***lin:*****start="<< curStartPos_list <<
+//                      " end"<<curEndPos_list;
+//        }
+
+//        for (int row = 0; row < model->rowCount(); row++) {
+//            model->setData(model->index(row, 0), row);  // 第 0 列设置为当前行号
+//        }
+
+//        QString x0=QString::number(model->data(model->index(curRow, 10), Qt::DisplayRole).toFloat(), 'f', 3);
+//        QString y0=QString::number(model->data(model->index(curRow, 11), Qt::DisplayRole).toFloat(), 'f', 3);
+//        QString z0=QString::number(model->data(model->index(curRow, 12), Qt::DisplayRole).toFloat(), 'f', 3);
+//        QString r0=QString::number(model->data(model->index(curRow, 13), Qt::DisplayRole).toFloat(), 'f', 3);
+//        curStartPos_list={x0,y0,z0,r0};
+
+//        model->setData(model->index(curRow+1, 2), curStartPos_list.at(0));
+//        model->setData(model->index(curRow+1, 3), curStartPos_list.at(1));
+//        model->setData(model->index(curRow+1, 4), curStartPos_list.at(2));
+//        model->setData(model->index(curRow+1, 5), curStartPos_list.at(3));
 
 
-    if (!dbManager->db.commit()) {
-        qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
-        QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
-        dbManager->db.rollback();
-    }
+
+//        if (!model->submitAll()) {
+//            qDebug() << "提交数据失败:" << model->lastError().text();
+//            dbManager->db.rollback();
+//            QMessageBox::critical(this, "Error", "提交数据失败: " + model->lastError().text());
+//            return;
+//        }
+//    } else {
+//        if(addRoute->isReject){
+//            if(edit==0){
+//                model->removeRow(curRow);
+//                if (!model->submitAll()) {
+//                    qDebug() << "提交数据失败:" << model->lastError().text();
+//                    dbManager->db.rollback();
+//                    QMessageBox::critical(this, "Error", "提交数据失败: " + model->lastError().text());
+//                    return;
+//                }
+//            }
+//            addRoute->isReject=false;
+//        }
+
+//        dbManager->db.rollback();
+//        return;
+//    }
 
 
-    updateSence();
+
+
+//    if (!dbManager->db.commit()) {
+//        qDebug() << "Failed to commit transaction:" << dbManager->db.lastError().text();
+//        QMessageBox::critical(this, "Error", "事务提交失败:" + dbManager->db.lastError().text());
+//        dbManager->db.rollback();
+//    }
+
+
+//    updateSence();
+//}
+
+
+void MotionControl::updateAddRoute(int arc,int edit,int curRow){
+    qDebug() << "updateAddRouteNonBlocking";
+
+      QList<QString> curStartPos_list;
+
+      // 初始化起始位置
+      if(curRow <= 0) {
+          if(edit == 0) {
+              if(!model->insertRow(curRow)) {
+                  qDebug() << "Failed to insert row at" << curRow;
+                  QMessageBox::critical(this, "Error", QString::fromLocal8Bit(" 插入新行失败 "));
+                  return;
+              }
+              curStartPos_list = startPoint;
+          } else {
+              QString x0 = QString::number(model->data(model->index(0, 2), Qt::DisplayRole).toFloat(), 'f', 3);
+              QString y0 = QString::number(model->data(model->index(0, 3), Qt::DisplayRole).toFloat(), 'f', 3);
+              QString z0 = QString::number(model->data(model->index(0, 4), Qt::DisplayRole).toFloat(), 'f', 3);
+              QString r0 = QString::number(model->data(model->index(0, 5), Qt::DisplayRole).toFloat(), 'f', 3);
+              curStartPos_list = {x0, y0, z0, r0};
+          }
+      } else {
+          if(edit == 0) {
+              if(!model->insertRow(curRow)) {
+                  qDebug() << "Failed to insert row at" << curRow;
+                  QMessageBox::critical(this, "Error", QString::fromLocal8Bit(" 插入新行失败 "));
+                  return;
+              }
+          }
+          QString x0 = QString::number(model->data(model->index(curRow-1, 10), Qt::DisplayRole).toFloat(), 'f', 3);
+          QString y0 = QString::number(model->data(model->index(curRow-1, 11), Qt::DisplayRole).toFloat(), 'f', 3);
+          QString z0 = QString::number(model->data(model->index(curRow-1, 12), Qt::DisplayRole).toFloat(), 'f', 3);
+          QString r0 = QString::number(model->data(model->index(curRow-1, 13), Qt::DisplayRole).toFloat(), 'f', 3);
+          curStartPos_list = {x0, y0, z0, r0};
+      }
+
+      // 设置对话框初始值
+      addRoute->pbSetStartPos(curStartPos_list[0], curStartPos_list[1], curStartPos_list[2], curStartPos_list[3]);
+      addRoute->show();  // 非阻塞
+
+      disconnect(addRoute, &QDialog::finished, nullptr, nullptr);
+      // 使用 finished 信号处理提交
+      connect(addRoute, &QDialog::finished, this, [=](int result) mutable {
+          if(result == QDialog::Accepted) {
+
+              // 获取用户输入
+              auto curStartPos_list = addRoute->getStartPos();
+              auto curTransPos_list = addRoute->getTransPos();
+              auto curEndPos_list = addRoute->getEndPos();
+
+              if(curStartPos_list == curTransPos_list ||
+                 curStartPos_list == curEndPos_list ||
+                 curTransPos_list == curEndPos_list) {
+                  QMessageBox::information(this, "Warning", QString::fromLocal8Bit(" 有至少两个点重合，请检查 "));
+                  return;
+              }
+
+              // 设置模型数据
+              model->setData(model->index(curRow, 1), arc ? "arc" : "line");
+              for(int i=0;i<4;i++) {
+                  model->setData(model->index(curRow, 2+i), curStartPos_list.at(i));
+                  model->setData(model->index(curRow, 6+i), curTransPos_list.at(i));
+                  model->setData(model->index(curRow, 10+i), curEndPos_list.at(i));
+              }
+
+              qDebug()<<"***arc-line:*****start="<< curStartPos_list <<"trans"<<curTransPos_list<<
+                                    " end"<<curEndPos_list;
+
+              for(int row=0; row<model->rowCount(); row++) {
+                  model->setData(model->index(row, 0), row);
+              }
+
+              // 设置下一行起点
+              QString x0 = QString::number(model->data(model->index(curRow, 10), Qt::DisplayRole).toFloat(), 'f', 3);
+              QString y0 = QString::number(model->data(model->index(curRow, 11), Qt::DisplayRole).toFloat(), 'f', 3);
+              QString z0 = QString::number(model->data(model->index(curRow, 12), Qt::DisplayRole).toFloat(), 'f', 3);
+              QString r0 = QString::number(model->data(model->index(curRow, 13), Qt::DisplayRole).toFloat(), 'f', 3);
+              curStartPos_list = {x0, y0, z0, r0};
+
+              model->setData(model->index(curRow+1, 2), curStartPos_list.at(0));
+              model->setData(model->index(curRow+1, 3), curStartPos_list.at(1));
+              model->setData(model->index(curRow+1, 4), curStartPos_list.at(2));
+              model->setData(model->index(curRow+1, 5), curStartPos_list.at(3));
+
+              // 提交模型
+              if(!model->submitAll()) {
+                  qDebug() << "提交数据失败:" << model->lastError().text();
+                  QMessageBox::critical(this, "Error", "提交数据失败: " + model->lastError().text());
+                  return;
+              }
+
+              updateSence();
+
+          } else {
+              // 用户取消
+              if(addRoute->isReject) {
+                  if(edit==0){
+                      model->removeRow(curRow);
+                      model->submitAll(); // 忽略失败
+                  }
+                  addRoute->isReject = false;
+              }
+          }
+      },Qt::UniqueConnection);
 }
+
+
 
 void MotionControl::PbModbusConnectBtn(){
 
@@ -851,13 +960,13 @@ void MotionControl::pbStartScanBtn(){
     }
 
     ui->disMess_lab->setText(QString::fromLocal8Bit(" 开始启动   "));
-    if(isSelectChange){
+    //if(isSelectChange){
 
         scanDetectCtrl->workPiece=ui->cBworkpiece->currentText();
         scanDetectCtrl->sendStringCommand(scanDetectCtrl->modbusClient,QModbusDataUnit::HoldingRegisters,workPieceModbusAdress,ui->cBworkpiece->currentText());
-        isSelectChange=false;
+        //isSelectChange=false;
 
-    }
+    //}
     //QThread::sleep(500);
     scanDetectCtrl->selectProcessType(ui->processType_cb->currentIndex());
     //QThread::sleep(500);
@@ -1126,10 +1235,6 @@ void MotionControl::tableSelectionChanged()
             }
         }
     }
-
-    qDebug() << "最近的点是:" << nearestName
-             << "坐标:" << nearestPoint
-             << "距离:" << minDist;
 
 }
 
@@ -3051,21 +3156,7 @@ void MotionControl::PbsmoothCurve(){
 
     double Zsmooth=1.0;
 
-    QString text=ui->cBworkpiece->currentText();
 
-    text=text+"_smoodth";
-
-    createOrSwitchTable(text,true);
-    WorkpieceList.push_back(text);
-    // 添加新工件名称到 QComboBox
-    ui->cBworkpiece->addItem(text);
-    // 设置新添加的工件为当前选中项
-    ui->cBworkpiece->setCurrentText(text);
-
-
-
-
-    saveSetting();
 
 
     int rowCount = model->rowCount();
@@ -3159,6 +3250,20 @@ void MotionControl::PbsmoothCurve(){
 
 
     }else{
+
+
+        QString text=ui->cBworkpiece->currentText();
+
+        text=text+"_smoodth";
+
+        createOrSwitchTable(text,true);
+        WorkpieceList.push_back(text);
+        // 添加新工件名称到 QComboBox
+        ui->cBworkpiece->addItem(text);
+        // 设置新添加的工件为当前选中项
+        ui->cBworkpiece->setCurrentText(text);
+
+        saveSetting();
 
         for (int i = 0; i < rowCount - 1; ++i)
         {
@@ -3327,7 +3432,31 @@ void MotionControl::pbnewPiece(){
 
 void MotionControl::pbdeletePiece(){
 
-    QString selectedText = ui->cBworkpiece->currentText();
+    bool deletePiece = QApplication::keyboardModifiers() & Qt::ControlModifier;
+
+    QString selectedText;
+    if(deletePiece){
+         QVector<QString> workPeceList= gcodeEidt->listRemoteFiles();
+         ;
+         for (const QString& selectedText : workPeceList) {
+             // 只处理 .cnc 文件
+             if (!selectedText.endsWith(".cnc", Qt::CaseInsensitive))
+                 continue;
+
+             QString workpieceName=selectedText;
+                     workpieceName.chop(4);
+
+             if (!WorkpieceList.contains(workpieceName)) {
+                 qDebug() << "Deleting remote file (not in WorkpieceList):" << workpieceName;
+                 gcodeEidt->deleteRemoteFile(workpieceName);
+             }
+         }
+
+         QMessageBox::warning(nullptr, "error", QString::fromLocal8Bit(" 工件以外的文件已删除   "));
+
+    }else{
+         selectedText = ui->cBworkpiece->currentText();
+    }
     if (selectedText.isEmpty()||selectedText=="Initialization") {
         return;
     }
@@ -3856,7 +3985,7 @@ void MotionControl::saveSetting() {
     settings->setValue("ArcV", ui->arcVelocity_lin->text());
     settings->setValue("ProcessType", ui->processType_cb->currentIndex());
     settings->setValue("pointV", ui->pointVelocity_lin->text());
-
+    settings->setValue("workpiece", ui->cBworkpiece->currentIndex());
     // 打印保存的值
     settings->endGroup();
     settings->sync();  // 强制写入磁盘
@@ -3923,7 +4052,7 @@ void MotionControl::initSetting() {
     // Populate workpiece combo box
     ui->cBworkpiece->clear();
     ui->cBworkpiece->addItems(pieces);
-    ui->cBworkpiece->setCurrentIndex(0);
+    ui->cBworkpiece->setCurrentIndex(settings->value("workpiece", 0).toDouble());
 
     // Determine active workpiece
     QString activePiece = ui->cBworkpiece->currentText();

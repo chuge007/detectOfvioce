@@ -809,8 +809,8 @@ bool gCodeModulation::isHostOnline(const QString& host, quint16 port, int timeou
 int gCodeModulation::uploadFileWithSftp()
 {
 
-    if (!isHostOnline("192.168.1.88")) {
-        qDebug() << "目标主机不可达";
+    if (!isHostOnline(hostname)) {
+        qDebug() << "uploadFileWithSftp falid";
         return false;
     }
 
@@ -821,9 +821,9 @@ int gCodeModulation::uploadFileWithSftp()
     progress.setValue(0);
 
     QString remotePath = "./PlcLogic/_cnc/" + workPiece + ".cnc";
-    const char *hostname = "192.168.1.88";
-    const char *username = "update";
-    const char *password = "123456";
+//    const char *hostname = "192.168.1.88";
+//    const char *username = "update";
+//    const char *password = "123456";
     std::string remotePathStr = remotePath.toStdString();
     const char *remoteFilePath = remotePathStr.c_str();
 
@@ -1040,11 +1040,129 @@ Point gCodeModulation::getPointAtDistance(float x0, float y0, float z0,
 
 
 
+
+QVector<QString> gCodeModulation::listRemoteFiles()
+{
+    QVector<QString> fileList;
+
+    if (!isHostOnline(hostname)) {
+        qDebug() << "listRemoteFiles failed: host offline";
+        return fileList;
+    }
+
+    std::string remotePathStr = "./PlcLogic/_cnc/" ;
+    const char* remoteDirPath = remotePathStr.c_str();
+
+    WSADATA wsadata;
+    if (WSAStartup(MAKEWORD(2, 2), &wsadata) != 0) {
+        std::cerr << "WSAStartup failed.\n";
+        return fileList;
+    }
+
+    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sock == INVALID_SOCKET) {
+        std::cerr << "Socket creation failed.\n";
+        WSACleanup();
+        return fileList;
+    }
+
+    sockaddr_in sin{};
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(22);
+
+    if (InetPtonA(AF_INET, hostname, &sin.sin_addr) != 1) {
+        std::cerr << "InetPtonA failed.\n";
+        closesocket(sock);
+        WSACleanup();
+        return fileList;
+    }
+
+    if (::connect(sock, (struct sockaddr*)&sin, sizeof(sin)) != 0) {
+        std::cerr << "Failed to connect.\n";
+        closesocket(sock);
+        WSACleanup();
+        return fileList;
+    }
+
+    LIBSSH2_SESSION* session = libssh2_session_init();
+    if (!session) {
+        std::cerr << "Failed to init SSH session.\n";
+        closesocket(sock);
+        WSACleanup();
+        return fileList;
+    }
+
+    if (libssh2_session_handshake(session, sock)) {
+        std::cerr << "SSH session handshake failed.\n";
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return fileList;
+    }
+
+    if (libssh2_userauth_password(session, username, password)) {
+        std::cerr << "Authentication failed.\n";
+        libssh2_session_disconnect(session, "Bye");
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return fileList;
+    }
+
+    LIBSSH2_SFTP* sftp_session = libssh2_sftp_init(session);
+    if (!sftp_session) {
+        std::cerr << "Unable to init SFTP session.\n";
+        libssh2_session_disconnect(session, "Bye");
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return fileList;
+    }
+
+    LIBSSH2_SFTP_HANDLE* sftp_handle = libssh2_sftp_opendir(sftp_session, remoteDirPath);
+    if (!sftp_handle) {
+        std::cerr << "Unable to open directory: " << remoteDirPath << "\n";
+        libssh2_sftp_shutdown(sftp_session);
+        libssh2_session_disconnect(session, "Bye");
+        libssh2_session_free(session);
+        closesocket(sock);
+        WSACleanup();
+        return fileList;
+    }
+
+    char mem[512];
+    LIBSSH2_SFTP_ATTRIBUTES attrs;
+
+    while (true) {
+        int rc = libssh2_sftp_readdir(sftp_handle, mem, sizeof(mem), &attrs);
+        if (rc > 0) {
+            QString fileName = QString::fromUtf8(mem, rc);
+            // 跳过 "." 和 ".."
+            if (fileName != "." && fileName != "..") {
+                fileList.append(fileName);
+            }
+        } else {
+            break; // 没有更多文件
+        }
+    }
+
+    libssh2_sftp_closedir(sftp_handle);
+    libssh2_sftp_shutdown(sftp_session);
+    libssh2_session_disconnect(session, "Bye");
+    libssh2_session_free(session);
+    closesocket(sock);
+    WSACleanup();
+
+    return fileList;
+}
+
+
+
 bool gCodeModulation::deleteRemoteFile(const QString& workPiece) {
 
 
-    if (!isHostOnline("192.168.1.88")) {
-        qDebug() << "目标主机不可达";
+    if (!isHostOnline(hostname)) {
+        qDebug() << "deleteRemoteFile faild";
         return false;
     }
 
@@ -1052,9 +1170,9 @@ bool gCodeModulation::deleteRemoteFile(const QString& workPiece) {
     std::string remotePathStr = remotePath.toStdString();
     const char* remoteFilePath = remotePathStr.c_str();
 
-    const char* hostname = "192.168.1.88";
-    const char* username = "update";
-    const char* password = "123456";
+//    const char* hostname = "192.168.1.88";
+//    const char* username = "update";
+//    const char* password = "123456";
 
     WSADATA wsadata;
     if (WSAStartup(MAKEWORD(2, 2), &wsadata) != 0) {

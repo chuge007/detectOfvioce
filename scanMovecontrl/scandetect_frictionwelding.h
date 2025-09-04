@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QModbusDataUnit>
 #include <QMutex>
-
+#include <QUdpSocket>
 
 class scanDetect_frictionWelding : public ScanControlAbstract  // 修改继承关系
 {
@@ -79,8 +79,17 @@ private slots:
     bool modbusState();
     void performTasks();
 
+    void onUdpReadyRead();
+
+    void processLatestDatagram();
+
 
 private:
+    QByteArray latestDatagram;
+    QMutex datagramMutex;
+
+    QUdpSocket *udpSocket;
+
     int retryCount ;
     QProgressDialog *progressDialog;
 
